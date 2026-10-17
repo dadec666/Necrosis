@@ -403,3 +403,14 @@ L["VIOLET1"] = "Violett"
 L["VIOLET2"] = "Violett 2"
 L["X"] = "Spezial"
 end
+
+-- Sphere options sliders (issue #46)
+L["SLIDER_BUTTON_SPACING"] = "Buttonabstand"
+L["SLIDER_BUTTON_SPACING_TIP"] = "Abstand zwischen den Buttons rund um die Kugel (0.5 = eng, 2.0 = weit)."
+L["SLIDER_BUTTON_RADIUS"] = "Entfernung zur Kugel"
+L["SLIDER_BUTTON_RADIUS_TIP"] = "Entfernung der Buttons vom Mittelpunkt der Kugel (0.8 = nah, 1.2 = weit entfernt)."
+
+-- Mounts page of the buttons options (issue #46)
+L["MOUNTS_PAGE_TITLE"] = "Reittiere"
+L["MOUNTS_HELP"] = "Wähle deine Reittiere: Ziehe ein Reittier aus deiner Sammlung auf einen Platz, um es zuzuweisen."
+L["MOUNTS_SLOT_TIP"] = "Ziehe ein Reittier hierher."

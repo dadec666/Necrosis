@@ -71,27 +71,27 @@ Speech\Speech-cn.lua
 Speech\Speech-ru.lua
 
 Message.lua
-Spells-Retail.lua
+Spells-Forever.lua
 Dialog_Forever.lua
 
 Timers\Functions_retail.lua
 Timers\GraphicalTimers.lua
 Timers\OtherTimers.lua
 
-XML\Attributes_retail.lua
+XML\Attributes-Forever.lua
 
 XML\Options-Messages.lua
 XML\Options-SummonQueue.lua
-XML\Options-Sphere_retail.lua
-XML\Options-Buttons_retail.lua
+XML\Options-Sphere-Forever.lua
+XML\Options-Buttons-Forever.lua
 XML\Options-Menus_retail.lua
 XML\Options-Timers_retail.lua
-XML\Options-Misc_retail.lua
+XML\Options-Misc-Forever.lua
 XML\Options-Overlay.lua
 
 XML\Panel_retail.lua
 XML\AboutPanel.lua
-Necrosis_retail.lua
+Necrosis-Forever.lua
 XML\XML_retail.lua
 ThreatMeter.lua
 

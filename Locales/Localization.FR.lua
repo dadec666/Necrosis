@@ -492,3 +492,14 @@ L["ENABLED"] = "Activé"
 L["OPTIONS"] = "Options"
 L["SETTINGS"] = "Paramètres"
 L["SUMMON_QUEUE_SHOW"] = "File"
+
+-- Sphere options sliders (issue #46)
+L["SLIDER_BUTTON_SPACING"] = "Écartement des boutons"
+L["SLIDER_BUTTON_SPACING_TIP"] = "Espace entre les boutons autour de la sphère (0.5 = serrés, 2.0 = espacés)."
+L["SLIDER_BUTTON_RADIUS"] = "Distance à la sphère"
+L["SLIDER_BUTTON_RADIUS_TIP"] = "Distance des boutons par rapport au centre de la sphère (0.8 = proches, 1.2 = éloignés)."
+
+-- Mounts page of the buttons options (issue #46)
+L["MOUNTS_PAGE_TITLE"] = "Montures"
+L["MOUNTS_HELP"] = "Choisissez vos montures : glissez une monture de votre collection sur un emplacement pour l'associer."
+L["MOUNTS_SLOT_TIP"] = "Glissez-déposez une monture ici."

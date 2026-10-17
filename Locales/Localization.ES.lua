@@ -399,3 +399,14 @@ L["VIOLET2"] = "Púrpura 2"
 L["666"] = "666"
 L["X"] = "Especial"
 end
+
+-- Sphere options sliders (issue #46)
+L["SLIDER_BUTTON_SPACING"] = "Separación de los botones"
+L["SLIDER_BUTTON_SPACING_TIP"] = "Espacio entre los botones alrededor de la esfera (0.5 = juntos, 2.0 = separados)."
+L["SLIDER_BUTTON_RADIUS"] = "Distancia a la esfera"
+L["SLIDER_BUTTON_RADIUS_TIP"] = "Distancia de los botones al centro de la esfera (0.8 = cerca, 1.2 = lejos)."
+
+-- Mounts page of the buttons options (issue #46)
+L["MOUNTS_PAGE_TITLE"] = "Monturas"
+L["MOUNTS_HELP"] = "Elige tus monturas: arrastra una montura de tu colección a una ranura para asignarla."
+L["MOUNTS_SLOT_TIP"] = "Arrastra y suelta una montura aquí."

@@ -477,3 +477,14 @@ L["AFK_SCREEN"] = "AFK Screen"
 L["THREAT_METER_ENABLED"] = "Enable Threat Meter (circular indicator)"
 L["NECROSISUI_ENABLED"] = "Enable NecrosisUI (advanced framework)"
 L["OPEN_OPTIONS_OVERLAY"] = "Open Spell Overlay Options"
+
+-- Sphere options sliders (issue #46)
+L["SLIDER_BUTTON_SPACING"] = "Button spacing"
+L["SLIDER_BUTTON_SPACING_TIP"] = "Gap between the buttons around the sphere (0.5 = tight, 2.0 = wide)."
+L["SLIDER_BUTTON_RADIUS"] = "Distance to sphere"
+L["SLIDER_BUTTON_RADIUS_TIP"] = "Distance of the buttons from the sphere center (0.8 = close, 1.2 = far)."
+
+-- Mounts page of the buttons options (issue #46)
+L["MOUNTS_PAGE_TITLE"] = "Mounts"
+L["MOUNTS_HELP"] = "Select your mounts: drag a mount from your collection onto a slot to bind it."
+L["MOUNTS_SLOT_TIP"] = "Drag and drop a mount here."

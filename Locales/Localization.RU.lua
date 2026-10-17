@@ -401,3 +401,14 @@ L["VIOLET1"] = "Фиолетовый"
 L["VIOLET2"] = "Фиолетовый 2"
 L["X"] = "Специальный"
 end
+
+-- Sphere options sliders (issue #46)
+L["SLIDER_BUTTON_SPACING"] = "Расстояние между кнопками"
+L["SLIDER_BUTTON_SPACING_TIP"] = "Промежуток между кнопками вокруг сферы (0.5 — плотно, 2.0 — широко)."
+L["SLIDER_BUTTON_RADIUS"] = "Удалённость от сферы"
+L["SLIDER_BUTTON_RADIUS_TIP"] = "Расстояние от кнопок до центра сферы (0.8 — ближе, 1.2 — дальше)."
+
+-- Mounts page of the buttons options (issue #46)
+L["MOUNTS_PAGE_TITLE"] = "Верховые животные"
+L["MOUNTS_HELP"] = "Выберите транспорт: перетащите средство передвижения из коллекции в ячейку, чтобы назначить его."
+L["MOUNTS_SLOT_TIP"] = "Перетащите сюда средство передвижения."

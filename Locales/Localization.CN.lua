@@ -389,3 +389,14 @@ L["VIOLET1"] = "紫色"
 L["VIOLET2"] = "紫色 2"
 L["X"] = "特殊"
 end
+
+-- Sphere options sliders (issue #46)
+L["SLIDER_BUTTON_SPACING"] = "按钮间距"
+L["SLIDER_BUTTON_SPACING_TIP"] = "球体周围按钮之间的间隔（0.5 = 紧凑，2.0 = 宽松）。"
+L["SLIDER_BUTTON_RADIUS"] = "到球体的距离"
+L["SLIDER_BUTTON_RADIUS_TIP"] = "按钮与球体中心的距离（0.8 = 近，1.2 = 远）。"
+
+-- Mounts page of the buttons options (issue #46)
+L["MOUNTS_PAGE_TITLE"] = "坐骑"
+L["MOUNTS_HELP"] = "选择坐骑：将收藏中的坐骑拖到栏位上即可绑定。"
+L["MOUNTS_SLOT_TIP"] = "将坐骑拖放到此处。"

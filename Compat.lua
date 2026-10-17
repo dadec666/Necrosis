@@ -22,46 +22,57 @@ end
 
 -- ============================================================================
 -- GetSpellCooldown Compatibility Wrapper (12.0+)
+-- Same four values as the historical API (startTime, duration, isEnabled, modRate). When the cooldown cannot be read
+-- (secret value or empty API answer) the first three stay 0, 0, 1 so existing callers keep working; use
+-- NecrosisCompat.IsSpellCooldownUnknown(spellID) to tell "ready" from "unknown" (issue #46).
+-- Only installed when the client has no native GetSpellCooldown.
 -- ============================================================================
-if not _G.GetSpellCooldownOriginal then
-    _G.GetSpellCooldownOriginal = _G.GetSpellCooldown
+NecrosisCompat = NecrosisCompat or {}
+
+local function ReadSpellCooldown(spellID)
+    spellID = tonumber(spellID)
+    if not spellID or spellID <= 0 then return nil end
+    local info = C_Spell and C_Spell.GetSpellCooldown and C_Spell.GetSpellCooldown(spellID)
+    if not info then return nil end
+    if issecretvalue and (issecretvalue(info.startTime) or issecretvalue(info.duration) or issecretvalue(info.isEnabled)) then
+        return nil
+    end
+    return info
+end
+
+-- true when the cooldown of this spell cannot be read right now
+function NecrosisCompat.IsSpellCooldownUnknown(spellID)
+    return ReadSpellCooldown(spellID) == nil
+end
+
+if not _G.GetSpellCooldown then
     function _G.GetSpellCooldown(spellID)
-        if not spellID then return 0, 0, 1 end
-        spellID = tonumber(spellID)
-        if not spellID or spellID <= 0 then return 0, 0, 1 end
+        local info = ReadSpellCooldown(spellID)
+        if not info then return 0, 0, 1 end
 
-        local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
-        if not cooldownInfo then return 0, 0, 1 end
-
-        local startTime, duration = cooldownInfo.startTime, cooldownInfo.duration
-        -- Secret values cannot be compared or used in arithmetic from addon code: report "ready"
-        if issecretvalue and (issecretvalue(startTime) or issecretvalue(duration) or issecretvalue(cooldownInfo.isEnabled)) then
-            return 0, 0, 1
-        end
-
-        -- Return in old format: startTime, duration, isEnabled
-        return startTime or 0, duration or 0, cooldownInfo.isEnabled and 1 or 0
+        -- Return in old format: startTime, duration, isEnabled, modRate
+        return info.startTime or 0, info.duration or 0, info.isEnabled and 1 or 0, info.modRate
     end
 end
 
 -- ============================================================================
 -- GetItemInfo Compatibility Wrapper (12.0+)
+-- Only installed when the client has no global GetItemInfo. C_Item.GetItemInfo takes an item ID, name or link
+-- and (on Forever, issue #46) returns separate values, not a table: pass them through unchanged. A table return
+-- (some builds) is converted to the legacy order. Never replaces a native GetItemInfo.
 -- ============================================================================
-if not _G.GetItemInfoOriginal then
-    _G.GetItemInfoOriginal = _G.GetItemInfo
-    function _G.GetItemInfo(itemID)
-        if not itemID then return nil end
-        itemID = tonumber(itemID)
-        if not itemID or itemID <= 0 then return nil end
+if not _G.GetItemInfo then
+    function _G.GetItemInfo(item)
+        if not item or not (C_Item and C_Item.GetItemInfo) then return nil end
 
-        local itemInfo = C_Item.GetItemInfo(itemID)
-        if not itemInfo then return nil end
-
-        -- Return in old format
-        return itemInfo.itemName, itemInfo.itemLink, itemInfo.quality, itemInfo.itemLevel,
-               itemInfo.requiredLevel, itemInfo.itemType, itemInfo.itemSubType,
-               itemInfo.stackCount, itemInfo.equipLoc, itemInfo.icon, itemInfo.sellPrice,
-               itemInfo.classID, itemInfo.subClassID
+        local first = C_Item.GetItemInfo(item)
+        if type(first) == "table" then
+            return first.itemName, first.itemLink, first.quality, first.itemLevel,
+                   first.requiredLevel, first.itemType, first.itemSubType,
+                   first.stackCount, first.equipLoc, first.icon, first.sellPrice,
+                   first.classID, first.subClassID
+        end
+        return C_Item.GetItemInfo(item)
     end
 end
 
