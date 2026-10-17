@@ -414,3 +414,14 @@ L["SLIDER_BUTTON_RADIUS_TIP"] = "Entfernung der Buttons vom Mittelpunkt der Kuge
 L["MOUNTS_PAGE_TITLE"] = "Reittiere"
 L["MOUNTS_HELP"] = "Wähle deine Reittiere: Ziehe ein Reittier aus deiner Sammlung auf einen Platz, um es zuzuweisen."
 L["MOUNTS_SLOT_TIP"] = "Ziehe ein Reittier hierher."
+
+-- Alert options of the Misc page (issue #46)
+L["ALERT_PROC"] = "Schattentrance- / Rückschlag-Warnungen"
+L["ALERT_CREATURE"] = "Verbannen-/Versklaven-Warnungen am Ziel"
+
+-- Destroy Shards button tooltip (issue #46)
+L["DESTROY_SHARD_MENU_LABEL"] = "|c00FF99FF".."Seelensplitter zerstören".."|r"
+L["DESTROY_SHARD_MENU_TEXT"] = "Rechtsklick: Seelensplitter bis zum Limit zerstören : "
+
+-- Soul shards over the limit message (issue #46)
+L["SHARD_OVER_LIMIT"] = "Seelensplitter über dem Limit: Rechtsklick auf die Schaltfläche „Seelensplitter zerstören“, um den Überschuss zu entfernen."

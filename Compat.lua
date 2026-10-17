@@ -347,3 +347,17 @@ if not _G.GetItemInfoInstant then
         return nil
     end
 end
+
+-- ============================================================================
+-- Safe player aura read (issue: "Auras cannot be accessed when secret while tainted by 'Necrosis'")
+-- C_UnitAuras.GetAuraDataByIndex raises the error itself when the player's auras are restricted (combat,
+-- instances), so testing the returned fields afterwards is too late. Returns auraData, or nil plus a second value
+-- true when the read was refused: callers can stop scanning instead of retrying every index.
+-- ============================================================================
+NecrosisCompat = NecrosisCompat or {}
+function NecrosisCompat.GetPlayerAuraByIndex(index)
+    if not (C_UnitAuras and C_UnitAuras.GetAuraDataByIndex) then return nil end
+    local ok, auraData = pcall(C_UnitAuras.GetAuraDataByIndex, "player", index)
+    if ok then return auraData end
+    return nil, true
+end

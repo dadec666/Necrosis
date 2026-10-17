@@ -392,3 +392,14 @@ L["SLIDER_BUTTON_RADIUS_TIP"] = "Distancia de los botones al centro de la esfera
 L["MOUNTS_PAGE_TITLE"] = "Monturas"
 L["MOUNTS_HELP"] = "Elige tus monturas: arrastra una montura de tu colección a una ranura para asignarla."
 L["MOUNTS_SLOT_TIP"] = "Arrastra y suelta una montura aquí."
+
+-- Alert options of the Misc page (issue #46)
+L["ALERT_PROC"] = "Alertas de Trance de las Sombras / Contragolpe"
+L["ALERT_CREATURE"] = "Alertas de Desterrar / Esclavizar en el objetivo"
+
+-- Destroy Shards button tooltip (issue #46)
+L["DESTROY_SHARD_MENU_LABEL"] = "|c00FF99FF".."Destruir fragmento(s) de alma".."|r"
+L["DESTROY_SHARD_MENU_TEXT"] = "Clic derecho para destruir fragmentos de alma hasta el límite : "
+
+-- Soul shards over the limit message (issue #46)
+L["SHARD_OVER_LIMIT"] = "Fragmentos de alma por encima del límite: haz clic derecho en el botón Destruir fragmentos para eliminar el exceso."

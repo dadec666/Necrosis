@@ -400,3 +400,10 @@ L["SLIDER_BUTTON_RADIUS_TIP"] = "按钮与球体中心的距离（0.8 = 近，1.
 L["MOUNTS_PAGE_TITLE"] = "坐骑"
 L["MOUNTS_HELP"] = "选择坐骑：将收藏中的坐骑拖到栏位上即可绑定。"
 L["MOUNTS_SLOT_TIP"] = "将坐骑拖放到此处。"
+
+-- Alert options of the Misc page (issue #46)
+L["ALERT_PROC"] = "显示暗影冥思 / 反冲提示"
+L["ALERT_CREATURE"] = "显示目标的放逐 / 奴役提示"
+
+-- Soul shards over the limit message (issue #46)
+L["SHARD_OVER_LIMIT"] = "灵魂碎片超过上限：右键点击“摧毁灵魂碎片”按钮以清除多余的碎片。"

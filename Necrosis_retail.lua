@@ -997,7 +997,8 @@ function SetupBuffTimers()
 	local res = false
 	for i=1,40 do -- hate hard coded numbers! Forums suggest the max buffs is 32 but no one is sure...
 	  -- Use C_UnitAuras.GetAuraDataByIndex() in Retail 12.0+
-	  local auraData = C_UnitAuras.GetAuraDataByIndex("player", i)
+	  local auraData, restricted = NecrosisCompat.GetPlayerAuraByIndex(i)
+	  if restricted then break end -- auras unreadable right now: do not retry the other indexes
 
 	  if auraData then
 	    buffs_found = true
@@ -2916,7 +2917,7 @@ function Necrosis:BagExplore(arg)
 			-- If not found in SpellTimer, search for Soulstone aura by spell ID 20707
 			if not Time and C_UnitAuras then
 				for i = 1, 40 do
-					local auraData = C_UnitAuras.GetAuraDataByIndex("player", i)
+					local auraData = NecrosisCompat.GetPlayerAuraByIndex(i)
 					if not auraData then break end
 					if not IsSecret(auraData.spellId) and not IsSecret(auraData.expirationTime)
 					and tonumber(auraData.spellId) == 20707 then  -- Soulstone spell ID

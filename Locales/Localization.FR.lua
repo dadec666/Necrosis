@@ -503,3 +503,10 @@ L["SLIDER_BUTTON_RADIUS_TIP"] = "Distance des boutons par rapport au centre de l
 L["MOUNTS_PAGE_TITLE"] = "Montures"
 L["MOUNTS_HELP"] = "Choisissez vos montures : glissez une monture de votre collection sur un emplacement pour l'associer."
 L["MOUNTS_SLOT_TIP"] = "Glissez-déposez une monture ici."
+
+-- Alert options of the Misc page (issue #46)
+L["ALERT_PROC"] = "Alertes Transe de l'ombre / Contrecoup"
+L["ALERT_CREATURE"] = "Alertes Bannir / Asservir sur la cible"
+
+-- Soul shards over the limit message (issue #46)
+L["SHARD_OVER_LIMIT"] = "Fragments d'âme au-dessus de la limite : clic droit sur le bouton Détruire les fragments pour supprimer l'excédent."

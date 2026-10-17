@@ -297,7 +297,7 @@ function Necrosis:UpdateResurrectionTimerDisplay(Timer)
 	-- If not found in SpellTimer, search for Soulstone aura by spell ID 20707
 	if not Time and C_UnitAuras then
 		for i = 1, 40 do
-			local auraData = C_UnitAuras.GetAuraDataByIndex("player", i)
+			local auraData = NecrosisCompat.GetPlayerAuraByIndex(i)
 			if not auraData then break end
 			if not IsSecret(auraData.spellId) and not IsSecret(auraData.expirationTime)
 			and tonumber(auraData.spellId) == 20707 then  -- Soulstone spell ID

@@ -919,8 +919,9 @@ end
 local function SatList(list, val)
 	for i, v in pairs(list) do
 		menuVariable = _G[Necrosis.Warlock_Buttons[v.f_ptr].f]
-		if menuVariable then
-			menuVariable:GetNormalTexture():SetDesaturated(val)
+		local tex = menuVariable and menuVariable:GetNormalTexture()
+		if tex then
+			tex:SetDesaturated(val)
 		end
 	end
 end
@@ -1037,6 +1038,88 @@ local function SetupSpells(reason)
 	Necrosis:ChangeDemon()
 end
 
+-- SPELLS_CHANGED fires several times in a row (login, zoning, talents) and SetupSpells rebuilds the menus:
+-- coalesce a burst into one call, and retry later instead of dropping it when it arrives in combat.
+-- SPELLS_CHANGED arrive en rafale : un seul appel regroupé, reporté si on est en combat.
+
+-- Shard counter text on the sphere: "07", or "07/32" when the Destroy Shards button is shown (limit), in red above
+-- the limit (issue #46)
+local function ShardLimitActive()
+	local pos = NecrosisConfig.StonePosition
+	return pos and (pos[7] or 0) > 0
+end
+
+local function ShardCountText()
+	local c = Local.Soulshard.Count
+	local text = (c < 10) and ("0"..c) or tostring(c)
+	if ShardLimitActive() then
+		local limit = NecrosisConfig.DestroyCount or 32
+		text = text.."/"..limit
+		if c > limit then text = "|cffff3333"..text.."|r" end
+	end
+	return text
+end
+
+-- Over the limit: highlight the Destroy Shards button and say it once. The extra shards cannot be destroyed
+-- automatically: the game blocks DeleteCursorItem (ADDON_ACTION_BLOCKED) unless it comes from a player click, so the
+-- player destroys them with a right-click on the button (tested in game, issue #46).
+-- Au-dessus de la limite : bouton mis en évidence et message unique. La destruction automatique est refusée par le jeu.
+local function CheckShardLimit()
+	local limit = NecrosisConfig.DestroyCount or 32
+	local over = ShardLimitActive() and Local.Soulshard.Count > limit
+
+	local b = _G[Necrosis.Warlock_Buttons.destroy_shards.f]
+	if b then
+		b:SetNormalTexture(over and Necrosis.Warlock_Buttons.destroy_shards.high or Necrosis.Warlock_Buttons.destroy_shards.norm)
+	end
+
+	if over then
+		if not Local.ShardOverNotified then
+			Local.ShardOverNotified = true
+			Necrosis:Msg((L and L["SHARD_OVER_LIMIT"]) or "Soul shards over the limit: right-click the Destroy Shards button.", "USER")
+		end
+	else
+		Local.ShardOverNotified = false
+	end
+end
+
+local spellsChangedPending = false
+local function RunSpellsChanged()
+	if InCombatLockdown() then
+		C_Timer.After(5, RunSpellsChanged)
+		return
+	end
+	spellsChangedPending = false
+	SetupSpells("SPELLS_CHANGED")
+end
+
+-- Self aura changes without the combat log (issue #46): compare the player's auras with the previous snapshot and
+-- feed SelfEffect() with what appeared ("BUFF") and what faded ("DEBUFF"), as the combat log branch used to do.
+-- The first scan only memorizes the auras (no proc replayed at login); a refused read keeps the old snapshot.
+-- Auras du joueur sans journal de combat : apparu -> SelfEffect("BUFF"), disparu -> SelfEffect("DEBUFF").
+local playerAuraSnapshot = nil
+local auraScanPending = false
+local function ScanPlayerAuras()
+	auraScanPending = false
+	local current = {}
+	for i = 1, 40 do
+		local aura, restricted = NecrosisCompat.GetPlayerAuraByIndex(i)
+		if restricted then return end -- unreadable right now (combat restriction): try again on the next event
+		if not aura then break end
+		local name = aura.name
+		if name and not IsSecret(name) then current[name] = true end
+	end
+	local previous = playerAuraSnapshot
+	playerAuraSnapshot = current
+	if not previous then return end
+	for name in pairs(current) do
+		if not previous[name] then SelfEffect("BUFF", name) end
+	end
+	for name in pairs(previous) do
+		if not current[name] then SelfEffect("DEBUFF", name) end
+	end
+end
+
 --[[ SetupBuffTimers
 This routine is invoked during initialization to get warlock buffs, if any.
 However, it seems buffs are not available until after Necrosis initializes on a login. 
@@ -1054,7 +1137,8 @@ function SetupBuffTimers()
 	local res = false
 	for i=1,40 do -- hate hard coded numbers! Forums suggest the max buffs is 32 but no one is sure...
 	  -- Use C_UnitAuras.GetAuraDataByIndex() in Retail 12.0+
-	  local auraData = C_UnitAuras.GetAuraDataByIndex("player", i)
+	  local auraData, restricted = NecrosisCompat.GetPlayerAuraByIndex(i)
+	  if restricted then break end -- auras unreadable right now: do not retry the other indexes
 
 	  if auraData then
 	    buffs_found = true
@@ -1279,6 +1363,20 @@ function Necrosis:OnEvent(event,...)
 			NecrosisConfig.StonePosition = {1, 2, 3, 4, 5, 6, 7, 8, 9}
 			NecrosisConfig.StonePositionVersion = 2
 		end
+		-- The defaults table actually used (Initialize_retail.lua) has no ShadowTranceAlert / CreatureAlert, so both stayed
+		-- nil and the Shadow Trance / Backlash proc and the Enslave/Banish alerts never showed (issue #46).
+		-- Fill them in once, keeping any saved value || Comble les clés absentes sans écraser une valeur enregistrée.
+		if NecrosisConfig then
+			for _, key in ipairs({"ShadowTranceAlert", "CreatureAlert"}) do
+				if NecrosisConfig[key] == nil then NecrosisConfig[key] = true end
+			end
+			-- Destroy Shards button: shard limit and default position next to the sphere (issue #46)
+			if NecrosisConfig.DestroyCount == nil then NecrosisConfig.DestroyCount = 32 end
+			NecrosisConfig.FramePosition = NecrosisConfig.FramePosition or {}
+			if not NecrosisConfig.FramePosition["NecrosisDestroyShardsButton"] then
+				NecrosisConfig.FramePosition["NecrosisDestroyShardsButton"] = {"CENTER", "NecrosisMainSphere", "CENTER", 38.235, -19.482, 1.55}
+			end
+		end
 		Necrosis.SyncAlertMouse()
 		-- Issue #46: BAG_UPDATE was listed but never registered, so bag changes (new stone, shard count) were not seen.
 		-- Registered at PLAYER_LOGIN: the Events list of Initialize_retail.lua is never registered, and PLAYER_ENTERING_WORLD is not delivered.
@@ -1290,6 +1388,20 @@ function Necrosis:OnEvent(event,...)
 				bagFrame:RegisterEvent("BAG_UPDATE_DELAYED")
 				-- Same story for the Enslave/Banish alert buttons: they are shown from this event || Idem pour les boutons d'alerte Asservir/Bannir
 				bagFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+				-- Rebuild buttons/menus when a spell is learned (no /reload needed) || Reconstruit boutons/menus quand un sort est appris
+				bagFrame:RegisterEvent("SPELLS_CHANGED")
+				-- Combat transitions (timers cleanup, alert mouse, icons) and demon changes || Transitions de combat et changement de démon
+				bagFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+				bagFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+				bagFrame:RegisterUnitEvent("UNIT_PET", "player")
+				-- Gray / restore the spell buttons on death and resurrection || Grise / restaure les boutons à la mort et à la résurrection
+				bagFrame:RegisterEvent("PLAYER_DEAD")
+				bagFrame:RegisterEvent("PLAYER_ALIVE")
+				bagFrame:RegisterEvent("PLAYER_UNGHOST")
+				-- COMBAT_LOG_EVENT_UNFILTERED cannot be registered by an addon on this client (ADDON_ACTION_FORBIDDEN), so the
+				-- self aura changes (Shadow Trance / Backlash procs, mounts...) are read from UNIT_AURA instead.
+				-- Le journal de combat est interdit aux addons sur ce client : on lit les changements d'auras via UNIT_AURA.
+				bagFrame:RegisterUnitEvent("UNIT_AURA", "player")
 			end
 		end)
 	elseif (event == "PLAYER_LEAVING_WORLD") then
@@ -1382,11 +1494,9 @@ function Necrosis:OnEvent(event,...)
 	end
 
 	if (event == "SPELLS_CHANGED") then
-		if InCombatLockdown() then
-			-- should not get these in combat but ...
-		else
-			-- safe to process new spells and rebuild buttons
-			SetupSpells("SPELLS_CHANGED")
+		if not spellsChangedPending then
+			spellsChangedPending = true
+			C_Timer.After(1, RunSpellsChanged)
 		end
 	end
 
@@ -1426,12 +1536,14 @@ function Necrosis:OnEvent(event,...)
 		Local.Dead = true
 		local fs = _G[Necrosis.Warlock_Buttons.trance.f]
 		local fb = _G[Necrosis.Warlock_Buttons.backlash.f]
-		fs:Hide()
-		fb:Hide()
+		-- PLAYER_DEAD was never registered before: these buttons or textures may not exist yet (issue #46)
+		if fs then fs:Hide() end
+		if fb then fb:Hide() end
 		-- We gray all the spell buttons || On grise tous les boutons de sort
 		local f = _G[Necrosis.Warlock_Buttons.mounts.f]
-		if f then
-			f:GetNormalTexture():SetDesaturated(1)
+		local tex = f and f:GetNormalTexture()
+		if tex then
+			tex:SetDesaturated(1)
 		end
 		SatList(Necrosis.Warlock_Lists.buffs, 1)
 		SatList(Necrosis.Warlock_Lists.pets, 1)
@@ -1440,8 +1552,9 @@ function Necrosis:OnEvent(event,...)
 	elseif 	(event == "PLAYER_ALIVE" or event == "PLAYER_UNGHOST") then
 		-- We are sobering all the spell buttons || On dégrise tous les boutons de sort
 		local f = _G[Necrosis.Warlock_Buttons.mounts.f]
-		if f then
-			f:GetNormalTexture():SetDesaturated(nil)
+		local tex = f and f:GetNormalTexture()
+		if tex then
+			tex:SetDesaturated(nil)
 		end
 		SatList(Necrosis.Warlock_Lists.buffs, nil)
 		SatList(Necrosis.Warlock_Lists.pets, nil)
@@ -1665,19 +1778,44 @@ function Necrosis:OnEvent(event,...)
 	elseif (event == "PLAYER_REGEN_ENABLED") then
 		Local.PlayerInCombat = false
 		Local.TimerManagement = Necrosis:RetraitTimerCombat(Local.TimerManagement, "PLAYER_REGEN_ENABLED")
-		NecrosisCreatureAlertButton_demon:EnableMouse(true)		
-		NecrosisCreatureAlertButton_elemental:EnableMouse(true)
-		
-		
-		
+		-- The alert buttons' mouse follows their alpha (issue #46): re-apply it now that combat lockdown is over
+		-- instead of forcing the mouse on || Le mouse des boutons d'alerte suit leur alpha : on le réapplique hors combat
+		Necrosis.ApplyAlertMouse()
+		if Local.ButtonSetupPending then
+			Local.ButtonSetupPending = false
+			Necrosis:ButtonSetup()
+		end
+		if Necrosis.SphereScalePending then
+			Necrosis.SphereScalePending = false
+			local sphere = _G[Necrosis.Warlock_Buttons.main.f]
+			if sphere and NecrosisConfig.NecrosisButtonScale then
+				sphere:SetScale(NecrosisConfig.NecrosisButtonScale / 100)
+			end
+		end
+		if Local.OfxyPending then
+			local pending = Local.OfxyPending
+			Local.OfxyPending = nil
+			for menu in pairs(pending) do Necrosis:SetOfxy(menu) end
+		end
+
 		--Necrosis:Msg("regen enabled", "USER")
 		-- We are redefining the attributes of spell buttons in a situational way || On redéfinit les attributs des boutons de sorts de manière situationnelle
-		Necrosis:NoCombatAttribute(Local.Stone.Soul.Mode, Local.Stone.Fire.Mode, Local.Stone.Spell.Mode, Local.Menu.Pet, Local.Menu.Buff, Local.Menu.Curse)
+		-- PLAYER_REGEN_* were never registered before: protect this legacy secure-attribute code (issue #46)
+		if not InCombatLockdown() then
+			pcall(Necrosis.NoCombatAttribute, Necrosis, Local.Stone.Soul.Mode, Local.Stone.Fire.Mode, Local.Stone.Spell.Mode, Local.Menu.Pet, Local.Menu.Buff, Local.Menu.Curse)
+		end
 		UpdateIcons()
 
 	-- When the warlock changes demon || Quand le démoniste change de démon
 	elseif (event == "UNIT_PET" and arg1 == "player") then
 		Necrosis:ChangeDemon()
+
+	-- Player aura changes (procs, mounts): coalesce the burst into one scan || Changements d'auras du joueur
+	elseif event == "UNIT_AURA" and arg1 == "player" then
+		if not auraScanPending then
+			auraScanPending = true
+			C_Timer.After(0.1, ScanPlayerAuras)
+		end
 
 	-- ============= UNIT_HEALTH (for unit death detection)
 	-- Check if unit died and cleanup timers
@@ -1710,10 +1848,6 @@ function Necrosis:OnEvent(event,...)
 		local timestamp = a1
 		local subevent = a2
 
-		-- Debug: Log all subevent types
-		if subevent == "UNIT_DIED" then
-			_G["DEFAULT_CHAT_FRAME"]:AddMessage("[DEBUG COMBAT] subevent="..tostring(subevent))
-		end 
 		local sourceGUID = a4
 		local sourceName = a5
 		local sourceFlags = a6
@@ -1895,7 +2029,10 @@ function Necrosis:OnEvent(event,...)
 			NecrosisGeneralFrame:Hide()
 		end
 		-- Spell button attributes are negated situational || On annule les attributs des boutons de sorts de manière situationnelle
-		Necrosis:InCombatAttribute(Local.Menu.Pet, Local.Menu.Buff, Local.Menu.Curse)
+		-- Secure attributes cannot change once the combat lockdown is on: only try while it is not (issue #46)
+		if not InCombatLockdown() then
+			pcall(Necrosis.InCombatAttribute, Necrosis, Local.Menu.Pet, Local.Menu.Buff, Local.Menu.Curse)
+		end
 	end 
 	return
 end
@@ -2013,6 +2150,15 @@ local function AddMenuTip(Type)
 		GameTooltip:AddLine(Necrosis.TooltipData[Type].Text2)
 	else
 		GameTooltip:AddLine(Necrosis.TooltipData[Type].Text)
+	end
+end
+local function AddDestroyCount()
+	-- Shards held / limit, plus the usage hints of the Destroy Shards button (issue #46)
+	local limit = NecrosisConfig.DestroyCount or 32
+	GameTooltip:AddLine("|c00FF4444"..Necrosis.TooltipData.Main.Soulshard..Local.Soulshard.Count.."|r".."/".."|c00FF4444"..limit.."|r")
+	if L then
+		if L["SHARD_MOUSEWHEEL_HELP"] then GameTooltip:AddLine("|c00FFFFFF"..L["SHARD_MOUSEWHEEL_HELP"]) end
+		if L["SHARD_LEFTCLICK_HELP"] then GameTooltip:AddLine("|c00FFFFFF"..L["SHARD_LEFTCLICK_HELP"]) end
 	end
 end
 local function AddInfernalReagent()
@@ -2460,6 +2606,7 @@ function Necrosis:BuildButtonTooltip(button)
 	elseif (Type == "BuffMenu")		then AddMenuTip(Type)
 	elseif (Type == "CurseMenu")	then AddMenuTip(Type)
 	elseif (Type == "PetMenu")		then AddMenuTip(Type)
+	elseif (Type == "DestroyShards")	then AddMenuTip(Type); AddDestroyCount()
 	end
 	-- And hop, posting! || Et hop, affichage !
 	GameTooltip:Show()
@@ -2950,6 +3097,8 @@ function Necrosis:BagExplore(arg)
 				Necrosis.Warlock_Lists.reagents.demonic_figurine.count = GetItemCount(Necrosis.Warlock_Lists.reagents.demonic_figurine.id)
 	-- Destroy extra shards (if enabled) || Si il y a un nombre maximum de fragments à conserver, on enlève les supplémentaires
 
+	CheckShardLimit()
+
 	local f = _G[Necrosis.Warlock_Buttons.main.f]
 	-- Update the main (sphere) button display || Affichage du bouton principal de Necrosis
 	if NecrosisConfig.Circle == 1 then
@@ -2977,11 +3126,7 @@ function Necrosis:BagExplore(arg)
 		if NecrosisConfig.CountType == 2 then
 			NecrosisShardCount:SetText(Local.Reagent.Infernal.." / "..Local.Reagent.Demoniac)
 		elseif NecrosisConfig.CountType == 1 then
-			if Local.Soulshard.Count < 10 then
-				NecrosisShardCount:SetText("0"..Local.Soulshard.Count)
-			else
-				NecrosisShardCount:SetText(Local.Soulshard.Count)
-			end
+			NecrosisShardCount:SetText(ShardCountText())
 		elseif NecrosisConfig.CountType == 3 then
 			-- Display Soulstone resurrection timer
 			-- RETAIL 12.0+: Use C_UnitAuras.GetAuraDataByIndex (modern API)
@@ -2999,7 +3144,7 @@ function Necrosis:BagExplore(arg)
 			-- If not found in SpellTimer, search for Soulstone aura by spell ID 20707
 			if not Time and C_UnitAuras then
 				for i = 1, 40 do
-					local auraData = C_UnitAuras.GetAuraDataByIndex("player", i)
+					local auraData = NecrosisCompat.GetPlayerAuraByIndex(i)
 					if not auraData then break end
 					if not IsSecret(auraData.spellId) and not IsSecret(auraData.expirationTime)
 					and tonumber(auraData.spellId) == 20707 then  -- Soulstone spell ID
@@ -3069,6 +3214,13 @@ end
 
 -- Display or Hide buttons depending on spell availability || Affiche ou masque les boutons de sort à chaque nouveau sort appris
 function Necrosis:ButtonSetup()
+	-- Show/Hide/SetPoint on the secure sphere buttons are forbidden in combat (e.g. options panel opened or a slider
+	-- moved during a fight): remember the request and replay it when combat ends (issue #46)
+	-- Interdit en combat sur les boutons sécurisés : on mémorise et on rejoue à la sortie de combat.
+	if InCombatLockdown() then
+		Local.ButtonSetupPending = true
+		return
+	end
 	local NBRScale, rayondebase ,rayon , dist
 	
 -- (Min)50 to 100 
@@ -3728,6 +3880,14 @@ end
 
 
 function Necrosis:SetOfxy(menu)
+	-- ClearAllPoints/SetPoint on the secure menu buttons are forbidden in combat (options page opened or a slider
+	-- moved during a fight): remember which menu and replay when combat ends (issue #46)
+	-- Interdit en combat sur les boutons de menu sécurisés : on mémorise et on rejoue à la sortie de combat.
+	if InCombatLockdown() then
+		Local.OfxyPending = Local.OfxyPending or {}
+		Local.OfxyPending[menu] = true
+		return
+	end
 	local fb = _G[Necrosis.Warlock_Buttons.buffs.f]
 	local fp = _G[Necrosis.Warlock_Buttons.pets.f]
 	local fc = _G[Necrosis.Warlock_Buttons.curses.f]
@@ -3829,31 +3989,34 @@ function Necrosis:SymetrieTimer(bool)
 end
 --TBC Add : Delete shards out of stock
 function Necrosis:DeleteShards()
-    ev_out(event, "DeleteShards() called", false, true, false)
-    	
-	if NecrosisConfig.DestroyShard then
-        Local.Soulshard.Count = GetItemCount(Necrosis.Warlock_Lists.reagents.soul_shard.id)
-        for container = 0, NUM_BAG_SLOTS, 1 do
-            local numSlots = Local.BagIsSoulPouch[container] and 0 or C_Container.GetContainerNumSlots(container)
-            for slot=1, numSlots, 1 do
-                if Local.Soulshard.Count == 0 then break end
-                local itemLink = C_Container.GetContainerItemLink(container, slot)
-                if (itemLink) then
-                    local itemID, itemName = Necrosis.Utils.ParseItemLink(itemLink) --GetContainerItemLink(container, slot))
-                    itemID = tonumber(itemID)
-                    if (itemID == Necrosis.Warlock_Lists.reagents.soul_shard.id) then
-                        C_Container.PickupContainerItem(container, slot)
-                        local infoType, info1, info2 = GetCursorInfo()
-                        if (CursorHasItem() and infoType == "item" and tonumber(info1) == Necrosis.Warlock_Lists.reagents.soul_shard.id) then
-                            DeleteCursorItem()
-                            Local.Soulshard.Count = GetItemCount(Necrosis.Warlock_Lists.reagents.soul_shard.id)
-                            ClearCursor()
-                        end
-                    end
-                end
-            end
-        end
-    end
+	-- Destroys the shards above NecrosisConfig.DestroyCount (default 32). It only works from a player click
+	-- (DeleteCursorItem needs a hardware event), see the Destroy Shards button. Issue #46.
+	-- Détruit les fragments au-delà de DestroyCount ; ne fonctionne que depuis un clic du joueur.
+	local limit = math.floor(NecrosisConfig.DestroyCount or 32)
+	local shardID = Necrosis.Warlock_Lists.reagents.soul_shard.id
+	Local.Soulshard.Count = GetItemCount(shardID)
+	local remaining = Local.Soulshard.Count - limit
+	if remaining <= 0 then return end
+
+	for container = 0, NUM_BAG_SLOTS, 1 do
+		-- a soul bag only holds shards: skip it, the shards in it are kept || un sac d'âmes est ignoré
+		local numSlots = Local.BagIsSoulPouch[container] and 0 or C_Container.GetContainerNumSlots(container)
+		for slot = 1, numSlots, 1 do
+			if remaining <= 0 then return end
+			local itemLink = C_Container.GetContainerItemLink(container, slot)
+			-- ParseItemLink returns two values: keep the first only, tonumber would take the 2nd as a base
+			if itemLink and tonumber((Necrosis.Utils.ParseItemLink(itemLink))) == shardID then
+				C_Container.PickupContainerItem(container, slot)
+				local infoType, info1 = GetCursorInfo()
+				if CursorHasItem() and infoType == "item" and tonumber(info1) == shardID then
+					DeleteCursorItem()
+					remaining = remaining - 1
+				end
+				ClearCursor()
+			end
+		end
+	end
+	Local.Soulshard.Count = GetItemCount(shardID)
 end
 
 -- Function to get Soulstone item cooldown info || Fonction pour obtenir les infos de cooldown de la pierre d'âme

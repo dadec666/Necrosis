@@ -243,7 +243,7 @@ function Necrosis:SetButtonsConfig()
 
 
 	-- Groupe 2: Boutons d'Action
-	local boutons_action = {"SpellMenu", "Mount", "PetMenu", "CurseMenu"}
+	local boutons_action = {"SpellMenu", "Mount", "PetMenu", "CurseMenu", "DestroyShards"}
 	local firstCheckboxAction = nil
 	local initY_action = 205
 	for i in ipairs(boutons_action) do
@@ -258,12 +258,13 @@ function Necrosis:SetButtonsConfig()
 			firstCheckboxAction = frame
 		end
 
-		local globalIndex = i + 2
+		local globalIndex = i + 2 -- 3 SpellMenu, 4 Mount, 5 PetMenu, 6 CurseMenu, 7 DestroyShards
 		frame:SetScript("OnClick", function(self)
+			local current = NecrosisConfig.StonePosition[globalIndex] or globalIndex
 			if (self:GetChecked()) then
-				NecrosisConfig.StonePosition[globalIndex] = math.abs(NecrosisConfig.StonePosition[globalIndex])
+				NecrosisConfig.StonePosition[globalIndex] = math.abs(current)
 			else
-				NecrosisConfig.StonePosition[globalIndex] = - math.abs(NecrosisConfig.StonePosition[globalIndex])
+				NecrosisConfig.StonePosition[globalIndex] = - math.abs(current)
 			end
 
 				Necrosis:ButtonSetup()
@@ -612,6 +613,13 @@ function Necrosis:SetButtonsConfig()
 	for i in ipairs(boutons) do
 		_G["NecrosisShow"..boutons[i]]:SetChecked(NecrosisConfig.StonePosition[i] > 0)
 		_G["NecrosisShow"..boutons[i]]:SetText(self.Config.Buttons.Name[i])
+	end
+
+	-- Destroy Shards button (7th entry, ported from the Anniversary version, issue #46)
+	if NecrosisShowDestroyShards then
+		NecrosisShowDestroyShards:SetChecked((NecrosisConfig.StonePosition[7] or 7) > 0)
+		local Lbl = LibStub("AceLocale-3.0"):GetLocale(NECROSIS_ID, true)
+		NecrosisShowDestroyShards:SetText((Lbl and Lbl["SHOW_DESTROY_SHARDS"]) or "Show Destroy Shards button")
 	end
 
 	NecrosisButtonsConfig1Text:SetText(self.Config.Buttons["Choix des boutons a afficher"])

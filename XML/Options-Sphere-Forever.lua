@@ -146,7 +146,12 @@ function Necrosis:SetSphereConfig()
 
 				-- Ne pas recalculer la position pour éviter que la sphère se déplace
 				-- Seulement changer le scale
-				f:SetScale(NecrosisConfig.NecrosisButtonScale / 100 ) ---- Scaling de la sphere
+				-- SetScale on the secure sphere is forbidden in combat: replayed at PLAYER_REGEN_ENABLED (issue #46)
+				if InCombatLockdown() then
+					Necrosis.SphereScalePending = true
+				else
+					f:SetScale(NecrosisConfig.NecrosisButtonScale / 100 ) ---- Scaling de la sphere
+				end
 
 				Necrosis:ButtonSetup()
 			else

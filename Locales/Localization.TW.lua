@@ -391,3 +391,14 @@ L["SLIDER_BUTTON_RADIUS_TIP"] = "按鈕與球體中心的距離（0.8 = 近，1.
 L["MOUNTS_PAGE_TITLE"] = "坐騎"
 L["MOUNTS_HELP"] = "選擇坐騎：將收藏中的坐騎拖曳到欄位上即可綁定。"
 L["MOUNTS_SLOT_TIP"] = "將坐騎拖放到此處。"
+
+-- Alert options of the Misc page (issue #46)
+L["ALERT_PROC"] = "顯示暗影冥思 / 反衝提示"
+L["ALERT_CREATURE"] = "顯示目標的放逐 / 奴役提示"
+
+-- Destroy Shards button tooltip (issue #46)
+L["DESTROY_SHARD_MENU_LABEL"] = "|c00FF99FF".."摧毀靈魂碎片".."|r"
+L["DESTROY_SHARD_MENU_TEXT"] = "右鍵點擊可摧毀靈魂碎片至上限："
+
+-- Soul shards over the limit message (issue #46)
+L["SHARD_OVER_LIMIT"] = "靈魂碎片超過上限：右鍵點擊「摧毀靈魂碎片」按鈕以清除多餘的碎片。"

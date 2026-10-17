@@ -674,6 +674,41 @@ Necrosis.Warlock_Buttons = {
 					norm = "Interface\\AddOns\\Necrosis\\UI\\SoulstoneButton-01",
 					high = "Interface\\AddOns\\Necrosis\\UI\\SoulstoneButton-04",
 					}, --
+	-- Destroy Shards button (ported from the Anniversary version, issue #46): addons may not delete items
+	-- automatically any more, so the player does it with a click: right = destroy the shards above the limit,
+	-- left = move the shards to the chosen bag, mouse wheel = change the limit (1..32).
+	-- Bouton de destruction des fragments (version Anniversary) : clic droit = détruit l'excédent, clic gauche = range
+	-- dans le sac choisi, molette = règle la limite.
+	destroy_shards = {f = "NecrosisDestroyShardsButton", tip = "DestroyShards", anchor = "ANCHOR_RIGHT",
+					norm = "Interface\\AddOns\\Necrosis\\UI\\ShardDestroy-01",
+					high = "Interface\\AddOns\\Necrosis\\UI\\ShardDestroy-02",
+					func = function(self, arg1)
+						local limit = NecrosisConfig.DestroyCount or 32
+						if arg1 == "RightButton" then
+							Necrosis:DeleteShards()
+							Necrosis:BuildButtonTooltip(self)
+						elseif arg1 == "LeftButton" then
+							-- legacy code: never let it raise a Lua error on click
+							pcall(function()
+								for i = 1, GetItemCount(Necrosis.Warlock_Lists.reagents.soul_shard.id) do
+									Necrosis:SoulshardSwitch(i)
+								end
+							end)
+						elseif arg1 == 1 then
+							if limit < 32 then
+								NecrosisConfig.DestroyCount = limit + 1
+								Necrosis:BuildButtonTooltip(self)
+								Necrosis:BagExplore()
+							end
+						elseif arg1 == -1 then
+							if limit > 1 then
+								NecrosisConfig.DestroyCount = limit - 1
+								Necrosis:BuildButtonTooltip(self)
+								Necrosis:BagExplore()
+							end
+						end
+					end,
+					},
 	mounts 		= {f = "NecrosisMountButton", tip = "Mount",anchor = "ANCHOR_RIGHT",
 					norm = "Interface\\AddOns\\Necrosis\\UI\\MountButton-01",
 					high = "Interface\\AddOns\\Necrosis\\UI\\MountButton-02",
@@ -873,6 +908,7 @@ Necrosis.Warlock_Lists = {
 		[4] = {f_ptr = "mounts", high_of = "mounts", item = true},
 		[5] = {f_ptr = "pets", menu = "pets", },
 		[6] = {f_ptr = "curses", menu = "curses", },
+		[7] = {f_ptr = "destroy_shards", high_of = "destroy_shards", item = true},
 		
 --		[9] = {f_ptr = "hearth_stone", item = "Hearthstone",},
 	},

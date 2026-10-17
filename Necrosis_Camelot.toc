@@ -89,7 +89,7 @@ XML\Options-Timers_retail.lua
 XML\Options-Misc-Forever.lua
 XML\Options-Overlay.lua
 
-XML\Panel_retail.lua
+XML\Panel-Forever.lua
 XML\AboutPanel.lua
 Necrosis-Forever.lua
 XML\XML_retail.lua

@@ -488,3 +488,10 @@ L["SLIDER_BUTTON_RADIUS_TIP"] = "Distance of the buttons from the sphere center 
 L["MOUNTS_PAGE_TITLE"] = "Mounts"
 L["MOUNTS_HELP"] = "Select your mounts: drag a mount from your collection onto a slot to bind it."
 L["MOUNTS_SLOT_TIP"] = "Drag and drop a mount here."
+
+-- Alert options of the Misc page (issue #46)
+L["ALERT_PROC"] = "Shadow Trance / Backlash alerts"
+L["ALERT_CREATURE"] = "Banish / Enslave alerts on target"
+
+-- Soul shards over the limit message (issue #46)
+L["SHARD_OVER_LIMIT"] = "Soul shards over the limit: right-click the Destroy Shards button to remove the extra ones."

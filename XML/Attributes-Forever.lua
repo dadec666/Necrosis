@@ -441,6 +441,14 @@ function Necrosis:StoneAttribute(Steed)
 		f:SetAttribute("item", self.Translation.Item.Hearthstone)
 	end
 --]]
+
+	-- Destroy Shards button: plain click / mouse wheel scripts, no secure action (issue #46, Anniversary port)
+	local destroy_shards_button = _G[Necrosis.Warlock_Buttons.destroy_shards.f]
+	if destroy_shards_button then
+		destroy_shards_button:EnableMouseWheel(true)
+		destroy_shards_button:SetScript("OnClick", Necrosis.Warlock_Buttons.destroy_shards.func)
+		destroy_shards_button:SetScript("OnMouseWheel", Necrosis.Warlock_Buttons.destroy_shards.func)
+	end
 end
 
 -- Connection Association to the central button if the spell is available || Association de la Connexion au bouton central si le sort est disponible

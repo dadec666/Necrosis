@@ -62,6 +62,43 @@ function Necrosis:SetMiscConfig()
 		FontString:SetTextColor(1, 1, 1)
 		frame:SetFontString(FontString)
 
+		-- Alert options (issue #46): proc alerts (Shadow Trance / Backlash) and Banish/Enslave target alerts
+		local alertBoxes = {
+			{name = "NecrosisProcAlertCheckButton", key = "ShadowTranceAlert", y = 175,
+			 label = (L and L["ALERT_PROC"]) or "Shadow Trance / Backlash alerts",
+			 off = function()
+				if NecrosisShadowTranceButton then Necrosis_HideFrame(NecrosisShadowTranceButton) end
+				if NecrosisBacklashButton then Necrosis_HideFrame(NecrosisBacklashButton) end
+			 end},
+			{name = "NecrosisCreatureAlertCheckButton", key = "CreatureAlert", y = 120,
+			 label = (L and L["ALERT_CREATURE"]) or "Banish / Enslave alerts on target",
+			 off = function()
+				Necrosis.SetAlertShown(NecrosisCreatureAlertButton_demon, false)
+				Necrosis.SetAlertShown(NecrosisCreatureAlertButton_elemental, false)
+			 end},
+		}
+		for _, box in ipairs(alertBoxes) do
+			frame = CreateFrame("CheckButton", box.name, NecrosisMiscConfig, "UICheckButtonTemplate")
+			frame:EnableMouse(true)
+			frame:SetWidth(24)
+			frame:SetHeight(24)
+			frame:Show()
+			frame:ClearAllPoints()
+			frame:SetPoint("LEFT", NecrosisMiscConfig, "BOTTOMLEFT", 40, box.y)
+			frame:SetScript("OnClick", function(self)
+				NecrosisConfig[box.key] = self:GetChecked() and true or false
+				if not NecrosisConfig[box.key] then box.off() end
+			end)
+
+			FontString = frame:CreateFontString(nil, nil, "GameFontNormalSmall")
+			FontString:Show()
+			FontString:ClearAllPoints()
+			FontString:SetPoint("LEFT", frame, "RIGHT", 5, 1)
+			FontString:SetTextColor(1, 1, 1)
+			FontString:SetText(box.label)
+			frame:SetFontString(FontString)
+		end
+
 		-- Enable/Disable Threat Meter
 		frame = CreateFrame("CheckButton", "ThreatMeterEnabledCheckButton", NecrosisMiscConfig, "UICheckButtonTemplate")
 		frame:EnableMouse(true)
@@ -193,6 +230,10 @@ function Necrosis:SetMiscConfig()
 		end)
 
 	NecrosisAFK:SetChecked(NecrosisConfig.AFK)
+
+	-- Alert checkboxes (a nil value means "on", see the login defaults in Necrosis-Forever.lua)
+	if NecrosisProcAlertCheckButton then NecrosisProcAlertCheckButton:SetChecked(NecrosisConfig.ShadowTranceAlert ~= false) end
+	if NecrosisCreatureAlertCheckButton then NecrosisCreatureAlertCheckButton:SetChecked(NecrosisConfig.CreatureAlert ~= false) end
 
 	-- Initialize Threat Meter checkbox state
 	if ThreatMeterEnabledCheckButton then
