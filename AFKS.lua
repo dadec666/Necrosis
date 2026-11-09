@@ -70,21 +70,21 @@ local C_Club_GetClubInfo
 local C_TradeSkillUI_IsRecipeRepeating
 local UnitCastingInfo
 
-if wowVersion ~= "classic" then
+if C_DateAndTime and C_DateAndTime.GetCurrentCalendarTime then
 	C_DateAndTime_GetCurrentCalendarTime = C_DateAndTime.GetCurrentCalendarTime
-	-- Initialize C_Calendar functions (may be nil in some versions)
+end
+if C_Calendar and C_Calendar.GetNumDayEvents then
 	C_Calendar_GetNumDayEvents = C_Calendar.GetNumDayEvents
 	C_Calendar_GetDayEvent = C_Calendar.GetDayEvent
-	-- Initialize C_Club functions (Discord communities)
+end
+if C_Club and C_Club.GetStreamInfo then
 	C_Club_GetStreamInfo = C_Club.GetStreamInfo
 	C_Club_GetClubInfo = C_Club.GetClubInfo
-	-- Initialize C_TradeSkillUI functions (may not exist in all versions)
-	if C_TradeSkillUI then
-		C_TradeSkillUI_IsRecipeRepeating = C_TradeSkillUI.IsRecipeRepeating
-	else
-		-- Fallback for versions where TradeSkillUI doesn't exist
-		C_TradeSkillUI_IsRecipeRepeating = function() return false end
-	end
+end
+if C_TradeSkillUI and C_TradeSkillUI.IsRecipeRepeating then
+	C_TradeSkillUI_IsRecipeRepeating = C_TradeSkillUI.IsRecipeRepeating
+else
+	C_TradeSkillUI_IsRecipeRepeating = function() return false end
 end
 
 -- Initialize C_PetBattles_IsInBattle with safe fallback (Midnight 12.0.1 compatibility)
@@ -623,7 +623,7 @@ end
 
 function AFKS:UpdateTimer()
 	local curtime = GetTime() - self.startTime
-	if wowVersion == "classic" then
+	if not C_DateAndTime_GetCurrentCalendarTime or wowVersion == "classic" or wowVersion == "wrath" then
 		self.AFKMode.bottom.date:SetText(format("%s", GameTime_GetLocalTime(true)))
 	else
 		local today = C_DateAndTime_GetCurrentCalendarTime()
