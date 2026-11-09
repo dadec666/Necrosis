@@ -534,13 +534,18 @@ function AFKS:Init()
 	self.AFKMode.bottom.specpanel:SetSize(GetScreenWidth(), GetScreenHeight() * (1 / 10))
 	self.AFKMode.bottom.specpanel:SetPoint("BOTTOM", self.AFKMode, "BOTTOM", 0, -2 )
 	self.AFKMode.bottom.specpanel:SetTexture("interface/artifacts/artifactuiwarlock")
-	local info = C_Texture.GetAtlasInfo("Artifacts-Warlock-BG")
-	self.AFKMode.bottom.specpanel:SetTexCoord(info.leftTexCoord, info.rightTexCoord, info.topTexCoord, info.bottomTexCoord)
+	if C_Texture and C_Texture.GetAtlasInfo then
+		local info = C_Texture.GetAtlasInfo("Artifacts-Warlock-BG")
+		if info then
+			self.AFKMode.bottom.specpanel:SetTexCoord(info.leftTexCoord, info.rightTexCoord, info.topTexCoord, info.bottomTexCoord)
+		end
+	end
 
-	local factionGroup = UnitFactionGroup("player")
+	local factionGroup = UnitFactionGroup("player") or "Horde"
 	local size, offsetX, offsetY = 140, -20, -16
 	local nameOffsetX, nameOffsetY = -10, -28
-	local ratio = tonumber(strsub(GetMonitorAspectRatio(), 0, 3))
+	local aspect = GetMonitorAspectRatio and GetMonitorAspectRatio() or 1.77
+	local ratio = tonumber(strsub(tostring(aspect), 1, 3))
 	
 	if ratio == 1.6 then
 		nameOffsetY = -45 -- 16:10 monitor ratio fix

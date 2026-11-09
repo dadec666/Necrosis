@@ -164,6 +164,19 @@ if not frameMeta.SetShown then
     end
 end
 
+-- Screen & expansion compatibility wrappers for 3.3.5a
+if not GetPhysicalScreenSize then
+    function GetPhysicalScreenSize()
+        return GetScreenWidth(), GetScreenHeight()
+    end
+end
+
+if not GetExpansionLevel then
+    function GetExpansionLevel()
+        return (GetAccountExpansionLevel and GetAccountExpansionLevel()) or 2
+    end
+end
+
 -- Create compatibility wrappers for C_Container (WoW 9.0+)
 if not C_Container then
     C_Container = {}
