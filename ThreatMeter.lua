@@ -90,7 +90,7 @@ function Necrosis:UpdateThreatMeter()
 			local buttonWidth = mainButton:GetWidth() or 58
 			local buttonHeight = mainButton:GetHeight() or 58
 			local buttonSize = math.max(buttonWidth, buttonHeight)
-			local thickness = NecrosisConfig.ThreatRingThickness or 8
+			local thickness = (NecrosisConfig and NecrosisConfig.ThreatRingThickness) or 8
 
 			local needleAngle = 90 - (threatpct / 100) * 359  -- 0% = 90° (midi), 100% = -269° (clockwise rotation)
 			local needleRad = math.rad(needleAngle)
@@ -281,7 +281,7 @@ threatFrame:SetScript("OnUpdate", function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 	if self.elapsed >= 0.2 then
 		self.elapsed = 0
-		if UnitAffectingCombat("player") and NecrosisConfig.ThreatMeterEnabled then
+		if UnitAffectingCombat("player") and NecrosisConfig and NecrosisConfig.ThreatMeterEnabled then
 			lastThreatUpdate = GetTime()
 			Necrosis:UpdateThreatMeter()
 		end

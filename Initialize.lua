@@ -152,16 +152,100 @@ if not GetItemInfoInstant then
     end
 end
 
--- Frame:SetShown compatibility wrapper for 3.3.5a
-local frameMeta = getmetatable(CreateFrame("Frame")).__index
-if not frameMeta.SetShown then
-    function frameMeta:SetShown(show)
-        if show then
-            self:Show()
-        else
-            self:Hide()
+-- Frame, Texture, FontString compatibility wrappers for 3.3.5a (SetShown, SetSize, GetSize)
+do
+    local testFrame = CreateFrame("Frame")
+    local metas = {}
+    local fMeta = getmetatable(testFrame) and getmetatable(testFrame).__index
+    if fMeta then table.insert(metas, fMeta) end
+    local t = testFrame:CreateTexture()
+    local tMeta = getmetatable(t) and getmetatable(t).__index
+    if tMeta then table.insert(metas, tMeta) end
+    local fs = testFrame:CreateFontString()
+    local fsMeta = getmetatable(fs) and getmetatable(fs).__index
+    if fsMeta then table.insert(metas, fsMeta) end
+
+    for _, meta in ipairs(metas) do
+        if not meta.SetShown then
+            function meta:SetShown(show)
+                if show then
+                    self:Show()
+                else
+                    self:Hide()
+                end
+            end
+        end
+        if not meta.SetSize then
+            function meta:SetSize(width, height)
+                self:SetWidth(width)
+                self:SetHeight(height or width)
+            end
+        end
+        if not meta.GetSize then
+            function meta:GetSize()
+                return self:GetWidth(), self:GetHeight()
+            end
         end
     end
+
+    if tMeta then
+        if not tMeta.SetColorTexture then
+            function tMeta:SetColorTexture(r, g, b, a)
+                self:SetTexture(r, g, b, a)
+            end
+        end
+        if not tMeta.SetRotation then
+            function tMeta:SetRotation(angle)
+                local c = math.cos(angle)
+                local s = math.sin(angle)
+                local ULx, ULy = 0.5 - 0.5 * c + 0.5 * s, 0.5 - 0.5 * s - 0.5 * c
+                local LLx, LLy = 0.5 - 0.5 * c - 0.5 * s, 0.5 + 0.5 * s - 0.5 * c
+                local URx, URy = 0.5 + 0.5 * c + 0.5 * s, 0.5 - 0.5 * s + 0.5 * c
+                local LRx, LRy = 0.5 + 0.5 * c - 0.5 * s, 0.5 + 0.5 * s + 0.5 * c
+                self:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
+            end
+        end
+    end
+
+    if fsMeta then
+        if not fsMeta.SetWordWrap then
+            function fsMeta:SetWordWrap(wrap)
+                -- 3.3.5a fontstrings automatically wrap if width is constrained
+            end
+        end
+    end
+end
+
+-- Specialization compatibility wrappers for 3.3.5a
+if not GetSpecialization then
+    function GetSpecialization()
+        local maxPoints = -1
+        local maxSpec = 1
+        for i = 1, 3 do
+            local points = select(3, GetTalentTabInfo(i)) or 0
+            if points > maxPoints then
+                maxPoints = points
+                maxSpec = i
+            end
+        end
+        return maxSpec
+    end
+end
+
+if not GetSpecializationInfo then
+    function GetSpecializationInfo(specIndex)
+        if not specIndex then specIndex = GetSpecialization() end
+        local name, iconTexture, pointsSpent = GetTalentTabInfo(specIndex)
+        return specIndex, name, "", iconTexture, 0, 0, pointsSpent
+    end
+end
+
+if not C_SpecializationInfo then
+    C_SpecializationInfo = {
+        GetSpecialization = GetSpecialization,
+        GetSpecializationInfo = GetSpecializationInfo,
+        IsInitialized = function() return true end,
+    }
 end
 
 -- Screen & expansion compatibility wrappers for 3.3.5a

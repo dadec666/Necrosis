@@ -23,25 +23,26 @@ function Necrosis:Msg(msg, type)
 	end
 
 	if msg then
-		inInstance, _ = IsInInstance()
+		local inInstance, instanceType = IsInInstance()
 
 		-- dispatch the message to the appropriate chat channel depending on the message type
 		if (type == "WORLD") then
 			if UnitInRaid("player") then
-				-- send to all raid members
-				SendChatMessage(msg, "RAID")
+				if instanceType == "pvp" then
+					SendChatMessage(msg, "BATTLEGROUND")
+				else
+					SendChatMessage(msg, "RAID")
+				end
 			elseif UnitInParty("player") then
-				-- send to party members
-				SendChatMessage(msg, "PARTY")
-			elseif IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
-				SendChatMessage(msg, "INSTANCE_CHAT")
-			elseif UnitInParty("player") then
-			-- send to party members
-				SendChatMessage(msg, "PARTY")
-			
-			else
-				-- not in a group so lets use the 'say' channel
-				if (inInstance) then SendChatMessage(msg, "SAY") end
+				if instanceType == "pvp" then
+					SendChatMessage(msg, "BATTLEGROUND")
+				else
+					SendChatMessage(msg, "PARTY")
+				end
+			elseif instanceType == "pvp" then
+				SendChatMessage(msg, "BATTLEGROUND")
+			elseif inInstance then
+				SendChatMessage(msg, "SAY")
 			end
 		else
 			-- Add some color to our message :D

@@ -132,7 +132,7 @@ function Necrosis:SetSummonQueueConfig()
 		triggerLabel:SetTextColor(0.9, 0.9, 0.9)
 
 		-- Input box background
-		local triggerBg = CreateFrame("Frame", "NecrosisSQTriggerBg", frame, "BackdropTemplate")
+		local triggerBg = CreateFrame("Frame", "NecrosisSQTriggerBg", frame, BackdropTemplateMixin and "BackdropTemplate")
 		triggerBg:SetSize(250, 24)
 		triggerBg:SetPoint("TOPLEFT", frame, "TOPLEFT", 40, -135)
 		triggerBg:SetBackdrop({

@@ -281,7 +281,7 @@ function Necrosis:SetButtonsConfig()
 	-- Sub Menu 2
 		-- lets create a hidden frame container for the mount selection buttons
 		
-		frame = CreateFrame("Frame", "NecrosisMountsSelectionFrame", NecrosisButtonsConfig2, "BackdropTemplate")
+		frame = CreateFrame("Frame", "NecrosisMountsSelectionFrame", NecrosisButtonsConfig2, BackdropTemplateMixin and "BackdropTemplate")
 		frame:SetWidth(222);
 		frame:SetHeight(75);
 		frame:Show()

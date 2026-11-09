@@ -2975,12 +2975,11 @@ function Necrosis:BagExplore(arg)
 	
 	
 	--if version est cata then
-	if select(4, GetBuildInfo()) < 40400 then
+	if (select(4, GetBuildInfo()) or 30300) < 40400 then
 		Local.Soulshard.Count = GetItemCount(Necrosis.Warlock_Lists.reagents.soul_shard.id)
 	--sinon
 	else	
-	Local.Soulshard.Count = UnitPower("player", Enum.PowerType.SoulShards)
-	
+		Local.Soulshard.Count = (Enum and Enum.PowerType and Enum.PowerType.SoulShards and UnitPower("player", Enum.PowerType.SoulShards)) or GetItemCount(Necrosis.Warlock_Lists.reagents.soul_shard.id)
 	--fin
 	end
 	

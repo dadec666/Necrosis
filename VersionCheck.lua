@@ -309,7 +309,7 @@ end
 ----------------------------------------------
 
 function VersionCheck:Init()
-    self.Enabled = NecrosisConfig.VersionCheck and NecrosisConfig.VersionCheck.Enabled ~= false
+    self.Enabled = NecrosisConfig and NecrosisConfig.VersionCheck and NecrosisConfig.VersionCheck.Enabled ~= false
 
     if not self.Enabled then
         return
