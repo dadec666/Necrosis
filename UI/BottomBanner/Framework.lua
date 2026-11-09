@@ -33,7 +33,7 @@ end
 
 function NUI:UpdateBottomBannerScale()
 	if NUI_Art_Classic then
-		local scale = 0.78 * (NecrosisConfig.BottomBannerScale or 1.0)
+		local scale = 0.78 * (NecrosisConfig and NecrosisConfig.BottomBannerScale or 1.0)
 		NUI_Art_Classic:SetScale(scale)
 	end
 end

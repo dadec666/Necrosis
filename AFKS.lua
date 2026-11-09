@@ -70,21 +70,21 @@ local C_Club_GetClubInfo
 local C_TradeSkillUI_IsRecipeRepeating
 local UnitCastingInfo
 
-if wowVersion ~= "classic" then
+if C_DateAndTime and C_DateAndTime.GetCurrentCalendarTime then
 	C_DateAndTime_GetCurrentCalendarTime = C_DateAndTime.GetCurrentCalendarTime
-	-- Initialize C_Calendar functions (may be nil in some versions)
+end
+if C_Calendar and C_Calendar.GetNumDayEvents then
 	C_Calendar_GetNumDayEvents = C_Calendar.GetNumDayEvents
 	C_Calendar_GetDayEvent = C_Calendar.GetDayEvent
-	-- Initialize C_Club functions (Discord communities)
+end
+if C_Club and C_Club.GetStreamInfo then
 	C_Club_GetStreamInfo = C_Club.GetStreamInfo
 	C_Club_GetClubInfo = C_Club.GetClubInfo
-	-- Initialize C_TradeSkillUI functions (may not exist in all versions)
-	if C_TradeSkillUI then
-		C_TradeSkillUI_IsRecipeRepeating = C_TradeSkillUI.IsRecipeRepeating
-	else
-		-- Fallback for versions where TradeSkillUI doesn't exist
-		C_TradeSkillUI_IsRecipeRepeating = function() return false end
-	end
+end
+if C_TradeSkillUI and C_TradeSkillUI.IsRecipeRepeating then
+	C_TradeSkillUI_IsRecipeRepeating = C_TradeSkillUI.IsRecipeRepeating
+else
+	C_TradeSkillUI_IsRecipeRepeating = function() return false end
 end
 
 -- Initialize C_PetBattles_IsInBattle with safe fallback (Midnight 12.0.1 compatibility)
@@ -534,13 +534,18 @@ function AFKS:Init()
 	self.AFKMode.bottom.specpanel:SetSize(GetScreenWidth(), GetScreenHeight() * (1 / 10))
 	self.AFKMode.bottom.specpanel:SetPoint("BOTTOM", self.AFKMode, "BOTTOM", 0, -2 )
 	self.AFKMode.bottom.specpanel:SetTexture("interface/artifacts/artifactuiwarlock")
-	local info = C_Texture.GetAtlasInfo("Artifacts-Warlock-BG")
-	self.AFKMode.bottom.specpanel:SetTexCoord(info.leftTexCoord, info.rightTexCoord, info.topTexCoord, info.bottomTexCoord)
+	if C_Texture and C_Texture.GetAtlasInfo then
+		local info = C_Texture.GetAtlasInfo("Artifacts-Warlock-BG")
+		if info then
+			self.AFKMode.bottom.specpanel:SetTexCoord(info.leftTexCoord, info.rightTexCoord, info.topTexCoord, info.bottomTexCoord)
+		end
+	end
 
-	local factionGroup = UnitFactionGroup("player")
+	local factionGroup = UnitFactionGroup("player") or "Horde"
 	local size, offsetX, offsetY = 140, -20, -16
 	local nameOffsetX, nameOffsetY = -10, -28
-	local ratio = tonumber(strsub(GetMonitorAspectRatio(), 0, 3))
+	local aspect = GetMonitorAspectRatio and GetMonitorAspectRatio() or 1.77
+	local ratio = tonumber(strsub(tostring(aspect), 1, 3))
 	
 	if ratio == 1.6 then
 		nameOffsetY = -45 -- 16:10 monitor ratio fix
@@ -623,7 +628,7 @@ end
 
 function AFKS:UpdateTimer()
 	local curtime = GetTime() - self.startTime
-	if wowVersion == "classic" then
+	if not C_DateAndTime_GetCurrentCalendarTime or wowVersion == "classic" or wowVersion == "wrath" then
 		self.AFKMode.bottom.date:SetText(format("%s", GameTime_GetLocalTime(true)))
 	else
 		local today = C_DateAndTime_GetCurrentCalendarTime()

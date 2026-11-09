@@ -1750,10 +1750,12 @@ function Necrosis:OnEvent(self, event,...)
 	-- Reading the combat log || Lecture du journal de combat
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
 		-- The parameters differ depending on the event... || https://wow.gamepedia.com/COMBAT_LOG_EVENT
-		local a1, a2, a3, a4, a5, 
-			a6, a7, a8, a9, a10, 
-			a11, a12, a13, a14, a15
-			= CombatLogGetCurrentEventInfo()
+		local a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15
+		if arg1 ~= nil then
+			a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15 = ...
+		elseif CombatLogGetCurrentEventInfo then
+			a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15 = CombatLogGetCurrentEventInfo()
+		end
 		local timestamp = a1
 		local subevent = a2 
 		local sourceGUID = a4
@@ -2023,17 +2025,14 @@ local function AddCastAndCost(usage)
 	if spellID then
 		local manaCost = 0
 
-		-- Get mana cost dynamically using C_Spell API
-		local costs = C_Spell.GetSpellPowerCost(spellID)
+		-- Get mana cost dynamically using GetSpellPowerCost or C_Spell API
+		local costs = (GetSpellPowerCost and GetSpellPowerCost(spellID))
+			or (C_Spell and C_Spell.GetSpellPowerCost and C_Spell.GetSpellPowerCost(spellID))
 
 		if costs and #costs > 0 then
 			for _, cost in ipairs(costs) do
-				-- Check by name first (more reliable)
-				if cost.name == "MANA" and cost.cost > 0 then
-					manaCost = cost.cost
-					break
-				-- Fallback: check by type
-				elseif (cost.type == Enum.PowerType.Mana or cost.type == 1) and cost.cost > 0 then
+				-- Check by name or mana type (0 in 3.3.5a)
+				if (cost.name == "MANA" or cost.type == 0 or (Enum and Enum.PowerType and cost.type == Enum.PowerType.Mana)) and cost.cost and cost.cost > 0 then
 					manaCost = cost.cost
 					break
 				end
@@ -2770,7 +2769,10 @@ function Necrosis:SoulshardSwitch(nshard)
 				local itemLink = C_Container.GetContainerItemLink(container, slot)
 				if (itemLink) then
 					
-					local itemID, itemType, itemSubType, itemEquipLoc, icon, classID, subclassID = GetItemInfoInstant(itemLink)
+					local itemID = tonumber(itemLink:match("item:(%d+)"))
+					if not itemID and GetItemInfoInstant then
+						itemID = GetItemInfoInstant(itemLink)
+					end
 					
 					
 					if (itemID == Necrosis.Warlock_Lists.reagents.soul_shard.id) then --Search the Shard in the bags before to search a place for each one 
@@ -2973,12 +2975,11 @@ function Necrosis:BagExplore(arg)
 	
 	
 	--if version est cata then
-	if select(4, GetBuildInfo()) < 40400 then
+	if (select(4, GetBuildInfo()) or 30300) < 40400 then
 		Local.Soulshard.Count = GetItemCount(Necrosis.Warlock_Lists.reagents.soul_shard.id)
 	--sinon
 	else	
-	Local.Soulshard.Count = UnitPower("player", Enum.PowerType.SoulShards)
-	
+		Local.Soulshard.Count = (Enum and Enum.PowerType and Enum.PowerType.SoulShards and UnitPower("player", Enum.PowerType.SoulShards)) or GetItemCount(Necrosis.Warlock_Lists.reagents.soul_shard.id)
 	--fin
 	end
 	

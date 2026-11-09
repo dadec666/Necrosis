@@ -62,6 +62,205 @@ local IsModernWoW = tocVersion and tocVersion >= 90000 -- WoW 9.0+ has C_Contain
 -- DEBUG MARKER: Confirm we're using the correct variant
 -- _G["DEFAULT_CHAT_FRAME"]:AddMessage("|cFF00FF00[NECROSIS] CLASSIC VARIANT LOADED - Initialize.lua v" .. (tocVersion or "unknown") .. "|r")
 
+-- Create compatibility wrappers for C_Spell (3.3.5a compatibility)
+if not C_Spell then
+    C_Spell = {}
+end
+
+if not C_Spell.GetSpellName then
+    function C_Spell.GetSpellName(spellID)
+        return spellID and GetSpellInfo(spellID)
+    end
+end
+
+if not C_Spell.GetSpellTexture then
+    function C_Spell.GetSpellTexture(spellID)
+        if not spellID then return nil end
+        if GetSpellTexture then
+            local tex = GetSpellTexture(spellID)
+            if tex then return tex end
+        end
+        return select(3, GetSpellInfo(spellID))
+    end
+end
+
+if not C_Spell.GetSpellPowerCost then
+    function C_Spell.GetSpellPowerCost(spellID)
+        if GetSpellPowerCost then
+            return GetSpellPowerCost(spellID)
+        end
+        return nil
+    end
+end
+
+if not C_Spell.GetSpellInfo then
+    function C_Spell.GetSpellInfo(spellID)
+        if not spellID then return nil end
+        local name, rank, icon, castTime, minRange, maxRange, id = GetSpellInfo(spellID)
+        if not name then return nil end
+        return {
+            name = name,
+            iconID = icon,
+            castTime = castTime,
+            minRange = minRange,
+            maxRange = maxRange,
+            spellID = id or spellID,
+        }
+    end
+end
+
+-- CombatLogGetCurrentEventInfo compatibility wrapper for 3.3.5a
+if not CombatLogGetCurrentEventInfo then
+    local lastCLEU = {}
+    local cleuHelper = CreateFrame("Frame")
+    cleuHelper:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    cleuHelper:SetScript("OnEvent", function(self, event, ...)
+        lastCLEU = { ... }
+    end)
+    function CombatLogGetCurrentEventInfo()
+        return unpack(lastCLEU)
+    end
+end
+
+-- IsInRaid & IsInGroup compatibility wrappers for 3.3.5a
+if not IsInRaid then
+    function IsInRaid()
+        return (GetNumRaidMembers and GetNumRaidMembers() > 0) or false
+    end
+end
+
+if not IsInGroup then
+    function IsInGroup(category)
+        if category and category == (LE_PARTY_CATEGORY_INSTANCE or 2) then
+            local isInstance, instanceType = IsInInstance()
+            return isInstance and (instanceType == "pvp" or instanceType == "arena" or instanceType == "party" or instanceType == "raid")
+        end
+        return ((GetNumPartyMembers and GetNumPartyMembers() > 0) or (GetNumRaidMembers and GetNumRaidMembers() > 0)) or false
+    end
+end
+
+-- GetItemInfoInstant compatibility wrapper for 3.3.5a
+if not GetItemInfoInstant then
+    function GetItemInfoInstant(item)
+        if not item then return nil end
+        local itemID = tonumber(item)
+        if not itemID and type(item) == "string" then
+            itemID = tonumber(item:match("item:(%d+)"))
+        end
+        local name, link, quality, iLevel, reqLevel, class, subclass, maxStack, equipSlot, texture, vendorPrice, classID, subClassID = GetItemInfo(item)
+        return itemID, class, subclass, equipSlot, texture, classID, subClassID
+    end
+end
+
+-- Frame, Texture, FontString compatibility wrappers for 3.3.5a (SetShown, SetSize, GetSize)
+do
+    local testFrame = CreateFrame("Frame")
+    local metas = {}
+    local fMeta = getmetatable(testFrame) and getmetatable(testFrame).__index
+    if fMeta then table.insert(metas, fMeta) end
+    local t = testFrame:CreateTexture()
+    local tMeta = getmetatable(t) and getmetatable(t).__index
+    if tMeta then table.insert(metas, tMeta) end
+    local fs = testFrame:CreateFontString()
+    local fsMeta = getmetatable(fs) and getmetatable(fs).__index
+    if fsMeta then table.insert(metas, fsMeta) end
+
+    for _, meta in ipairs(metas) do
+        if not meta.SetShown then
+            function meta:SetShown(show)
+                if show then
+                    self:Show()
+                else
+                    self:Hide()
+                end
+            end
+        end
+        if not meta.SetSize then
+            function meta:SetSize(width, height)
+                self:SetWidth(width)
+                self:SetHeight(height or width)
+            end
+        end
+        if not meta.GetSize then
+            function meta:GetSize()
+                return self:GetWidth(), self:GetHeight()
+            end
+        end
+    end
+
+    if tMeta then
+        if not tMeta.SetColorTexture then
+            function tMeta:SetColorTexture(r, g, b, a)
+                self:SetTexture(r, g, b, a)
+            end
+        end
+        if not tMeta.SetRotation then
+            function tMeta:SetRotation(angle)
+                local c = math.cos(angle)
+                local s = math.sin(angle)
+                local ULx, ULy = 0.5 - 0.5 * c + 0.5 * s, 0.5 - 0.5 * s - 0.5 * c
+                local LLx, LLy = 0.5 - 0.5 * c - 0.5 * s, 0.5 + 0.5 * s - 0.5 * c
+                local URx, URy = 0.5 + 0.5 * c + 0.5 * s, 0.5 - 0.5 * s + 0.5 * c
+                local LRx, LRy = 0.5 + 0.5 * c - 0.5 * s, 0.5 + 0.5 * s + 0.5 * c
+                self:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
+            end
+        end
+    end
+
+    if fsMeta then
+        if not fsMeta.SetWordWrap then
+            function fsMeta:SetWordWrap(wrap)
+                -- 3.3.5a fontstrings automatically wrap if width is constrained
+            end
+        end
+    end
+end
+
+-- Specialization compatibility wrappers for 3.3.5a
+if not GetSpecialization then
+    function GetSpecialization()
+        local maxPoints = -1
+        local maxSpec = 1
+        for i = 1, 3 do
+            local points = select(3, GetTalentTabInfo(i)) or 0
+            if points > maxPoints then
+                maxPoints = points
+                maxSpec = i
+            end
+        end
+        return maxSpec
+    end
+end
+
+if not GetSpecializationInfo then
+    function GetSpecializationInfo(specIndex)
+        if not specIndex then specIndex = GetSpecialization() end
+        local name, iconTexture, pointsSpent = GetTalentTabInfo(specIndex)
+        return specIndex, name, "", iconTexture, 0, 0, pointsSpent
+    end
+end
+
+if not C_SpecializationInfo then
+    C_SpecializationInfo = {
+        GetSpecialization = GetSpecialization,
+        GetSpecializationInfo = GetSpecializationInfo,
+        IsInitialized = function() return true end,
+    }
+end
+
+-- Screen & expansion compatibility wrappers for 3.3.5a
+if not GetPhysicalScreenSize then
+    function GetPhysicalScreenSize()
+        return GetScreenWidth(), GetScreenHeight()
+    end
+end
+
+if not GetExpansionLevel then
+    function GetExpansionLevel()
+        return (GetAccountExpansionLevel and GetAccountExpansionLevel()) or 2
+    end
+end
+
 -- Create compatibility wrappers for C_Container (WoW 9.0+)
 if not C_Container then
     C_Container = {}
@@ -108,6 +307,12 @@ end
 if not C_Container.PickupContainerItem then
     function C_Container.PickupContainerItem(container, slot)
         return PickupContainerItem(container, slot)
+    end
+end
+
+if not C_Container.GetBagName then
+    function C_Container.GetBagName(container)
+        return GetBagName and GetBagName(container)
     end
 end
 

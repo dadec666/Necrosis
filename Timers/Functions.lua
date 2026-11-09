@@ -221,7 +221,14 @@ local function InsertThisTimer(spell, cast_guid, Target, Timer, start_time, dura
 		end
 		-- update the timer display || Association effective au timer
 		Timer.SpellTimer[#Timer.SpellTimer].Gtimer = TimerLibre
-		local spellTexture = C_Spell.GetSpellTexture(spell.ID)  -- Retail 12.0+ API
+		local spellTexture = GetSpellTexture and GetSpellTexture(spell.ID)
+		if not spellTexture then
+			if C_Spell and C_Spell.GetSpellTexture then
+				spellTexture = C_Spell.GetSpellTexture(spell.ID)
+			else
+				spellTexture = select(3, GetSpellInfo(spell.ID))
+			end
+		end
 		--print (spellTexture,"spell",spell.ID,spell.Name)
 		local FontString, StatusBar , Icon_Spell = Necrosis:AddFrame("NecrosisTimerFrame"..TimerLibre,spellTexture)
 		--print("update:",spellTexture)

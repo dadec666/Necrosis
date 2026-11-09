@@ -537,9 +537,18 @@ function SAO:GetHomonymSpellIDs(spell)
         for tab = 1, GetNumSpellTabs() do
             local offset, numSlots = select(3, GetSpellTabInfo(tab));
             for index = offset+1, offset+numSlots do
-                local name, _, id = GetSpellBookItemName(index, BOOKTYPE_SPELL);
+                local name = GetSpellBookItemName(index, BOOKTYPE_SPELL);
                 if (name == spellName) then
-                    table.insert(homonyms, id);
+                    local spellType, id = GetSpellBookItemInfo(index, BOOKTYPE_SPELL);
+                    if not id or spellType ~= "SPELL" then
+                        local link = GetSpellLink(index, BOOKTYPE_SPELL);
+                        if link then
+                            id = tonumber(link:match("spell:(%d+)"));
+                        end
+                    end
+                    if id then
+                        table.insert(homonyms, id);
+                    end
                 end
             end
         end
