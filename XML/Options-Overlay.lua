@@ -6,6 +6,9 @@
 -- On définit G comme étant le tableau contenant toutes les frames existantes.
 local _G = getfenv(0)
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 
 
 

@@ -1,4 +1,7 @@
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 local Module = "auracontainer"
 
 local LoadAddOn = C_AddOns and C_AddOns.LoadAddOn or LoadAddOn

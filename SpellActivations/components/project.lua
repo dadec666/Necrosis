@@ -1,4 +1,7 @@
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 local Module = "project"
 
 local WOW_PROJECT_FOREVER = WOW_PROJECT_FOREVER or WOW_PROJECT_CAMELOT or 18 -- Hardcode until the variable name is stable

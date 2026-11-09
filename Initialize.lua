@@ -205,6 +205,9 @@ do
     local pm = CreateFrame("PlayerModel")
     local pmMeta = pm and getmetatable(pm) and getmetatable(pm).__index
     if pmMeta then table.insert(metas, pmMeta) end
+    local cd = CreateFrame("Cooldown", nil, UIParent)
+    local cdMeta = cd and getmetatable(cd) and getmetatable(cd).__index
+    if cdMeta then table.insert(metas, cdMeta) end
 
     for _, meta in ipairs(metas) do
         if not meta.SetShown then
@@ -239,6 +242,16 @@ do
         end
     end
 
+    if cdMeta then
+        if not cdMeta.SetUseCircularEdge then cdMeta.SetUseCircularEdge = function(self, val) end end
+        if not cdMeta.SetDrawSwipe then cdMeta.SetDrawSwipe = function(self, val) end end
+        if not cdMeta.SetSwipeColor then cdMeta.SetSwipeColor = function(self, r, g, b, a) end end
+        if not cdMeta.SetDrawBling then cdMeta.SetDrawBling = function(self, val) end end
+        if not cdMeta.SetDrawEdge then cdMeta.SetDrawEdge = function(self, val) end end
+        if not cdMeta.SetEdgeTexture then cdMeta.SetEdgeTexture = function(self, tex) end end
+        if not cdMeta.SetHideCountdownNumbers then cdMeta.SetHideCountdownNumbers = function(self, val) end end
+    end
+
     if tMeta then
         if not tMeta.SetColorTexture then
             function tMeta:SetColorTexture(r, g, b, a)
@@ -266,6 +279,47 @@ do
         end
     end
 end
+
+-- ScrollingEdit_OnUpdate cursorOffset fix for 3.3.5a ScriptErrorsFrame
+if ScrollingEdit_OnUpdate then
+    local orig_ScrollingEdit_OnUpdate = ScrollingEdit_OnUpdate
+    ScrollingEdit_OnUpdate = function(self, elapsed, scope)
+        if self and self.cursorOffset == nil then
+            self.cursorOffset = 0
+        end
+        return orig_ScrollingEdit_OnUpdate(self, elapsed, scope)
+    end
+end
+
+-- WrapTextInColor / WrapTextInColorCode polyfills for 3.3.5a
+if not WrapTextInColorCode then
+    function WrapTextInColorCode(text, colorCode)
+        return "|c" .. colorCode .. tostring(text) .. "|r"
+    end
+end
+if not WrapTextInColor then
+    function WrapTextInColor(text, color)
+        if color and color.GenerateHexColorMarkup then
+            return color:GenerateHexColorMarkup() .. tostring(text) .. "|r"
+        elseif color and color.r and color.g and color.b then
+            local a = color.a or 1
+            return string.format("|c%02x%02x%02x%02x%s|r", math.floor(a*255), math.floor(color.r*255), math.floor(color.g*255), math.floor(color.b*255), tostring(text))
+        else
+            return tostring(text)
+        end
+    end
+end
+
+-- SAO table and logging polyfill for 3.3.5a
+SAO = SAO or {}
+if not SAO.Trace then SAO.Trace = function(self, ...) end end
+if not SAO.TraceThrottled then SAO.TraceThrottled = function(self, ...) end end
+if not SAO.Debug then SAO.Debug = function(self, ...) end end
+if not SAO.Warn then SAO.Warn = function(self, ...) end end
+if not SAO.Error then SAO.Error = function(self, ...) end end
+if not SAO.Info then SAO.Info = function(self, ...) end end
+if not SAO.HasTrace then SAO.HasTrace = function(self, ...) return false end end
+if not SAO.HasDebug then SAO.HasDebug = function(self, ...) return false end end
 
 -- Specialization compatibility wrappers for 3.3.5a
 if not GetSpecialization then
@@ -706,35 +760,6 @@ local shardCount = textOverlay:CreateFontString("NecrosisShardCount", "OVERLAY",
 shardCount:SetPoint("CENTER")  -- Center in parent
 shardCount:SetTextColor(1, 1, 1, 1)
 
--- Hide all peripheral buttons at startup - will be shown after position restoration
--- Wait 1 second to ensure all buttons are created by XML.lua first
-C_Timer.After(1, function()
-	local buttonNames = {
-		"NecrosisFirestoneButton",
-		"NecrosisSpellstoneButton",
-		"NecrosisHealthstoneButton",
-		"NecrosisSoulstoneButton",
-		"NecrosisBuffMenuButton",
-		"NecrosisMountButton",
-		"NecrosisPetMenuButton",
-		"NecrosisCurseMenuButton",
-		"NecrosisDestroyShardsButton",
-		"NecrosisShadowTranceButton",
-		"NecrosisBacklashButton",
-		"NecrosisAntiFearButton",
-		"NecrosisCreatureAlertButton_demon",
-		"NecrosisCreatureAlertButton_elemental",
-	}
-	for _, name in ipairs(buttonNames) do
-		local btn = _G[name]
-		if btn then
-			btn:Hide()
-		end
-	end
-
-	-- Stone button attributes are now initialized in StartInit() after buttons are created
-	-- This avoids timing issues with CreateStoneButtons()
-end)
 
 -- Create separate frame for event handling (NOT the button itself!)
 -- This is the KEY: Events are handled by eventFrame, clicks by NecrosisButton!
@@ -982,24 +1007,25 @@ function Necrosis:Initialize(Config)
 	--On affiche ou on cache le bouton, d'ailleurs !
 	if not NecrosisConfig.ShowSpellTimers then ftb:Hide() end
 	-- Le Shard est-il verrouillé sur l'interface ?
+	local f = _G["NecrosisButton"] or _G["NecrosisMainSphere"]
 	if NecrosisConfig.NoDragAll then
 		self:NoDrag()
-		f:RegisterForDrag("")
-		ftb:RegisterForDrag("")
-		ft:RegisterForDrag("")
-		fb:RegisterForDrag("")
-		fa:RegisterForDrag("")
-		fe:RegisterForDrag("")
+		if f and f.RegisterForDrag then f:RegisterForDrag("") end
+		if ftb and ftb.RegisterForDrag then ftb:RegisterForDrag("") end
+		if ft and ft.RegisterForDrag then ft:RegisterForDrag("") end
+		if fb and fb.RegisterForDrag then fb:RegisterForDrag("") end
+		if fa and fa.RegisterForDrag then fa:RegisterForDrag("") end
+		if fe and fe.RegisterForDrag then fe:RegisterForDrag("") end
 	else
 		self:Drag()
 		-- CRITICAL TEST: Disable drag on main sphere to see if clicks work
 		-- RegisterForDrag("LeftButton") blocks SecureActionButton clicks!
-		f:RegisterForDrag("")  -- TEST: No drag at all
-		ftb:RegisterForDrag("LeftButton")
-		ft:RegisterForDrag("LeftButton")
-		fb:RegisterForDrag("LeftButton")
-		fa:RegisterForDrag("LeftButton")
-		fe:RegisterForDrag("LeftButton")
+		if f and f.RegisterForDrag then f:RegisterForDrag("") end  -- TEST: No drag at all
+		if ftb and ftb.RegisterForDrag then ftb:RegisterForDrag("LeftButton") end
+		if ft and ft.RegisterForDrag then ft:RegisterForDrag("LeftButton") end
+		if fb and fb.RegisterForDrag then fb:RegisterForDrag("LeftButton") end
+		if fa and fa.RegisterForDrag then fa:RegisterForDrag("LeftButton") end
+		if fe and fe.RegisterForDrag then fe:RegisterForDrag("LeftButton") end
 	end
 
 	-- Initialize just case the player has updated from an older version

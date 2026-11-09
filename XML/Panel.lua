@@ -36,7 +36,7 @@ function Necrosis:OpenConfigPanel()
 		frame:SetHeight(512)
 		frame:Show()
 		frame:ClearAllPoints()
-		if NecrosisConfig.FramePosition.NecrosisGeneralFrame then
+		if NecrosisConfig.FramePosition and NecrosisConfig.FramePosition.NecrosisGeneralFrame then
 			frame:SetPoint(
 				NecrosisConfig.FramePosition["NecrosisGeneralFrame"][1],
 				NecrosisConfig.FramePosition["NecrosisGeneralFrame"][2],

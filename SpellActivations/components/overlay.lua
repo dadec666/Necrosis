@@ -1,4 +1,7 @@
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 local Module = "overlay"
 
 -- Search in overlay options if the specified auraID should be discarded

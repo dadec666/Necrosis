@@ -1,4 +1,7 @@
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 
 -- Optimize frequent calls
 local GetItemInfo = C_Item and C_Item.GetItemInfo or GetItemInfo

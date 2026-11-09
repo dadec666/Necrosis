@@ -1,4 +1,7 @@
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 local Module = "option"
 
 -- Add a checkbox for an overlay
