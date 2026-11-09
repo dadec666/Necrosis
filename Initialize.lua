@@ -213,6 +213,12 @@ if not C_Container.PickupContainerItem then
     end
 end
 
+if not C_Container.GetBagName then
+    function C_Container.GetBagName(container)
+        return GetBagName and GetBagName(container)
+    end
+end
+
 -- Create compatibility wrapper for C_Timer (Pre-WoW 7.1 / 3.3.5a compatibility)
 if not C_Timer then
     C_Timer = {}

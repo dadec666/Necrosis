@@ -121,7 +121,8 @@ function Necrosis:SetMiscConfig()
 
 		frame:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			local bagName = C_Container.GetBagName(5-math.floor(self:GetValue())-1);  
+			local bagID = 5 - math.floor(self:GetValue()) - 1
+			local bagName = (GetBagName and GetBagName(bagID)) or (C_Container and C_Container.GetBagName and C_Container.GetBagName(bagID))
 			if bagName then GameTooltip:SetText(bagName) end
 		end)
 
@@ -130,8 +131,9 @@ function Necrosis:SetMiscConfig()
 		frame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 		
 		frame:SetScript("OnMouseUp", function(self)
-			local bagName = C_Container.GetBagName(5-math.floor(self:GetValue())-1);  
-			GameTooltip:SetText(bagName)
+			local bagID = 5 - math.floor(self:GetValue()) - 1
+			local bagName = (GetBagName and GetBagName(bagID)) or (C_Container and C_Container.GetBagName and C_Container.GetBagName(bagID))
+			if bagName then GameTooltip:SetText(bagName) end
 			
 			NecrosisConfig.SoulshardContainer = 4 - math.floor(self:GetValue())
 			
@@ -145,10 +147,9 @@ function Necrosis:SetMiscConfig()
 		end)
 		
 		frame:SetScript("OnValueChanged", function(self) 
-		local bagName = C_Container.GetBagName(5-math.floor(self:GetValue())-1);  
-		if bagName then GameTooltip:SetText(bagName) end
-		
-		
+			local bagID = 5 - math.floor(self:GetValue()) - 1
+			local bagName = (GetBagName and GetBagName(bagID)) or (C_Container and C_Container.GetBagName and C_Container.GetBagName(bagID))
+			if bagName then GameTooltip:SetText(bagName) end
 		end)
 
 		NecrosisShardBagLow:SetText("Bag#5")

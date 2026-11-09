@@ -561,13 +561,17 @@ function Necrosis:SetCompanionPage(num)
 	NecrosisMountsSelectionFrame.pageMount = num;
 
 	num = num + 1;	--For easier usage
-	--local maxpage = ceil(GetNumCompanions("MOUNT")/NECROSIS_COMPANIONS_PER_PAGE);
-	C_MountJournal.SetAllTypeFilters(true)
-	C_MountJournal.SetCollectedFilterSetting(1, true)
-	C_MountJournal.SetCollectedFilterSetting(2, false)
+	local totalMounts = 0
+	if GetNumCompanions then
+		totalMounts = GetNumCompanions("MOUNT") or 0
+	elseif C_MountJournal and C_MountJournal.GetNumDisplayedMounts then
+		C_MountJournal.SetAllTypeFilters(true)
+		C_MountJournal.SetCollectedFilterSetting(1, true)
+		C_MountJournal.SetCollectedFilterSetting(2, false)
+		totalMounts = C_MountJournal.GetNumDisplayedMounts() or 0
+	end
 
-	local maxpage = ceil(C_MountJournal.GetNumDisplayedMounts()/NECROSIS_COMPANIONS_PER_PAGE);
-	
+	local maxpage = math.max(1, ceil(totalMounts / NECROSIS_COMPANIONS_PER_PAGE));
 	
 	NecrosisCompanionPageNumber:SetFormattedText(NECROSIS_PAGE_NUMBER, num, maxpage);
 
@@ -594,33 +598,37 @@ function Necrosis:UpdateMountButtons()
 	local offset, selected;
 
 	offset = (NecrosisMountsSelectionFrame.pageMount or 0)*NECROSIS_COMPANIONS_PER_PAGE;
-	--offset = 0;
 	selected = FindCompanionIndex(NecrosisMountsSelectionFrame.idMount);
-	--selected = 0;
 
 	for i = 1, NECROSIS_COMPANIONS_PER_PAGE do
 		button = _G["NecrosisCompanionButton"..i];
 		id = i + (offset or 0);
-		--creatureID, creatureName, spellID, icon, active = GetCompanionInfo("MOUNT", id);
-		--creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, hideOnChar, isCollected = C_MountJournal.GetMountInfo(id)
-		name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected, mountID = C_MountJournal.GetDisplayedMountInfo(id)
+		local name, mSpellID, mIcon, mActive
+		if GetCompanionInfo then
+			local _, cName, sID, sIcon, sActive = GetCompanionInfo("MOUNT", id)
+			name = cName
+			mSpellID = sID
+			mIcon = sIcon
+			mActive = sActive
+		elseif C_MountJournal and C_MountJournal.GetDisplayedMountInfo then
+			name, mSpellID, mIcon, _, _, _, _, _, _, _, mActive = C_MountJournal.GetDisplayedMountInfo(id)
+		end
 		button.creatureID = name;
-		button.spellID = spellID;
-		button.active = isCollected;
+		button.spellID = mSpellID;
+		button.active = mActive;
 		if ( name ) then
-			button:SetNormalTexture(icon);
+			button:SetNormalTexture(mIcon);
 			button:Enable();
 		else
 			button:Disable();
 		end
-		--print (id,name,isCollected)
 		if ( (id == selected) and name ) then
 			button:SetChecked(true);
 		else
 			button:SetChecked(false);
 		end
 
-		if ( isCollected ) then
+		if ( mActive ) then
 			_G["NecrosisCompanionButton"..i.."ActiveTexture"]:Show();
 		else
 			_G["NecrosisCompanionButton"..i.."ActiveTexture"]:Hide();
@@ -628,32 +636,34 @@ function Necrosis:UpdateMountButtons()
 	end
 
 	if ( selected > 0 ) then
-		--creatureID, creatureName, spellID, icon, active = GetCompanionInfo("MOUNT", selected);
-		creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected, mountID = C_MountJournal.GetMountInfoByID(selected)	
-		creatureID = creatureName;
+		if GetCompanionInfo then
+			local _, cName = GetCompanionInfo("MOUNT", selected)
+			creatureID = cName
+		elseif C_MountJournal and C_MountJournal.GetMountInfoByID then
+			local cName = C_MountJournal.GetMountInfoByID(selected)
+			creatureID = cName
+		end
 	end
 	if ( active and creatureID ) then
---			CompanionSummonButton:SetText(PetPaperDollFrameCompanionFrame.mode == "MOUNT" and BINDING_NAME_DISMOUNT or PET_DISMISS);
---		else
---			CompanionSummonButton:SetText(PetPaperDollFrameCompanionFrame.mode == "MOUNT" and MOUNT or SUMMON);
---		end
 	end
 end
 
 function FindCompanionIndex(creatureID, mode)
---[[
-	if ( not mode ) then
-		mode = NecrosisMountsSelectionFrame.mode;
+	local total = 0
+	if GetNumCompanions then
+		total = GetNumCompanions("MOUNT") or 0
+	elseif C_MountJournal and C_MountJournal.GetNumDisplayedMounts then
+		total = C_MountJournal.GetNumDisplayedMounts() or 0
 	end
-	if (not creatureID ) then
-		creatureID = (NecrosisMountsSelectionFrame.mode=="MOUNT") and NecrosisMountsSelectionFrame.idMount or NecrosisMountsSelectionFrame.idCritter;
-	end
---]]
-	--for i=1,GetNumCompanions("MOUNT") do
-	for i=1,C_MountJournal.GetNumDisplayedMounts() do
-		
-	
-		if ( GetCompanionInfo("MOUNT", i) == creatureID ) then
+	for i = 1, total do
+		local name
+		if GetCompanionInfo then
+			local _, cName = GetCompanionInfo("MOUNT", i)
+			name = cName
+		elseif C_MountJournal and C_MountJournal.GetDisplayedMountInfo then
+			name = C_MountJournal.GetDisplayedMountInfo(i)
+		end
+		if ( name == creatureID ) then
 			return i;
 		end
 	end
@@ -688,19 +698,20 @@ function NecrosisSelectedMountButton_OnReceiveDrag(self)
 	local infoType, info1, info2 = GetCursorInfo();
 	--print (GetCursorInfo());
 	if (infoType == "companion") then
-		-- info1 contains the mount index
-		-- info2 contains the companion type, e.g. "MOUNT" or "CRITTER"
-	  --local creatureID, creatureName, spellID, icon, active = GetCompanionInfo("MOUNT", info1);
-	  local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected, mountID = C_MountJournal.GetDisplayedMountInfo(info1)	
-	  	
-	  local creatureID = creatureName;
+		local creatureName, spellID, icon, active
+		if GetCompanionInfo then
+			local _, cName, sID, sIcon, sActive = GetCompanionInfo("MOUNT", info1)
+			creatureName = cName
+			spellID = sID
+			icon = sIcon
+			active = sActive
+		elseif C_MountJournal and C_MountJournal.GetDisplayedMountInfo then
+			creatureName, spellID, icon, _, _, _, _, _, _, _, active = C_MountJournal.GetDisplayedMountInfo(info1)
+		end
+		local creatureID = creatureName;
 
 		local button = _G[self:GetName()];
 
-		-- a mount was dragged to the left/right selected mount button boxes, so save the spellID to savedvariables
-		-- note:
-		--   using spellID because the API GetSpellInfo() will always return the correctly localised creature name.
-		--   The creatureID cannot be used because the API GetCompanionInfo() does not always return the correctly localised creature name.
 		if (button == NecrosisSelectedMountLeft) then
 			NecrosisConfig.LeftMount = spellID;
 		end
@@ -726,27 +737,35 @@ function NecrosisSelectedMountButton_OnReceiveDrag(self)
 			_G[self:GetName().."ActiveTexture"]:Hide();
 		end
 
-		--update mount button (on the sphere) and also the keybindings
 		Necrosis:StoneAttribute("Own");
-		--Necrosis:BindName();
-
 	end
 	ClearCursor();
 end
 
 function NecrosisInitSelectedMountButton(button, id)
-	--print (button, id)
 	if ( id ) then
-		--local mounts = GetNumCompanions("MOUNT");
-		local mounts = C_MountJournal.GetNumDisplayedMounts()
+		local mounts = 0
+		if GetNumCompanions then
+			mounts = GetNumCompanions("MOUNT") or 0
+		elseif C_MountJournal and C_MountJournal.GetNumDisplayedMounts then
+			mounts = C_MountJournal.GetNumDisplayedMounts() or 0
+		end
 
 		if (mounts > 0) then
 			for index = 1, mounts do
-				--local creatureID, creatureName, spellID, icon, active = GetCompanionInfo("MOUNT", index);
-				local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected, mountID = C_MountJournal.GetDisplayedMountInfo(index)	
-	  			local creatureID = creatureName;
+				local creatureName, spellID, icon, active
+				if GetCompanionInfo then
+					local _, cName, sID, sIcon, sActive = GetCompanionInfo("MOUNT", index)
+					creatureName = cName
+					spellID = sID
+					icon = sIcon
+					active = sActive
+				elseif C_MountJournal and C_MountJournal.GetDisplayedMountInfo then
+					creatureName, spellID, icon, _, _, _, _, _, _, _, active = C_MountJournal.GetDisplayedMountInfo(index)
+				end
+				local creatureID = creatureName;
 				
-				  if ( spellID == id ) then
+				if ( spellID == id ) then
 					button.creatureID = creatureID;
 					button.creatureName = creatureName;
 					button.spellID = spellID;
@@ -759,10 +778,17 @@ function NecrosisInitSelectedMountButton(button, id)
 						button:Disable();
 					end
 
-					if ( isUsable ) then
+					if ( active ) then
 						_G[button:GetName().."ActiveTexture"]:Show();
 					else
 						_G[button:GetName().."ActiveTexture"]:Hide();
+					end
+					break
+				end
+			end
+		end
+	end
+end
 					end
 
 					break;
