@@ -190,7 +190,7 @@ if not GetItemInfoInstant then
     end
 end
 
--- Frame, Texture, FontString, PlayerModel compatibility wrappers for 3.3.5a (SetShown, SetSize, GetSize, SetCamDistanceScale)
+-- Frame, Texture, FontString, PlayerModel, Cooldown, Slider compatibility wrappers for 3.3.5a (SetShown, SetSize, GetSize, SetCamDistanceScale, SetObeyStepOnDrag, SetStepsPerPage, SetPoint)
 do
     local testFrame = CreateFrame("Frame")
     local metas = {}
@@ -208,6 +208,12 @@ do
     local cd = CreateFrame("Cooldown", nil, UIParent)
     local cdMeta = cd and getmetatable(cd) and getmetatable(cd).__index
     if cdMeta then table.insert(metas, cdMeta) end
+    local sl = CreateFrame("Slider", nil, UIParent)
+    local slMeta = sl and getmetatable(sl) and getmetatable(sl).__index
+    if slMeta then table.insert(metas, slMeta) end
+    local btn = CreateFrame("Button", nil, UIParent)
+    local btnMeta = btn and getmetatable(btn) and getmetatable(btn).__index
+    if btnMeta then table.insert(metas, btnMeta) end
 
     for _, meta in ipairs(metas) do
         if not meta.SetShown then
@@ -228,6 +234,43 @@ do
         if not meta.GetSize then
             function meta:GetSize()
                 return self:GetWidth(), self:GetHeight()
+            end
+        end
+    end
+
+    -- Flexible SetPoint for Frame, Texture, FontString (handles modern 1-arg and 3-arg calls in 3.3.5a)
+    for _, meta in ipairs({ fMeta, tMeta, fsMeta }) do
+        if meta and meta.SetPoint then
+            local origSetPoint = meta.SetPoint
+            meta.SetPoint = function(self, point, a2, a3, a4, a5)
+                if type(a2) == "number" and type(a3) == "number" and a4 == nil then
+                    -- 3-arg syntax: SetPoint(point, xOffset, yOffset) relative to parent
+                    local parent = self:GetParent() or UIParent
+                    return origSetPoint(self, point, parent, point, a2, a3)
+                elseif a2 == nil and a3 == nil then
+                    -- 1-arg syntax: SetPoint(point) relative to parent
+                    local parent = self:GetParent() or UIParent
+                    return origSetPoint(self, point, parent, point, 0, 0)
+                else
+                    return origSetPoint(self, point, a2, a3, a4, a5)
+                end
+            end
+        end
+    end
+
+    if slMeta then
+        if not slMeta.SetObeyStepOnDrag then
+            slMeta.SetObeyStepOnDrag = function(self, val) end
+        end
+        if not slMeta.SetStepsPerPage then
+            slMeta.SetStepsPerPage = function(self, val) end
+        end
+    end
+
+    if btnMeta and SecureHandlerWrapScript then
+        if not btnMeta.WrapScript then
+            btnMeta.WrapScript = function(self, target, script, preBody, postBody)
+                return SecureHandlerWrapScript(target, script, self, preBody, postBody)
             end
         end
     end
@@ -307,6 +350,32 @@ if not WrapTextInColor then
         else
             return tostring(text)
         end
+    end
+end
+
+-- GetSpellSubtext compatibility wrapper for 3.3.5a
+if not GetSpellSubtext then
+    function GetSpellSubtext(spellID)
+        if not spellID then return "" end
+        local sub = select(2, GetSpellInfo(spellID))
+        return sub or ""
+    end
+end
+
+-- GameTime_GetLocalTime and CloseAllWindows compatibility wrappers for 3.3.5a
+if not GameTime_GetLocalTime then
+    function GameTime_GetLocalTime(showSeconds)
+        if showSeconds then
+            return date("%H:%M:%S")
+        else
+            return date("%H:%M")
+        end
+    end
+end
+
+if not CloseAllWindows then
+    function CloseAllWindows()
+        if CloseMenus then CloseMenus() end
     end
 end
 
@@ -616,6 +685,7 @@ end)
 -- Simple version storage (from TOC file)
 Necrosis.Data = {
 	AppName = "Necrosis",
+	Label = "Necrosis",
 	Version = "8.8.5",  -- Update manually when releasing
 	Enabled = false,
 }
@@ -1102,7 +1172,7 @@ function Necrosis:Initialize(Config)
 			end
 
 				-- Create BRAND NEW button
-				local btn = CreateFrame("Button", "NecrosisMainSphere", UIParent, "SecureUnitButtonTemplate")
+				local btn = CreateFrame("Button", "NecrosisButton", UIParent, "SecureUnitButtonTemplate")
 
 				-- Apply initial skin based on configuration
 				local initialSkin = "Shard"
@@ -1343,6 +1413,11 @@ function Necrosis:Initialize(Config)
 				-- Set tooltip type for the main button
 				btn.tip = "Main"
 
+				-- Ensure stone buttons are created before arranging them
+				if Necrosis.CreateStoneButtons then
+					Necrosis:CreateStoneButtons()
+				end
+
 				-- Reposition peripheral buttons around the sphere
 				Necrosis:ButtonSetup()
 
@@ -1374,6 +1449,9 @@ function Necrosis:Initialize(Config)
 				-- No need to force update here - let the normal system handle it
 			end
 	end
+
+	-- Mark addon as fully initialized and enabled
+	Necrosis.Data.Enabled = true
 
 	-- We check that the fragments are in the bag defined by the Warlock || On vérifie que les fragments sont dans le sac défini par le Démoniste
 	if NecrosisConfig.SoulshardSort then
