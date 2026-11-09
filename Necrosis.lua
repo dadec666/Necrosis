@@ -2023,17 +2023,14 @@ local function AddCastAndCost(usage)
 	if spellID then
 		local manaCost = 0
 
-		-- Get mana cost dynamically using C_Spell API
-		local costs = C_Spell.GetSpellPowerCost(spellID)
+		-- Get mana cost dynamically using GetSpellPowerCost or C_Spell API
+		local costs = (GetSpellPowerCost and GetSpellPowerCost(spellID))
+			or (C_Spell and C_Spell.GetSpellPowerCost and C_Spell.GetSpellPowerCost(spellID))
 
 		if costs and #costs > 0 then
 			for _, cost in ipairs(costs) do
-				-- Check by name first (more reliable)
-				if cost.name == "MANA" and cost.cost > 0 then
-					manaCost = cost.cost
-					break
-				-- Fallback: check by type
-				elseif (cost.type == Enum.PowerType.Mana or cost.type == 1) and cost.cost > 0 then
+				-- Check by name or mana type (0 in 3.3.5a)
+				if (cost.name == "MANA" or cost.type == 0 or (Enum and Enum.PowerType and cost.type == Enum.PowerType.Mana)) and cost.cost and cost.cost > 0 then
 					manaCost = cost.cost
 					break
 				end

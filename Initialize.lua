@@ -62,6 +62,53 @@ local IsModernWoW = tocVersion and tocVersion >= 90000 -- WoW 9.0+ has C_Contain
 -- DEBUG MARKER: Confirm we're using the correct variant
 -- _G["DEFAULT_CHAT_FRAME"]:AddMessage("|cFF00FF00[NECROSIS] CLASSIC VARIANT LOADED - Initialize.lua v" .. (tocVersion or "unknown") .. "|r")
 
+-- Create compatibility wrappers for C_Spell (3.3.5a compatibility)
+if not C_Spell then
+    C_Spell = {}
+end
+
+if not C_Spell.GetSpellName then
+    function C_Spell.GetSpellName(spellID)
+        return spellID and GetSpellInfo(spellID)
+    end
+end
+
+if not C_Spell.GetSpellTexture then
+    function C_Spell.GetSpellTexture(spellID)
+        if not spellID then return nil end
+        if GetSpellTexture then
+            local tex = GetSpellTexture(spellID)
+            if tex then return tex end
+        end
+        return select(3, GetSpellInfo(spellID))
+    end
+end
+
+if not C_Spell.GetSpellPowerCost then
+    function C_Spell.GetSpellPowerCost(spellID)
+        if GetSpellPowerCost then
+            return GetSpellPowerCost(spellID)
+        end
+        return nil
+    end
+end
+
+if not C_Spell.GetSpellInfo then
+    function C_Spell.GetSpellInfo(spellID)
+        if not spellID then return nil end
+        local name, rank, icon, castTime, minRange, maxRange, id = GetSpellInfo(spellID)
+        if not name then return nil end
+        return {
+            name = name,
+            iconID = icon,
+            castTime = castTime,
+            minRange = minRange,
+            maxRange = maxRange,
+            spellID = id or spellID,
+        }
+    end
+end
+
 -- Create compatibility wrappers for C_Container (WoW 9.0+)
 if not C_Container then
     C_Container = {}

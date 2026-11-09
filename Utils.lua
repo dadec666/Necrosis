@@ -55,7 +55,10 @@ function Necrosis.Utils.GetItemLink(itemID)
 end
 
 function Necrosis.Utils.GetSpellName(spell_id) -- Get spell info, return only what we want
-	local name = C_Spell.GetSpellName(spell_id)
+	local name = GetSpellInfo and GetSpellInfo(spell_id)
+	if not name and C_Spell and C_Spell.GetSpellName then
+		name = C_Spell.GetSpellName(spell_id)
+	end
 	if not name then return nil end
 	local rank, icon, castTime, minRange, maxRange, spellId = nil, nil, nil, nil, nil, spell_id
 
