@@ -66,30 +66,74 @@ if not C_Container.PickupContainerItem then
     end
 end
 
--- Create compatibility wrapper for C_Timer (WoW 9.0+)
+-- Create compatibility wrapper for C_Timer (Pre-WoW 7.1 / 3.3.5a compatibility)
 if not C_Timer then
     C_Timer = {}
 end
 
-if not C_Timer.After then
-    -- Create a fallback using AceTimer or frame-based timer
-    function C_Timer.After(delay, callback)
-        if Necrosis and Necrosis.TimerCount == nil then
-            Necrosis.TimerCount = 0
-        end
-        Necrosis.TimerCount = Necrosis.TimerCount + 1
-        local timerId = Necrosis.TimerCount
-
-        -- Use frame-based OnUpdate as fallback
-        local frame = CreateFrame("Frame")
-        local elapsed = 0
-        frame:SetScript("OnUpdate", function(self, delta)
-            elapsed = elapsed + delta
-            if elapsed >= delay then
-                callback()
-                frame:SetScript("OnUpdate", nil)
+do
+    local tickerFrame = CreateFrame("Frame")
+    local pending = {}
+    tickerFrame:SetScript("OnUpdate", function(self, elapsed)
+        local now = GetTime()
+        for i = #pending, 1, -1 do
+            local t = pending[i]
+            if now >= t.time then
+                table.remove(pending, i)
+                if not t.cancelled then
+                    t.callback(t)
+                end
             end
-        end)
+        end
+    end)
+
+    if not C_Timer.After then
+        function C_Timer.After(delay, callback)
+            table.insert(pending, { time = GetTime() + (delay or 0), callback = callback, cancelled = false })
+        end
+    end
+
+    if not C_Timer.NewTimer then
+        function C_Timer.NewTimer(delay, callback)
+            local t = {
+                time = GetTime() + (delay or 0),
+                callback = callback,
+                cancelled = false
+            }
+            function t:Cancel()
+                self.cancelled = true
+            end
+            table.insert(pending, t)
+            return t
+        end
+    end
+
+    if not C_Timer.NewTicker then
+        function C_Timer.NewTicker(interval, callback, iterations)
+            local ticker = {
+                interval = interval,
+                callback = callback,
+                iterations = iterations,
+                count = 0,
+                cancelled = false,
+            }
+            function ticker:Cancel()
+                self.cancelled = true
+            end
+            local function loop(t)
+                if ticker.cancelled then return end
+                ticker.count = ticker.count + 1
+                ticker.callback(ticker)
+                if ticker.cancelled then return end
+                if ticker.iterations and ticker.count >= ticker.iterations then
+                    ticker.cancelled = true
+                    return
+                end
+                C_Timer.After(ticker.interval, loop)
+            end
+            C_Timer.After(interval, loop)
+            return ticker
+        end
     end
 end
 
