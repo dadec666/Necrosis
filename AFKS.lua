@@ -351,7 +351,7 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
 	end
 
 	local message = arg1
-	if ( arg14 ) then	--isMobile
+	if ( arg14 ) and ChatFrame_GetMobileEmbeddedTexture then	--isMobile
 		message = ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b)..message
 	end
 	
@@ -377,8 +377,8 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
 		body = "[" .. arg4 .. "] " .. body
 	end
 
-	local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget)
-	local typeID = ChatHistory_GetAccessID(type, chatTarget, arg12 == "" and arg13 or arg12)
+	local accessID = ChatHistory_GetAccessID and ChatHistory_GetAccessID(chatGroup, chatTarget)
+	local typeID = ChatHistory_GetAccessID and ChatHistory_GetAccessID(type, chatTarget, arg12 == "" and arg13 or arg12)
 
 	self:AddMessage(body, info.r, info.g, info.b, info.id, false, accessID, typeID)
 end
@@ -590,7 +590,11 @@ function AFKS:Init()
 	self.AFKMode.bottom.model = CreateFrame("PlayerModel", "AFKSPlayerModel", self.AFKMode.bottom.modelHolder)
 	self.AFKMode.bottom.model:SetPoint("CENTER", self.AFKMode.bottom.modelHolder, "CENTER")
 	self.AFKMode.bottom.model:SetSize(GetScreenWidth() * 2, GetScreenHeight() * 2)
-	self.AFKMode.bottom.model:SetCamDistanceScale(4.5) --Since the model frame is huge, we need to zoom out quite a bit.
+	if self.AFKMode.bottom.model.SetCamDistanceScale then
+		self.AFKMode.bottom.model:SetCamDistanceScale(4.5) --Since the model frame is huge, we need to zoom out quite a bit.
+	elseif self.AFKMode.bottom.model.SetModelScale then
+		self.AFKMode.bottom.model:SetModelScale(1 / 4.5)
+	end
 	self.AFKMode.bottom.model:SetFacing(6)
 	self.AFKMode.bottom.model:SetScript("OnUpdate", function(self)
 		local timePassed = GetTime() - self.startTime
@@ -654,8 +658,8 @@ end
 
 function AFKS:SetAFK(status)
 
-	if NecrosisConfig.AFK == false then 
-	return 
+	if NecrosisConfig and NecrosisConfig.AFK == false then 
+		return 
 	end
 	
 	if(status) then
