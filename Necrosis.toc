@@ -1,25 +1,16 @@
-## Interface: 11508,20506,30403,40400,50503
-## X-Min-Interface: 110207
-## X-Min-Interface-Classic: 11508
-## X-Min-Interface-BCC: 20506
-## X-Min-Interface-Wrath: 30403
-## X-Min-Interface-Cata: 40400
-
-## Title     : .|TInterface/AddOns/Necrosis/UI/Icon-Small:16:16|t  Necrosis 8
-## Title-ruRU: .|TInterface/AddOns/Necrosis/UI/Icon-Small:16:16|t  Necrosis (Русский)
-## Title-frFR: .|TInterface/AddOns/Necrosis/UI/Icon-Small:16:16|t  Necrosis (Français)
-
+## Interface: 30300
+## Title     : .|TInterface/AddOns/Necrosis/UI/Icon-Small:16:16|t  Necrosis (3.3.5a)
+## Title-ruRU: .|TInterface/AddOns/Necrosis/UI/Icon-Small:16:16|t  Necrosis 3.3.5a (Русский)
+## Title-frFR: .|TInterface/AddOns/Necrosis/UI/Icon-Small:16:16|t  Necrosis 3.3.5a (Français)
 ## Notes: Warlock UI & Shard Management
 ## Notes-frFR: Gestion graphique des shards, interface Démoniste, ban , asservir 
 ## Notes-ruRU: Менеджер заклинаний, камней и демонов для чернокнижника.
-## Version: 8.8.5
-## Website: https://github.com/CKNOEP/Necrosis
+## Version: 3.3.5a
 ## DefaultState: Enabled
-## X-Original-Author: Lomig,lädygaga - sulfuron EUR - As lancestre
-## X-Localizations: enUS, enGB, deDE, frFR, koKR, zhCN, zhTW, esES, ruRU
 ## X-Category: Warlock
 ## LoadOnDemand: 0
 ## SavedVariablesPerCharacter: NecrosisConfig
+
 Necrosis.xml
 
 libs\LibStub\LibStub.lua
@@ -36,12 +27,10 @@ libs\AceConfig-3.0\AceConfig-3.0.xml
 libs\AceLocale-3.0\AceLocale-3.0.xml
 libs\LibSharedMedia-3.0\lib.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
-libs\!LibUIDropDownMenu\LibUIDropDownMenu\LibUIDropDownMenu.xml
 
 libs\LibDataBroker-1.1.lua
 
 Constants.lua
-
 PreLocales.lua
 
 Locales\Localization.lua
@@ -68,22 +57,19 @@ Speech\Speech-cn.lua
 Speech\Speech-ru.lua
 
 Message.lua
-Spells-MOP.lua
-
+Spells.lua
+SpellActivations\SpellActivations.xml
 
 Timers\Functions.lua
 Timers\GraphicalTimers.lua
 Timers\OtherTimers.lua
 
-
-
-
-XML\Attributes-Anniversary.lua
+XML\Attributes.lua
 
 XML\Options-Messages.lua
 XML\Options-SummonQueue.lua
-XML\Options-Sphere-Vanilla.lua
-XML\Options-Buttons-Vanilla.lua
+XML\Options-Sphere.lua
+XML\Options-Buttons.lua
 XML\Options-Menus.lua
 XML\Options-Timers.lua
 XML\Options-Misc.lua
@@ -94,6 +80,5 @@ XML\AboutPanel.lua
 Necrosis.lua
 XML\XML.lua
 ThreatMeter.lua
-UI\BottomBanner\Framework.xml
 
-SpellActivations\SpellActivations.xml
+UI\BottomBanner\Init.xml
