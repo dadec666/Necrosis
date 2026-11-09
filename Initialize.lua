@@ -152,7 +152,7 @@ if not GetItemInfoInstant then
     end
 end
 
--- Frame, Texture, FontString compatibility wrappers for 3.3.5a (SetShown, SetSize, GetSize)
+-- Frame, Texture, FontString, PlayerModel compatibility wrappers for 3.3.5a (SetShown, SetSize, GetSize, SetCamDistanceScale)
 do
     local testFrame = CreateFrame("Frame")
     local metas = {}
@@ -164,6 +164,9 @@ do
     local fs = testFrame:CreateFontString()
     local fsMeta = getmetatable(fs) and getmetatable(fs).__index
     if fsMeta then table.insert(metas, fsMeta) end
+    local pm = CreateFrame("PlayerModel")
+    local pmMeta = pm and getmetatable(pm) and getmetatable(pm).__index
+    if pmMeta then table.insert(metas, pmMeta) end
 
     for _, meta in ipairs(metas) do
         if not meta.SetShown then
@@ -184,6 +187,16 @@ do
         if not meta.GetSize then
             function meta:GetSize()
                 return self:GetWidth(), self:GetHeight()
+            end
+        end
+    end
+
+    if pmMeta then
+        if not pmMeta.SetCamDistanceScale then
+            function pmMeta:SetCamDistanceScale(scale)
+                if self.SetModelScale then
+                    pcall(self.SetModelScale, self, 1 / (scale or 1))
+                end
             end
         end
     end
@@ -252,6 +265,16 @@ end
 if not GetPhysicalScreenSize then
     function GetPhysicalScreenSize()
         return GetScreenWidth(), GetScreenHeight()
+    end
+end
+
+if not GetMonitorAspectRatio then
+    function GetMonitorAspectRatio()
+        local w, h = GetScreenWidth(), GetScreenHeight()
+        if w and h and h > 0 then
+            return w / h
+        end
+        return 1.777777
     end
 end
 
