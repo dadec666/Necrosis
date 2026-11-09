@@ -109,6 +109,61 @@ if not C_Spell.GetSpellInfo then
     end
 end
 
+-- CombatLogGetCurrentEventInfo compatibility wrapper for 3.3.5a
+if not CombatLogGetCurrentEventInfo then
+    local lastCLEU = {}
+    local cleuHelper = CreateFrame("Frame")
+    cleuHelper:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    cleuHelper:SetScript("OnEvent", function(self, event, ...)
+        lastCLEU = { ... }
+    end)
+    function CombatLogGetCurrentEventInfo()
+        return unpack(lastCLEU)
+    end
+end
+
+-- IsInRaid & IsInGroup compatibility wrappers for 3.3.5a
+if not IsInRaid then
+    function IsInRaid()
+        return (GetNumRaidMembers and GetNumRaidMembers() > 0) or false
+    end
+end
+
+if not IsInGroup then
+    function IsInGroup(category)
+        if category and category == (LE_PARTY_CATEGORY_INSTANCE or 2) then
+            local isInstance, instanceType = IsInInstance()
+            return isInstance and (instanceType == "pvp" or instanceType == "arena" or instanceType == "party" or instanceType == "raid")
+        end
+        return ((GetNumPartyMembers and GetNumPartyMembers() > 0) or (GetNumRaidMembers and GetNumRaidMembers() > 0)) or false
+    end
+end
+
+-- GetItemInfoInstant compatibility wrapper for 3.3.5a
+if not GetItemInfoInstant then
+    function GetItemInfoInstant(item)
+        if not item then return nil end
+        local itemID = tonumber(item)
+        if not itemID and type(item) == "string" then
+            itemID = tonumber(item:match("item:(%d+)"))
+        end
+        local name, link, quality, iLevel, reqLevel, class, subclass, maxStack, equipSlot, texture, vendorPrice, classID, subClassID = GetItemInfo(item)
+        return itemID, class, subclass, equipSlot, texture, classID, subClassID
+    end
+end
+
+-- Frame:SetShown compatibility wrapper for 3.3.5a
+local frameMeta = getmetatable(CreateFrame("Frame")).__index
+if not frameMeta.SetShown then
+    function frameMeta:SetShown(show)
+        if show then
+            self:Show()
+        else
+            self:Hide()
+        end
+    end
+end
+
 -- Create compatibility wrappers for C_Container (WoW 9.0+)
 if not C_Container then
     C_Container = {}

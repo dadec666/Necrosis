@@ -1750,10 +1750,12 @@ function Necrosis:OnEvent(self, event,...)
 	-- Reading the combat log || Lecture du journal de combat
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
 		-- The parameters differ depending on the event... || https://wow.gamepedia.com/COMBAT_LOG_EVENT
-		local a1, a2, a3, a4, a5, 
-			a6, a7, a8, a9, a10, 
-			a11, a12, a13, a14, a15
-			= CombatLogGetCurrentEventInfo()
+		local a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15
+		if arg1 ~= nil then
+			a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15 = ...
+		elseif CombatLogGetCurrentEventInfo then
+			a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15 = CombatLogGetCurrentEventInfo()
+		end
 		local timestamp = a1
 		local subevent = a2 
 		local sourceGUID = a4
@@ -2767,7 +2769,10 @@ function Necrosis:SoulshardSwitch(nshard)
 				local itemLink = C_Container.GetContainerItemLink(container, slot)
 				if (itemLink) then
 					
-					local itemID, itemType, itemSubType, itemEquipLoc, icon, classID, subclassID = GetItemInfoInstant(itemLink)
+					local itemID = tonumber(itemLink:match("item:(%d+)"))
+					if not itemID and GetItemInfoInstant then
+						itemID = GetItemInfoInstant(itemLink)
+					end
 					
 					
 					if (itemID == Necrosis.Warlock_Lists.reagents.soul_shard.id) then --Search the Shard in the bags before to search a place for each one 
