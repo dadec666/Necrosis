@@ -437,7 +437,10 @@ if not C_Timer then
 end
 
 do
-    local tickerFrame = CreateFrame("Frame")
+    local tickerFrame = CreateFrame("Frame", "NecrosisTickerFrame", UIParent)
+    tickerFrame:SetSize(1, 1)
+    tickerFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
+    tickerFrame:Show()
     local pending = {}
     tickerFrame:SetScript("OnUpdate", function(self, elapsed)
         local now = GetTime()
@@ -1081,9 +1084,8 @@ function Necrosis:Initialize(Config)
 		Necrosis:CurseSpellAttribute()
 		Necrosis:StoneAttribute(SteedAvailable)
 
-		-- CRITICAL: Create main button after a brief moment to ensure frame setup is ready
-		C_Timer.After(0.2, function()
-			if not InCombatLockdown() then
+		-- Create main button immediately
+		if not InCombatLockdown() then
 				-- DESTROY old button completely (including placeholder)
 			local oldBtn = _G["NecrosisButton"]
 			if oldBtn then
@@ -1371,7 +1373,6 @@ function Necrosis:Initialize(Config)
 				-- Shard count will be automatically updated by Necrosis:OnUpdate()
 				-- No need to force update here - let the normal system handle it
 			end
-		end)
 	end
 
 	-- We check that the fragments are in the bag defined by the Warlock || On vérifie que les fragments sont dans le sac défini par le Démoniste
