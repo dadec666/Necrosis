@@ -1091,6 +1091,9 @@ local function UpdateSacrificeReminder()
 end
 
 local function StartInit(fm)
+	if Necrosis.Data and Necrosis.Data.Enabled then
+		return
+	end
 	-- unregister, server can spam unrelated ids  !?
 	fm:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
 	-- Initialization of the mod || Initialisation du mod
@@ -3109,7 +3112,7 @@ dist = dist * (NecrosisConfig.NecrosisButtonRadius or 1.0)
 		)
 	end
 	
-	local fm = Necrosis.Warlock_Buttons.main.f
+	local fm = _G[Necrosis.Warlock_Buttons.main.f] or _G["NecrosisButton"] or _G["NecrosisMainSphere"]
 	local indexScale = - 36
 	
 	for index=1, #Necrosis.Warlock_Lists.on_sphere, 1 do
@@ -3148,13 +3151,17 @@ dist = dist * (NecrosisConfig.NecrosisButtonRadius or 1.0)
 				indexScale = indexScale + buttonAngleSpacing
 			else
 --]]
-				f:SetPoint(
-					NecrosisConfig.FramePosition[fr][1],
-					NecrosisConfig.FramePosition[fr][2],
-					NecrosisConfig.FramePosition[fr][3],
-					NecrosisConfig.FramePosition[fr][4],
-					NecrosisConfig.FramePosition[fr][5]
-				)
+				if NecrosisConfig.FramePosition and NecrosisConfig.FramePosition[fr] then
+					f:SetPoint(
+						NecrosisConfig.FramePosition[fr][1],
+						NecrosisConfig.FramePosition[fr][2],
+						NecrosisConfig.FramePosition[fr][3],
+						NecrosisConfig.FramePosition[fr][4],
+						NecrosisConfig.FramePosition[fr][5]
+					)
+				else
+					f:SetPoint("CENTER", fm, "CENTER", 0, 0)
+				end
 			end
 			f:Show()
 			f:SetScale(NBRScale)

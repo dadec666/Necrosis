@@ -215,6 +215,7 @@ function Necrosis:UpdateThreatRingThickness()
 	local thickness = NecrosisConfig.ThreatRingThickness or 8
 	local ringSize = buttonSize + (thickness * 2) + 20  -- Larger ring to accommodate bigger circle
 	local radius = buttonSize / 2 + 15
+	local segmentWidth = 12  -- Width of each segment
 	local segmentHeight = 4  -- Fixed height
 
 	-- Redimensionner le frame principal

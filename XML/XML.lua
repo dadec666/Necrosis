@@ -132,6 +132,7 @@ function Necrosis:CreateWarlockUI()
 	end
 
 	frame:SetScale((NecrosisConfig.NecrosisButtonScale / 100))
+	frame:Show()
 	
 	-- Create the soulshard counter || Création du compteur de fragments d'âme
 	-- Note: If the new button system (Initialize.lua with timer) is active,

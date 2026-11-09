@@ -45,7 +45,7 @@ function Necrosis:OpenConfigPanel()
 				NecrosisConfig.FramePosition["NecrosisGeneralFrame"][5]
 			)
 		else
-			frame:SetPoint("TOPLEFT", 100, -100)
+			frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 100, -100)
 		end
 
 		frame:RegisterForDrag("LeftButton")
@@ -100,7 +100,7 @@ function Necrosis:OpenConfigPanel()
 		-- Texte du titre
 		local FontString = frame:CreateFontString(nil, nil, "GameFontNormal")
 		FontString:SetTextColor(255, 255, 0)
-		FontString:SetText(self.Data.Label)
+		FontString:SetText((self.Data and (self.Data.Label or self.Data.AppName)) or "Necrosis")
 		FontString:Show()
 		FontString:ClearAllPoints()
 		FontString:SetPoint("CENTER", 0, 210)
@@ -195,7 +195,7 @@ function Necrosis:OpenConfigPanel()
 
 			-- Use custom SummonQueue icon for the 7th tab
 		if i == 6 then
-			frame:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\SummonQueue-Icon.png")
+			frame:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\SummonQueue-Icon256")
 		else
 			frame:SetNormalTexture("Interface\\Icons\\"..tex[i])
 		end

@@ -244,20 +244,20 @@ function Necrosis:SetBuffSpellAttribute(button)
 		end
 		if f.high_of == 'banish' then
 			local high = Necrosis.GetSpellCastName(f.high_of)
-			-- Do NOT like hard coding but leave for now...
-			--local Rank1 = self.Warlock_Spells[710].InSpellBook and self.Warlock_Spells[710].CastName
-			local Rank1 = GetSpellInfo(710)..GetSpellSubtext(710)
-			if Necrosis.Warlock_Spells[Necrosis.Warlock_Spell_Use[f.high_of]].SpellRank == 2 then -- has rank 2
-				local Rank2 = self.Warlock_Spells[18647].InSpellBook and self.Warlock_Spells[18647].CastName
+			local name1, sub1 = GetSpellInfo(710)
+			local Rank1 = (sub1 and sub1 ~= "") and (name1.."("..sub1..")") or (name1 or "")
+			if Necrosis.Warlock_Spell_Use[f.high_of] and Necrosis.Warlock_Spells[Necrosis.Warlock_Spell_Use[f.high_of]] and Necrosis.Warlock_Spells[Necrosis.Warlock_Spell_Use[f.high_of]].SpellRank == 2 then -- has rank 2
+				local name2, sub2 = GetSpellInfo(18647)
+				local Rank2 = (sub2 and sub2 ~= "") and (name2.."("..sub2..")") or (name2 or Rank1)
 				
 				-- so lets use the "harmbutton" special attribute!
 				-- assign Banish(rank 2) to LEFT click 
 				f:SetAttribute("type1", "macro")
-				f:SetAttribute("macrotext1", "/focus\n/cast "..Rank1)
+				f:SetAttribute("macrotext1", "/focus\n/cast "..Rank2)
 				
 				-- assign Banish(rank 1) to RIGHT click 
 				f:SetAttribute("type2", "macro")
-				f:SetAttribute("macrotext2q", "/focus\n/cast "..Rank2)
+				f:SetAttribute("macrotext2", "/focus\n/cast "..Rank1)
 
 				-- allow focused target to be rebanished with CTRL+LEFT or RIGHT click
 				f:SetAttribute("ctrl-type"..l_click, "spell")

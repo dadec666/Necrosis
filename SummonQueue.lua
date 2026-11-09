@@ -393,7 +393,7 @@ function SummonQueue:UpdateQueueDisplay()
 
 		-- Add custom SummonQueue icon (fill entire button)
 		local iconTexture = summonBtn:CreateTexture(nil, "BORDER")
-		iconTexture:SetTexture("Interface\\AddOns\\Necrosis\\UI\\SummonQueue-Icon.png")
+		iconTexture:SetTexture("Interface\\AddOns\\Necrosis\\UI\\SummonQueue-Icon256")
 		iconTexture:SetAllPoints(summonBtn)
 
 		-- Get the spell name for Ritual of Summoning
