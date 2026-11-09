@@ -10,8 +10,53 @@ local _G = getfenv(0)
 -- WoW Version Compatibility Wrappers (Support TBC, Wrath, Cata, MOP+)
 -- ============================================================================
 
--- Detect WoW version
+-- Detect WoW version and ensure classic project constants exist (3.3.5a compatibility)
 local _, _, _, tocVersion = GetBuildInfo()
+tocVersion = tonumber(tocVersion) or 30300
+
+if not WOW_PROJECT_ID then
+    WOW_PROJECT_CLASSIC = 2
+    WOW_PROJECT_BURNING_CRUSADE_CLASSIC = 5
+    WOW_PROJECT_WRATH_CLASSIC = 11
+    WOW_PROJECT_CATACLYSM_CLASSIC = 14
+    WOW_PROJECT_MAINLINE = 1
+    if tocVersion >= 30000 and tocVersion < 40000 then
+        WOW_PROJECT_ID = WOW_PROJECT_WRATH_CLASSIC
+    elseif tocVersion >= 20000 and tocVersion < 30000 then
+        WOW_PROJECT_ID = WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+    elseif tocVersion < 20000 then
+        WOW_PROJECT_ID = WOW_PROJECT_CLASSIC
+    else
+        WOW_PROJECT_ID = WOW_PROJECT_MAINLINE
+    end
+end
+
+-- PlaySound compatibility wrapper for 3.3.5a
+do
+    local origPlaySound = PlaySound
+    local soundMap = {
+        [4384] = "igQuestLogOpen",
+        [8959] = "ReadyCheck",
+        [12977] = "RaidWarning",
+    }
+    function PlaySound(sound, channel)
+        if type(sound) == "number" then
+            local soundName = soundMap[sound]
+            if soundName then
+                return origPlaySound(soundName)
+            else
+                local ok = pcall(origPlaySound, sound, channel)
+                if not ok then
+                    -- Safe fallback in 3.3.5a
+                end
+                return
+            end
+        else
+            return origPlaySound(sound, channel)
+        end
+    end
+end
+
 local IsModernWoW = tocVersion and tocVersion >= 90000 -- WoW 9.0+ has C_Container
 
 -- DEBUG MARKER: Confirm we're using the correct variant
@@ -66,30 +111,74 @@ if not C_Container.PickupContainerItem then
     end
 end
 
--- Create compatibility wrapper for C_Timer (WoW 9.0+)
+-- Create compatibility wrapper for C_Timer (Pre-WoW 7.1 / 3.3.5a compatibility)
 if not C_Timer then
     C_Timer = {}
 end
 
-if not C_Timer.After then
-    -- Create a fallback using AceTimer or frame-based timer
-    function C_Timer.After(delay, callback)
-        if Necrosis and Necrosis.TimerCount == nil then
-            Necrosis.TimerCount = 0
-        end
-        Necrosis.TimerCount = Necrosis.TimerCount + 1
-        local timerId = Necrosis.TimerCount
-
-        -- Use frame-based OnUpdate as fallback
-        local frame = CreateFrame("Frame")
-        local elapsed = 0
-        frame:SetScript("OnUpdate", function(self, delta)
-            elapsed = elapsed + delta
-            if elapsed >= delay then
-                callback()
-                frame:SetScript("OnUpdate", nil)
+do
+    local tickerFrame = CreateFrame("Frame")
+    local pending = {}
+    tickerFrame:SetScript("OnUpdate", function(self, elapsed)
+        local now = GetTime()
+        for i = #pending, 1, -1 do
+            local t = pending[i]
+            if now >= t.time then
+                table.remove(pending, i)
+                if not t.cancelled then
+                    t.callback(t)
+                end
             end
-        end)
+        end
+    end)
+
+    if not C_Timer.After then
+        function C_Timer.After(delay, callback)
+            table.insert(pending, { time = GetTime() + (delay or 0), callback = callback, cancelled = false })
+        end
+    end
+
+    if not C_Timer.NewTimer then
+        function C_Timer.NewTimer(delay, callback)
+            local t = {
+                time = GetTime() + (delay or 0),
+                callback = callback,
+                cancelled = false
+            }
+            function t:Cancel()
+                self.cancelled = true
+            end
+            table.insert(pending, t)
+            return t
+        end
+    end
+
+    if not C_Timer.NewTicker then
+        function C_Timer.NewTicker(interval, callback, iterations)
+            local ticker = {
+                interval = interval,
+                callback = callback,
+                iterations = iterations,
+                count = 0,
+                cancelled = false,
+            }
+            function ticker:Cancel()
+                self.cancelled = true
+            end
+            local function loop(t)
+                if ticker.cancelled then return end
+                ticker.count = ticker.count + 1
+                ticker.callback(ticker)
+                if ticker.cancelled then return end
+                if ticker.iterations and ticker.count >= ticker.iterations then
+                    ticker.cancelled = true
+                    return
+                end
+                C_Timer.After(ticker.interval, loop)
+            end
+            C_Timer.After(interval, loop)
+            return ticker
+        end
     end
 end
 
