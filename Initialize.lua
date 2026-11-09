@@ -10,8 +10,53 @@ local _G = getfenv(0)
 -- WoW Version Compatibility Wrappers (Support TBC, Wrath, Cata, MOP+)
 -- ============================================================================
 
--- Detect WoW version
+-- Detect WoW version and ensure classic project constants exist (3.3.5a compatibility)
 local _, _, _, tocVersion = GetBuildInfo()
+tocVersion = tonumber(tocVersion) or 30300
+
+if not WOW_PROJECT_ID then
+    WOW_PROJECT_CLASSIC = 2
+    WOW_PROJECT_BURNING_CRUSADE_CLASSIC = 5
+    WOW_PROJECT_WRATH_CLASSIC = 11
+    WOW_PROJECT_CATACLYSM_CLASSIC = 14
+    WOW_PROJECT_MAINLINE = 1
+    if tocVersion >= 30000 and tocVersion < 40000 then
+        WOW_PROJECT_ID = WOW_PROJECT_WRATH_CLASSIC
+    elseif tocVersion >= 20000 and tocVersion < 30000 then
+        WOW_PROJECT_ID = WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+    elseif tocVersion < 20000 then
+        WOW_PROJECT_ID = WOW_PROJECT_CLASSIC
+    else
+        WOW_PROJECT_ID = WOW_PROJECT_MAINLINE
+    end
+end
+
+-- PlaySound compatibility wrapper for 3.3.5a
+do
+    local origPlaySound = PlaySound
+    local soundMap = {
+        [4384] = "igQuestLogOpen",
+        [8959] = "ReadyCheck",
+        [12977] = "RaidWarning",
+    }
+    function PlaySound(sound, channel)
+        if type(sound) == "number" then
+            local soundName = soundMap[sound]
+            if soundName then
+                return origPlaySound(soundName)
+            else
+                local ok = pcall(origPlaySound, sound, channel)
+                if not ok then
+                    -- Safe fallback in 3.3.5a
+                end
+                return
+            end
+        else
+            return origPlaySound(sound, channel)
+        end
+    end
+end
+
 local IsModernWoW = tocVersion and tocVersion >= 90000 -- WoW 9.0+ has C_Container
 
 -- DEBUG MARKER: Confirm we're using the correct variant
