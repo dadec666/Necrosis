@@ -13,7 +13,7 @@ local _G = getfenv(0)
 
 -- Ouverture du cadre des menus des options
 function Necrosis:OpenConfigPanel()
-	PlaySound(SOUNDKIT.UT_QUESTLOG_OPEN or 4384)
+	PlaySound("igQuestLogOpen")
 
 	-- On affiche les messages d'aide
 	if self.ChatMessage.Help[1] then

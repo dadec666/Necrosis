@@ -90,13 +90,8 @@ function Necrosis:CreateWarlockUI()
 
 	-- Place the button window at its saved location || Placement de la fenêtre à l'endroit sauvegardé ou à l'emplacement par défaut
 	frame:ClearAllPoints()
-	frame:SetPoint(
-		NecrosisConfig.FramePosition["NecrosisSpellTimerButton"][1],
-		NecrosisConfig.FramePosition["NecrosisSpellTimerButton"][2],
-		NecrosisConfig.FramePosition["NecrosisSpellTimerButton"][3],
-		NecrosisConfig.FramePosition["NecrosisSpellTimerButton"][4],
-		NecrosisConfig.FramePosition["NecrosisSpellTimerButton"][5]
-	)
+	local pos = (NecrosisConfig.FramePosition and NecrosisConfig.FramePosition["NecrosisSpellTimerButton"]) or {"CENTER", "UIParent", "CENTER", 100, 300}
+	frame:SetPoint(pos[1], pos[2], pos[3], pos[4], pos[5])
 
 	frame:Show()
 
@@ -447,13 +442,8 @@ function Necrosis:CreateWarlockPopup()
 
 	-- Place the button window at its saved location || Placement de la fenêtre à l'endroit sauvegardé ou à l'emplacement par défaut
 	frame:ClearAllPoints()
-	frame:SetPoint(
-		NecrosisConfig.FramePosition["NecrosisShadowTranceButton"][1],
-		NecrosisConfig.FramePosition["NecrosisShadowTranceButton"][2],
-		NecrosisConfig.FramePosition["NecrosisShadowTranceButton"][3],
-		NecrosisConfig.FramePosition["NecrosisShadowTranceButton"][4],
-		NecrosisConfig.FramePosition["NecrosisShadowTranceButton"][5]
-	)
+	local posST = (NecrosisConfig.FramePosition and NecrosisConfig.FramePosition["NecrosisShadowTranceButton"]) or {"CENTER", "UIParent", "CENTER", 20, 0}
+	frame:SetPoint(posST[1], posST[2], posST[3], posST[4], posST[5])
 
 ------------------------------------------------------------------------------------------------------
 	-- Create the Backlash button || Creation du bouton de BackLash
@@ -481,13 +471,8 @@ function Necrosis:CreateWarlockPopup()
 
 	-- Place the button window at its saved location || Placement de la fenêtre à l'endroit sauvegardé ou à l'emplacement par défaut
 	frame:ClearAllPoints()
-	frame:SetPoint(
-		NecrosisConfig.FramePosition["NecrosisBacklashButton"][1],
-		NecrosisConfig.FramePosition["NecrosisBacklashButton"][2],
-		NecrosisConfig.FramePosition["NecrosisBacklashButton"][3],
-		NecrosisConfig.FramePosition["NecrosisBacklashButton"][4],
-		NecrosisConfig.FramePosition["NecrosisBacklashButton"][5]
-	)
+	local posBL = (NecrosisConfig.FramePosition and NecrosisConfig.FramePosition["NecrosisBacklashButton"]) or {"CENTER", "UIParent", "CENTER", 60, 0}
+	frame:SetPoint(posBL[1], posBL[2], posBL[3], posBL[4], posBL[5])
 
 ---------------------------------------------
 	-- Create the Elemental & demon alert button || 

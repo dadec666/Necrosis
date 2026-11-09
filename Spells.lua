@@ -1039,11 +1039,14 @@ end
 This updates the spell timer value based on the user selection list from options.
 --]]
 function Necrosis.UpdateSpellTimers(list)
+	if not list then return end
 	for j = 1, #list, 1 do 
-		for i, v in pairs(Necrosis.Warlock_Spells) do
-			if Necrosis.Warlock_Spells[i].Usage == list[j].usage then
-				local t = Necrosis.Warlock_Spells[i].Timer
-				Necrosis.Warlock_Spells[i].Timer = list[j].show
+		if list[j] and list[j].usage then
+			for i, v in pairs(Necrosis.Warlock_Spells) do
+				if Necrosis.Warlock_Spells[i] and Necrosis.Warlock_Spells[i].Usage == list[j].usage then
+					local t = Necrosis.Warlock_Spells[i].Timer
+					Necrosis.Warlock_Spells[i].Timer = list[j].show
+				end
 			end
 		end
 	end
@@ -1390,18 +1393,16 @@ local function CreateNames(spell, rank)
 end
 
 local function getManaCost(spellID) -- assume only the first mana cost found is needed for now
-    if not spellID then return end
-	local cost = 0
-	local costTable = GetSpellPowerCost(spellID);
-	if costTable == nil then
-		return false
+    if not spellID then return 0 end
+	local costTable = GetSpellPowerCost and GetSpellPowerCost(spellID)
+	if costTable and type(costTable) == "table" then
+		for _, v in ipairs(costTable) do
+			if v and (v.name == "MANA" or v.type == 0) and v.cost then
+				return v.cost
+			end
+		end
 	end
-	return table.foreach(costTable, function(k,v)  
-		if v.name  == "MANA" then
-			return v.cost;
-		end 
-	end )
-
+	return 0
 end
 
 -- My favourite feature! Create a list of spells known by the warlock sorted by name & rank || Ma fonction préférée ! Elle fait la liste des sorts connus par le démo, et les classe par rang.

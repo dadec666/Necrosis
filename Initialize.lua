@@ -57,6 +57,15 @@ do
     end
 end
 
+if not SOUNDKIT then
+    SOUNDKIT = {
+        UT_QUESTLOG_OPEN = 4384,
+        IG_QUEST_LOG_OPEN = 4384,
+        READY_CHECK = 8959,
+        RAID_WARNING = 12977,
+    }
+end
+
 local IsModernWoW = tocVersion and tocVersion >= 90000 -- WoW 9.0+ has C_Container
 
 -- DEBUG MARKER: Confirm we're using the correct variant
@@ -84,13 +93,42 @@ if not C_Spell.GetSpellTexture then
     end
 end
 
-if not C_Spell.GetSpellPowerCost then
-    function C_Spell.GetSpellPowerCost(spellID)
-        if GetSpellPowerCost then
-            return GetSpellPowerCost(spellID)
+if not GetSpellPowerCost then
+    local costTooltip = CreateFrame("GameTooltip", "NecrosisCostScannerTooltip", UIParent, "GameTooltipTemplate")
+    costTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+
+    function GetSpellPowerCost(spellID)
+        if not spellID then return {} end
+        costTooltip:ClearLines()
+        costTooltip:SetHyperlink("spell:"..spellID)
+        for i = 2, math.min(costTooltip:NumLines(), 4) do
+            local line = _G["NecrosisCostScannerTooltipTextLeft"..i]
+            local text = line and line:GetText()
+            if text then
+                local mana = text:match("^(%d+)%s+")
+                if mana then
+                    local c = tonumber(mana)
+                    if c and c > 0 then
+                        return {
+                            {
+                                cost = c,
+                                type = 0,
+                                name = "MANA",
+                                minCost = c,
+                                costPerSec = 0,
+                                costPercent = 0,
+                            }
+                        }
+                    end
+                end
+            end
         end
-        return nil
+        return {}
     end
+end
+
+if not C_Spell.GetSpellPowerCost then
+    C_Spell.GetSpellPowerCost = GetSpellPowerCost
 end
 
 if not C_Spell.GetSpellInfo then
@@ -1017,9 +1055,8 @@ function Necrosis:Initialize(Config)
 		Necrosis:CurseSpellAttribute()
 		Necrosis:StoneAttribute(SteedAvailable)
 
-		-- CRITICAL: CREATE BRAND NEW BUTTON with delay (like test 5 that WORKS!)
-		-- Increased delay to 5 seconds to ensure proper initialization on first login
-		C_Timer.After(5, function()
+		-- CRITICAL: Create main button after a brief moment to ensure frame setup is ready
+		C_Timer.After(0.2, function()
 			if not InCombatLockdown() then
 				-- DESTROY old button completely (including placeholder)
 			local oldBtn = _G["NecrosisButton"]
@@ -1322,6 +1359,7 @@ end
 ------------------------------------------------------------------------------------------------------
 
 function Necrosis.SlashHandler(arg1)
+	arg1 = arg1 or ""
 	if arg1:lower():find("recall") then
 		Necrosis:Recall()
 		
@@ -1331,7 +1369,7 @@ function Necrosis.SlashHandler(arg1)
 	elseif arg1:lower():find("glasofruix") then
 		NecrosisConfig.Smooth = not NecrosisConfig.Smooth
 		Necrosis:Msg("SpellTimer smoothing  : <lightBlue>Toggled", "USER")
-		self:CreateWarlockUI()
+		Necrosis:CreateWarlockUI()
 		
 	else
 		Necrosis:OpenConfigPanel()
