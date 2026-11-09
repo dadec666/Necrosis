@@ -241,9 +241,15 @@ local function CreateStoneButton(stone)
 	if stone == Necrosis.Warlock_Buttons.soul_stone.f then
 		frame.cooldown = CreateFrame("Cooldown", frame:GetName().."Cooldown", frame)
 		frame.cooldown:SetAllPoints()
-		frame.cooldown:SetUseCircularEdge(true)
-		frame.cooldown:SetDrawSwipe(true)
-		frame.cooldown:SetSwipeColor(0, 0, 0, 0.5)
+		if frame.cooldown.SetUseCircularEdge then
+			frame.cooldown:SetUseCircularEdge(true)
+		end
+		if frame.cooldown.SetDrawSwipe then
+			frame.cooldown:SetDrawSwipe(true)
+		end
+		if frame.cooldown.SetSwipeColor then
+			frame.cooldown:SetSwipeColor(0, 0, 0, 0.5)
+		end
 	end
 
 	-- Place the button window at its saved location || Placement de la fenêtre à l'endroit sauvegardé ou à l'emplacement par défaut
@@ -720,9 +726,15 @@ function Necrosis:CreateWarlockPopup()
 	if not frame.cooldown then
 		frame.cooldown = CreateFrame("Cooldown", "NecrosisArmorReminderButtonCooldown", frame)
 		frame.cooldown:SetAllPoints()
-		frame.cooldown:SetUseCircularEdge(true)
-		frame.cooldown:SetDrawSwipe(true)
-		frame.cooldown:SetSwipeColor(0, 0, 0, 0.5)
+		if frame.cooldown.SetUseCircularEdge then
+			frame.cooldown:SetUseCircularEdge(true)
+		end
+		if frame.cooldown.SetDrawSwipe then
+			frame.cooldown:SetDrawSwipe(true)
+		end
+		if frame.cooldown.SetSwipeColor then
+			frame.cooldown:SetSwipeColor(0, 0, 0, 0.5)
+		end
 	end
 
 	-- Place the button window at its saved location || Placement de la fenêtre à l'endroit sauvegardé ou à l'emplacement par défaut

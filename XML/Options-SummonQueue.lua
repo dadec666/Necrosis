@@ -1,5 +1,8 @@
 local _G = getfenv(0)
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 local L = LibStub("AceLocale-3.0"):GetLocale(NECROSIS_ID, true)
 
 -- ========================================

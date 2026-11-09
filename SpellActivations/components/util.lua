@@ -1,4 +1,7 @@
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 local ShortAddonName = strlower(AddonName):sub(0,8) == "necrosis" and "Necrosis" or "SAO"
 local Module = "util"
 

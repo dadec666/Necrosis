@@ -6,6 +6,9 @@
 -- On définit G comme étant le tableau contenant toutes les frames existantes.
 local _G = getfenv(0)
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 local iamNecrosis = strlower(AddonName):sub(0,8) == "necrosis"
 local L = LibStub("AceLocale-3.0"):GetLocale(NECROSIS_ID, true)
 
@@ -111,7 +114,7 @@ function Necrosis:SetMiscConfig()
 
 		local thumb = frame:GetThumbTexture()
 		if thumb then
-			thumb:SetTexture("Interface\Common\Indicator-Yellow")
+			thumb:SetTexture("Interface\\Common\\Indicator-Yellow")
 			thumb:SetColorTexture(1, 0.8, 0, 1)
 			thumb:SetSize(6, 6)
 		end
@@ -213,7 +216,7 @@ function Necrosis:SetMiscConfig()
 
 		local thumb = frame:GetThumbTexture()
 		if thumb then
-			thumb:SetTexture("Interface\Common\Indicator-Yellow")
+			thumb:SetTexture("Interface\\Common\\Indicator-Yellow")
 			thumb:SetColorTexture(1, 0.8, 0, 1)
 			thumb:SetSize(6, 6)
 		end
@@ -556,7 +559,7 @@ function Necrosis:SetMiscConfig()
 
 		local thumb = frame:GetThumbTexture()
 		if thumb then
-			thumb:SetTexture("Interface\Common\Indicator-Yellow")
+			thumb:SetTexture("Interface\\Common\\Indicator-Yellow")
 			thumb:SetColorTexture(1, 0.8, 0, 1)
 			thumb:SetSize(6, 6)
 		end

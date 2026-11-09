@@ -359,7 +359,7 @@ function Necrosis:SetMenusConfig()
 
 		local thumb = frame:GetThumbTexture()
 		if thumb then
-			thumb:SetTexture("Interface\Common\Indicator-Yellow")
+			thumb:SetTexture("Interface\\Common\\Indicator-Yellow")
 			thumb:SetColorTexture(1, 0.8, 0, 1)
 			thumb:SetSize(6, 6)
 		end
@@ -413,7 +413,7 @@ function Necrosis:SetMenusConfig()
 
 		local thumb = frame:GetThumbTexture()
 		if thumb then
-			thumb:SetTexture("Interface\Common\Indicator-Yellow")
+			thumb:SetTexture("Interface\\Common\\Indicator-Yellow")
 			thumb:SetColorTexture(1, 0.8, 0, 1)
 			thumb:SetSize(6, 6)
 		end
@@ -461,7 +461,7 @@ function Necrosis:SetMenusConfig()
 
 		local thumb = frame:GetThumbTexture()
 		if thumb then
-			thumb:SetTexture("Interface\Common\Indicator-Yellow")
+			thumb:SetTexture("Interface\\Common\\Indicator-Yellow")
 			thumb:SetColorTexture(1, 0.8, 0, 1)
 			thumb:SetSize(6, 6)
 		end
@@ -640,7 +640,7 @@ function Necrosis:SetMenusConfig()
 
 		local thumb = frame:GetThumbTexture()
 		if thumb then
-			thumb:SetTexture("Interface\Common\Indicator-Yellow")
+			thumb:SetTexture("Interface\\Common\\Indicator-Yellow")
 			thumb:SetColorTexture(1, 0.8, 0, 1)
 			thumb:SetSize(6, 6)
 		end
@@ -688,7 +688,7 @@ function Necrosis:SetMenusConfig()
 
 		local thumb = frame:GetThumbTexture()
 		if thumb then
-			thumb:SetTexture("Interface\Common\Indicator-Yellow")
+			thumb:SetTexture("Interface\\Common\\Indicator-Yellow")
 			thumb:SetColorTexture(1, 0.8, 0, 1)
 			thumb:SetSize(6, 6)
 		end
@@ -816,7 +816,7 @@ function Necrosis:SetMenusConfig()
 
 		local thumb = frame:GetThumbTexture()
 		if thumb then
-			thumb:SetTexture("Interface\Common\Indicator-Yellow")
+			thumb:SetTexture("Interface\\Common\\Indicator-Yellow")
 			thumb:SetColorTexture(1, 0.8, 0, 1)
 			thumb:SetSize(6, 6)
 		end
@@ -864,7 +864,7 @@ function Necrosis:SetMenusConfig()
 
 		local thumb = frame:GetThumbTexture()
 		if thumb then
-			thumb:SetTexture("Interface\Common\Indicator-Yellow")
+			thumb:SetTexture("Interface\\Common\\Indicator-Yellow")
 			thumb:SetColorTexture(1, 0.8, 0, 1)
 			thumb:SetSize(6, 6)
 		end

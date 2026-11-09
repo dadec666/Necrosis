@@ -14,6 +14,9 @@
 ]]
 
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 local Module = "_template" --[[ For debugging purposes. Good practice: set the filename of the current source file ]]
 
 -- Optimize frequent calls

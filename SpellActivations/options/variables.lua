@@ -1,4 +1,7 @@
 local AddonName, SAO = ...
+AddonName = AddonName or "Necrosis"
+SAO = SAO or _G.SAO or {}
+_G.SAO = SAO
 
 -- Apply all values from the database to the engine
 function SAO.ApplyAllVariables(self)

@@ -31,15 +31,12 @@
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture parentKey="texture" setAllPoints="true"/>
-				<MaskTexture parentKey="mask" file="Interface\AddOns\Necrosis\SpellActivations\textures\mask" hWrapMode="CLAMP" vWrapMode="CLAMP">
+				<Texture parentKey="mask" file="Interface\AddOns\Necrosis\SpellActivations\textures\mask">
 					<!-- Mask for shrinking effect -->
 					<Size x="256" y="256"/><!-- Must match, or be quivalent to, overlay size -->
 					<Anchors>
 						<Anchor point="CENTER" relativeKey="$parent.texture" relativePoint="CENTER"/>
 					</Anchors>
-					<MaskedTextures>
-						<MaskedTexture childKey="texture"/>
-					</MaskedTextures>
 					<Animations>
 						<AnimationGroup name="$parentAnimTimeoutX" parentKey="timeoutX">
 							<Scale scaleX="0.05" scaleY="1" duration="10" smoothing="IN" parentKey="scaleX" order="1"/>
@@ -63,17 +60,14 @@
 							</Scripts>
 						</AnimationGroup>
 					</Animations>
-				</MaskTexture>
-				<MaskTexture parentKey="combat" file="Interface\AddOns\Necrosis\SpellActivations\textures\maskzero" hWrapMode="CLAMP" vWrapMode="CLAMP">
+				</Texture>
+				<Texture parentKey="combat" file="Interface\AddOns\Necrosis\SpellActivations\textures\maskzero">
 					<!-- Mask for out-of-combat fade-out, used by infinite overlays registered as 'combat-only' auras -->
 					<!-- This mask is *not* used for non-combat-only auras, because such auras are intended to be visible out of combat -->
 					<Size x="256" y="256"/><!-- Must match, or be quivalent to, overlay size -->
 					<Anchors>
 						<Anchor point="CENTER" relativeKey="$parent.texture" relativePoint="CENTER"/>
 					</Anchors>
-					<MaskedTextures>
-						<MaskedTexture childKey="texture"/>
-					</MaskedTextures>
 					<Animations>
 						<AnimationGroup name="$parentCombatAnimIn" parentKey="animIn">
 							<Translation duration="0.01" order="1" offsetX="0" offsetY="0" parentKey="point1">
@@ -95,7 +89,7 @@
 							<Translation duration="100" order="2" offsetX="0" offsetY="0" parentKey="point2"/> <!-- 100 should be enough, for now -->
 						</AnimationGroup>
 					</Animations>
-				</MaskTexture>
+				</Texture>
 			</Layer>
 		</Layers>
 		<Scripts>
@@ -132,11 +126,7 @@
 			<Cooldown
 				parentKey="cooldown"
 				inherits="CooldownFrameTemplate"
-				setAllPoints="true"
-				drawBling="false"
-				drawEdge="false"
-				drawSwipe="false"
-				hideCountdownNumbers="true">
+				setAllPoints="true">
 			</Cooldown>
 		</Frames>
 	</Frame>

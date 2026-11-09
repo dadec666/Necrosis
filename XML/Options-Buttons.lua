@@ -789,13 +789,5 @@ function NecrosisInitSelectedMountButton(button, id)
 		end
 	end
 end
-					end
-
-					break;
-				end
-			end
-		end
-	end
-end
 
 ------------------------------------------------------------------------------------------------------
