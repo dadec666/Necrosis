@@ -1,5 +1,5 @@
 --[[
-    Necrosis 
+    Necrosis
     Copyright (C) - copyright file included in this release
 --]]
 
@@ -17,8 +17,8 @@ local _G = getfenv(0)
 function Necrosis:Msg(msg, type)
 	if Necrosis.Debug.speech then
 		_G["DEFAULT_CHAT_FRAME"]:AddMessage(":Msg"
-		.." "..(tostring(type))..":"
-		.." '"..(tostring(msg)).."'"
+			.. " " .. (tostring(type)) .. ":"
+			.. " '" .. (tostring(msg)) .. "'"
 		)
 	end
 
@@ -47,7 +47,7 @@ function Necrosis:Msg(msg, type)
 		else
 			-- Add some color to our message :D
 			msg = self:MsgAddColor(msg)
-			local Intro = "|CFFFF00FFNe|CFFFF50FFcr|CFFFF99FFos|CFFFFC4FFis|CFFFFFFFF: "..msg.."|r"
+			local Intro = "|CFFFF00FFNe|CFFFF50FFcr|CFFFF99FFos|CFFFFC4FFis|CFFFFFFFF: " .. msg .. "|r"
 			if NecrosisConfig.ChatType then
 				-- ...... on the first chat frame
 				ChatFrame1:AddMessage(Intro, 1.0, 0.7, 1.0, 1.0, UIERRORS_HOLD_TIME)
@@ -143,7 +143,7 @@ local function MsgReplace(msg, player, target, pet)
 
 	if Necrosis.Debug.speech then
 		_G["DEFAULT_CHAT_FRAME"]:AddMessage("MsgReplace"
-		.." '"..(tostring(msg) or "nyl").."'"
+			.. " '" .. (tostring(msg) or "nyl") .. "'"
 		)
 	end
 
@@ -159,13 +159,13 @@ local function Out(Spell, Speech, msg, style)
 	end
 	local pet = Speech.DemonName or UNKNOWN
 	local s = style or "USER"
-	
+
 	if Necrosis.Debug.speech then
 		_G["DEFAULT_CHAT_FRAME"]:AddMessage("Out"
-		.." n'"..(tostring(player)).."'"
-		.." t'"..(tostring(target)).."'"
-		.." p'"..(tostring(pet)).."'"
-		.." s'"..(tostring(s).."'")
+			.. " n'" .. (tostring(player)) .. "'"
+			.. " t'" .. (tostring(target)) .. "'"
+			.. " p'" .. (tostring(pet)) .. "'"
+			.. " s'" .. (tostring(s) .. "'")
 		)
 	end
 
@@ -177,21 +177,21 @@ end
 function Necrosis:Speech_It(Spell, Speeches, metatable)
 	if Necrosis.Debug.speech then
 		_G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_It ::"
-		.." sum'"..tostring(NecrosisConfig.PlayerSummons).."'"
-		.." dem'"..tostring(NecrosisConfig.DemonSummon).."'"
-		.." soul'"..tostring(NecrosisConfig.RoSSummon).."'"
+			.. " sum'" .. tostring(NecrosisConfig.PlayerSummons) .. "'"
+			.. " dem'" .. tostring(NecrosisConfig.DemonSummon) .. "'"
+			.. " soul'" .. tostring(NecrosisConfig.RoSSummon) .. "'"
 		)
 		_G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_It"
-		.." n'"..(tostring(Spell.Name) or "nyl").."'"
-		.." mnt'"..(tostring(Necrosis.IsSpellMount(Spell.Name)) or "nyl").."'"
-		.." rez'"..(tostring(Necrosis.IsSpellRez(Spell.Name)) or "nyl").."'"
-		.." sum'"..(tostring(Spell.Name == Necrosis.GetSpellName("summoning")) or "nyl").."'"
-		.." dem'"..(tostring(Necrosis.IsSpellDemon(Spell.Name)) or "nyl").."'"
+			.. " n'" .. (tostring(Spell.Name) or "nyl") .. "'"
+			.. " mnt'" .. (tostring(Necrosis.IsSpellMount(Spell.Name)) or "nyl") .. "'"
+			.. " rez'" .. (tostring(Necrosis.IsSpellRez(Spell.Name)) or "nyl") .. "'"
+			.. " sum'" .. (tostring(Spell.Name == Necrosis.GetSpellName("summoning")) or "nyl") .. "'"
+			.. " dem'" .. (tostring(Necrosis.IsSpellDemon(Spell.Name)) or "nyl") .. "'"
 		)
 	end
 
 	-- messages to be posted while summoning a mount
-	if Necrosis.IsSpellMount(Spell.Name) then -- 1 or 2 
+	if Necrosis.IsSpellMount(Spell.Name) then -- 1 or 2
 		Speeches.SpellSucceed.Steed = setmetatable({}, metatable)
 		if NecrosisConfig.SteedSummon and NecrosisConfig.ChatMsg and self.Speech.Demon[7] then
 			local tempnum = math.random(1, #self.Speech.Demon[7])
@@ -207,11 +207,11 @@ function Necrosis:Speech_It(Spell, Speeches, metatable)
 				end
 			end
 		end
-	-- messages to be posted while casting 'Soulstone' on a friendly target
-	elseif Necrosis.IsSpellRez(Spell.Name) -- 11  
---		and not (Spell.TargetName == UnitName("player")) 
-		then
-			local tempnum = 1
+		-- messages to be posted while casting 'Soulstone' on a friendly target
+	elseif Necrosis.IsSpellRez(Spell.Name) -- 11
+	--		and not (Spell.TargetName == UnitName("player"))
+	then
+		local tempnum = 1
 		Speeches.SpellSucceed.Rez = setmetatable({}, metatable)
 		if NecrosisConfig.PlayerSS and NecrosisConfig.ChatMsg and self.Speech.Rez then
 			if NecrosisConfig.PlayerSSSM then
@@ -232,7 +232,7 @@ function Necrosis:Speech_It(Spell, Speeches, metatable)
 				end
 			end
 		end
---[[
+		--[[
 _G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_It SS::::"
 .." chat'"..tostring(NecrosisConfig.ChatMsg).."'"
 .." sum'"..tostring(NecrosisConfig.PlayerSS).."'"
@@ -240,9 +240,9 @@ _G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_It SS::::"
 .." #'"..tostring(tempnum).."'"
 )
 --]]
-	-- messages to be posted while casting 'Ritual of Summoning'
+		-- messages to be posted while casting 'Ritual of Summoning'
 	elseif Spell.Name == Necrosis.GetSpellName("summoning") then -- 37
-			local tempnum = 1
+		local tempnum = 1
 		-- Output the victim if in party or raid
 		Speeches.SpellSucceed.TP = setmetatable({}, metatable)
 		if NecrosisConfig.PlayerSummons and NecrosisConfig.ChatMsg then
@@ -264,7 +264,7 @@ _G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_It SS::::"
 				end
 			end
 		end
---[[
+		--[[
 _G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_It summon::::"
 .." chat'"..tostring(NecrosisConfig.ChatMsg).."'"
 .." sum'"..tostring(NecrosisConfig.PlayerSummons).."'"
@@ -274,20 +274,25 @@ _G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_It summon::::"
 --]]
 		AlphaBuffMenu = 1
 		AlphaBuffVar = GetTime() + 3
-	-- messages to be posted while summoning a pet demon
+		-- messages to be posted while summoning a pet demon
 	elseif Necrosis.IsSpellDemon(Spell.Name) then
 		Speeches.SpellSucceed.Pet = setmetatable({}, metatable)
 		Speeches.SpellSucceed.Sacrifice = setmetatable({}, metatable)
-		
+
 		local id, usage, timer = Necrosis.GetSpellByName(Spell.Name)
-		Speeches.DemonName = NecrosisConfig.PetInfo[usage] or "" 
+		Speeches.DemonName = NecrosisConfig.PetInfo[usage] or ""
 		if usage -- safety...
 		then
-			if usage == "imp" then Speeches.DemonId = 1 
-			elseif usage == "voidwalker" then Speeches.DemonId = 2 
-			elseif usage == "succubus"   then Speeches.DemonId = 3
-			elseif usage == "inccubus"   then Speeches.DemonId = 3			
-			elseif usage == "felhunter"  then Speeches.DemonId = 4 
+			if usage == "imp" then
+				Speeches.DemonId = 1
+			elseif usage == "voidwalker" then
+				Speeches.DemonId = 2
+			elseif usage == "succubus" then
+				Speeches.DemonId = 3
+			elseif usage == "inccubus" then
+				Speeches.DemonId = 3
+			elseif usage == "felhunter" then
+				Speeches.DemonId = 4
 			else -- should never happen...
 			end
 		else
@@ -313,29 +318,29 @@ _G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_It summon::::"
 				end
 				if Necrosis.Debug.speech then
 					_G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_It summon "
-						.." '"..(tostring(Spell.Name)).."'"
-						.." '"..(tostring(Speeches.DemonName)).."'"
-						.." '"..(tostring(Speeches.DemonId)).."'"
-						.." #'"..(tostring(generalSpeechNum)).."'"
-						.." #'"..(tostring(dn)).."'"
-						.." '"..(tostring(NecrosisConfig.PetName[dn])).."'"
-						.." picked #'"..(tostring(tempnum) or "nyl").."'"
-						.." last #'"..(tostring(Speeches.LastSpeech.Pet) or "nyl").."'"
+						.. " '" .. (tostring(Spell.Name)) .. "'"
+						.. " '" .. (tostring(Speeches.DemonName)) .. "'"
+						.. " '" .. (tostring(Speeches.DemonId)) .. "'"
+						.. " #'" .. (tostring(generalSpeechNum)) .. "'"
+						.. " #'" .. (tostring(dn)) .. "'"
+						.. " '" .. (tostring(NecrosisConfig.PetName[dn])) .. "'"
+						.. " picked #'" .. (tostring(tempnum) or "nyl") .. "'"
+						.. " last #'" .. (tostring(Speeches.LastSpeech.Pet) or "nyl") .. "'"
 					)
 				end
 				Speeches.LastSpeech.Pet = tempnum
 				for i in ipairs(self.Speech.Demon[dn][tempnum]) do
 					if Necrosis.Debug.speech then
 						_G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_It summon "
-						.." i'"..(tostring(i) or "nyl").."'"
-						.." '"..(tostring(self.Speech.Demon[dn][tempnum][i]) or "nyl").."'"
+							.. " i'" .. (tostring(i) or "nyl") .. "'"
+							.. " '" .. (tostring(self.Speech.Demon[dn][tempnum][i]) or "nyl") .. "'"
 						)
 					end
 					if self.Speech.Demon[dn][tempnum][i]:find("<after>") then
 						Speeches.SpellSucceed.Pet:insert(
 							self.Speech.Demon[dn][tempnum][i]
 						)
-					elseif self.Speech.Demon[dn][tempnum][i]:find("<sacrifice>")then
+					elseif self.Speech.Demon[dn][tempnum][i]:find("<sacrifice>") then
 						Speeches.SpellSucceed.Sacrifice:insert(
 							self.Speech.Demon[dn][tempnum][i]
 						)
@@ -357,16 +362,16 @@ end
 function Necrosis:Speech_Then(Spell, Speech)
 	if Necrosis.Debug.speech then
 		_G["DEFAULT_CHAT_FRAME"]:AddMessage("Speech_Then"
-		.." n'"..(tostring(Spell.Name) or "nyl").."'"
-		.." mnt'"..(tostring(Necrosis.IsSpellMount(Spell.Name)) or "nyl").."'"
-		.." rez'"..(tostring(Necrosis.IsSpellRez(Spell.Name)) or "nyl").."'"
-		.." sum'"..(tostring(Spell.Name == Necrosis.GetSpellName("summoning")) or "nyl").."'"
-		.." dem'"..(tostring(Necrosis.IsSpellDemon(Spell.Name)) or "nyl").."'"
+			.. " n'" .. (tostring(Spell.Name) or "nyl") .. "'"
+			.. " mnt'" .. (tostring(Necrosis.IsSpellMount(Spell.Name)) or "nyl") .. "'"
+			.. " rez'" .. (tostring(Necrosis.IsSpellRez(Spell.Name)) or "nyl") .. "'"
+			.. " sum'" .. (tostring(Spell.Name == Necrosis.GetSpellName("summoning")) or "nyl") .. "'"
+			.. " dem'" .. (tostring(Necrosis.IsSpellDemon(Spell.Name)) or "nyl") .. "'"
 		)
 	end
-	
+
 	-- messages to be posted after a mount is summoned.
-	if Necrosis.IsSpellMount(Spell.Name) then -- 1 or 2 
+	if Necrosis.IsSpellMount(Spell.Name) then -- 1 or 2
 		for i in ipairs(Speech.SpellSucceed.Steed) do
 			Out(Spell, Speech.SpellSucceed, Speech.Steed[i], "USER")
 		end
@@ -375,25 +380,25 @@ function Necrosis:Speech_Then(Spell, Speech)
 		if f then
 			f:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\MountButton-02")
 		end
-	-- messages to be posted after 'Soulstone' is cast
+		-- messages to be posted after 'Soulstone' is cast
 	elseif Necrosis.IsSpellRez(Spell.Name) then -- 11
 		for i in ipairs(Speech.SpellSucceed.Rez) do
 			Out(Spell, Speech, Speech.SpellSucceed.Rez[i], "WORLD")
 		end
 		Speech.Rez = {}
-	-- messages to be posted after 'Ritual of Summoning' is cast
-	elseif Spell.Name == Necrosis.GetSpellName("summoning") then -- 37 
+		-- messages to be posted after 'Ritual of Summoning' is cast
+	elseif Spell.Name == Necrosis.GetSpellName("summoning") then -- 37
 		for i in ipairs(Speech.SpellSucceed.TP) do
 			Out(Spell, Speech, Speech.SpellSucceed.TP[i], "WORLD")
 		end
 		Speech.TP = {}
-	-- messages to be posted after sacrificing a demon
-	elseif Spell.Name == Necrosis.GetSpellName("sacrifice") then -- 44 
+		-- messages to be posted after sacrificing a demon
+	elseif Spell.Name == Necrosis.GetSpellName("sacrifice") then -- 44
 		for i in ipairs(Speech.SpellSucceed.Sacrifice) do
 			Out(Spell, Speech, Speech.SpellSucceed.Sacrifice[i], "WORLD")
 		end
 		Speech.Sacrifice = {}
-	-- messages to be posted after summoning a demon
+		-- messages to be posted after summoning a demon
 	elseif Necrosis.IsSpellDemon(Spell.Name) then
 		for i in ipairs(Speech.SpellSucceed.Pet) do
 			Out(Spell, Speech, Speech.SpellSucceed.Pet[i], "WORLD")
