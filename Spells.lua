@@ -382,7 +382,10 @@ Notes:
 	[47841]	= {UsageRank = 4, SpellRank = 4, Timer = true, Usage = "unstable_affliction", Length = 18, }, --  
 	[47843]	= {UsageRank = 5, SpellRank = 5, Timer = true, Usage = "unstable_affliction", Length = 18, }, --  	
 	
-	[59161]	= {UsageRank = 1, SpellRank = 1, Timer = true, Usage = "haunt", Length = 12, }, -- Haunt
+	[59161]	= {UsageRank = 1, SpellRank = 1, Timer = true, Usage = "haunt", Length = 12, Cooldown = 8, }, -- Haunt R1 (WotLK 60)
+	[59163]	= {UsageRank = 2, SpellRank = 2, Timer = true, Usage = "haunt", Length = 12, Cooldown = 8, }, -- Haunt R2 (WotLK 70)
+	[59164]	= {UsageRank = 3, SpellRank = 3, Timer = true, Usage = "haunt", Length = 12, Cooldown = 8, }, -- Haunt R3 (WotLK 75)
+	[48181]	= {UsageRank = 4, SpellRank = 4, Timer = true, Usage = "haunt", Length = 12, Cooldown = 8, }, -- Haunt R4 (WotLK 80)
 	
 	-- ::: Spells
 	[348]	= {UsageRank = 1, SpellRank = 1, Timer = true, Usage = "immolate", Length = 15, }, -- Immolate 
@@ -435,6 +438,43 @@ Notes:
 	[18931] = {UsageRank = 3, SpellRank = 3, Timer = false, Usage = "conflagration"}, --  
 	[18932] = {UsageRank = 4, SpellRank = 4, Timer = false, Usage = "conflagration"}, -- 
 	[27266] = {UsageRank = 5, SpellRank = 5, Timer = false, Usage = "conflagration"}, -- TBC
+	[47879] = {UsageRank = 6, SpellRank = 6, Timer = false, Usage = "conflagration"}, -- WotLK (74)
+	[47880] = {UsageRank = 7, SpellRank = 7, Timer = false, Usage = "conflagration"}, -- WotLK (80)
+
+	-- ::: Seed of Corruption (TBC / WotLK Affliction AoE DoT)
+	[27243] = {UsageRank = 1, SpellRank = 1, Timer = true, Usage = "seed_of_corruption", Length = 18, }, -- Seed of Corruption R1 (TBC 70)
+	[47835] = {UsageRank = 2, SpellRank = 2, Timer = true, Usage = "seed_of_corruption", Length = 18, }, -- Seed of Corruption R2 (WotLK 75)
+	[47836] = {UsageRank = 3, SpellRank = 3, Timer = true, Usage = "seed_of_corruption", Length = 18, }, -- Seed of Corruption R3 (WotLK 80)
+
+	-- ::: Incinerate (TBC / WotLK Destruction)
+	[29722] = {UsageRank = 1, SpellRank = 1, Timer = false, Usage = "incinerate"}, -- Incinerate R1 (TBC 64)
+	[32231] = {UsageRank = 2, SpellRank = 2, Timer = false, Usage = "incinerate"}, -- Incinerate R2 (TBC 70)
+	[47837] = {UsageRank = 3, SpellRank = 3, Timer = false, Usage = "incinerate"}, -- Incinerate R3 (WotLK 74)
+	[47838] = {UsageRank = 4, SpellRank = 4, Timer = false, Usage = "incinerate"}, -- Incinerate R4 (WotLK 80)
+
+	-- ::: Shadowfury (TBC / WotLK Destruction AoE stun)
+	[30283] = {UsageRank = 1, SpellRank = 1, Timer = false, Usage = "shadowfury", Cooldown = 20}, -- Shadowfury R1 (TBC)
+	[30413] = {UsageRank = 2, SpellRank = 2, Timer = false, Usage = "shadowfury", Cooldown = 20}, -- Shadowfury R2 (TBC)
+	[30414] = {UsageRank = 3, SpellRank = 3, Timer = false, Usage = "shadowfury", Cooldown = 20}, -- Shadowfury R3 (TBC)
+	[47846] = {UsageRank = 4, SpellRank = 4, Timer = false, Usage = "shadowfury", Cooldown = 20}, -- Shadowfury R4 (WotLK 75)
+	[47847] = {UsageRank = 5, SpellRank = 5, Timer = false, Usage = "shadowfury", Cooldown = 20}, -- Shadowfury R5 (WotLK 80)
+
+	-- ::: Chaos Bolt (WotLK Destruction talent)
+	[50796] = {UsageRank = 1, SpellRank = 1, Timer = true, Usage = "chaos_bolt", Cooldown = 12}, -- Chaos Bolt R1 (60)
+	[59170] = {UsageRank = 2, SpellRank = 2, Timer = true, Usage = "chaos_bolt", Cooldown = 12}, -- Chaos Bolt R2 (70)
+	[59171] = {UsageRank = 3, SpellRank = 3, Timer = true, Usage = "chaos_bolt", Cooldown = 12}, -- Chaos Bolt R3 (75)
+	[59172] = {UsageRank = 4, SpellRank = 4, Timer = true, Usage = "chaos_bolt", Cooldown = 12}, -- Chaos Bolt R4 (80)
+
+	-- ::: Shadowflame (WotLK Fire/Shadow cone)
+	[47897] = {UsageRank = 1, SpellRank = 1, Timer = true, Usage = "shadowflame", Length = 6, Cooldown = 15}, -- Shadowflame R1 (75)
+	[61290] = {UsageRank = 2, SpellRank = 2, Timer = true, Usage = "shadowflame", Length = 6, Cooldown = 15}, -- Shadowflame R2 (80)
+
+	-- ::: Demonic Circle (WotLK)
+	[48018] = {UsageRank = 1, SpellRank = 1, Timer = true, Usage = "demonic_circle_summon", Length = 360, Buff = true, SelfOnly = true},
+	[48020] = {UsageRank = 1, SpellRank = 1, Timer = true, Usage = "demonic_circle_teleport", Cooldown = 30},
+
+	-- ::: Metamorphosis (WotLK Demonology talent)
+	[47241] = {UsageRank = 1, SpellRank = 1, Timer = true, Usage = "metamorphosis", Length = 30, Cooldown = 180, Buff = true, SelfOnly = true},
 	
 	[18265] = {UsageRank = 1, SpellRank = 1, Timer = true, Usage = "siphon_life", Length = 30, }, -- Siphon Life || Syphon de vie 
 	[18879] = {UsageRank = 2, SpellRank = 2, Timer = true, Usage = "siphon_life", Length = 30, }, --  
@@ -502,7 +542,8 @@ Notes:
 	[8288] = {UsageRank = 2, SpellRank = 2, Timer = true, Usage = "drain_soul", Length = 15,}, 
 	[8289] = {UsageRank = 3, SpellRank = 3, Timer = true, Usage = "drain_soul", Length = 15,},
 	[11675] = {UsageRank = 4, SpellRank = 4, Timer = true, Usage = "drain_soul", Length = 15,},
-	[27217] = {UsageRank = 5, SpellRank = 5, Timer = true, Usage = "drain_soul", Length = 15,},	
+	[27217] = {UsageRank = 5, SpellRank = 5, Timer = true, Usage = "drain_soul", Length = 15,},
+	[47855] = {UsageRank = 6, SpellRank = 6, Timer = true, Usage = "drain_soul", Length = 15,}, -- WotLK (77)	
 	
 	-- ::: Spells from using objects: These are spells we look for to create timers. They are not assigned to buttons.
 	-- Blizzard has several ids in the DB for each, not sure which are used for Classic...
@@ -1021,18 +1062,29 @@ function Necrosis.IsSpellKnown(usage)
 
 	if Necrosis.Warlock_Spell_Use[usage] -- get spell id
 	then
-		-- Check if spell is actually in player's spell book using InSpellBook flag
-		return Necrosis.Warlock_Spells[Necrosis.Warlock_Spell_Use[usage]].InSpellBook or false
+		local spellData = Necrosis.Warlock_Spells[Necrosis.Warlock_Spell_Use[usage]]
+		if spellData and spellData.InSpellBook then
+			return true
+		end
+		-- 3.3.5a fallback: check if spell name is known via native GetSpellInfo
+		if spellData and spellData.Name and spellData.Name ~= "" and GetSpellInfo(spellData.Name) then
+			return true
+		end
+		return false
 	else
 		return false -- safety
 	end
 end
 
 function Necrosis.IsSpellKnownId(id)
-	if Necrosis.Warlock_Spells[id] -- get spell id
-	then
-		return 
-			Necrosis.Warlock_Spells[id].InSpellBook or false
+	if Necrosis.Warlock_Spells[id] then
+		if Necrosis.Warlock_Spells[id].InSpellBook then
+			return true
+		end
+		if Necrosis.Warlock_Spells[id].Name and Necrosis.Warlock_Spells[id].Name ~= "" and GetSpellInfo(Necrosis.Warlock_Spells[id].Name) then
+			return true
+		end
+		return false
 	else
 		return false -- safety
 	end
@@ -1468,6 +1520,15 @@ function Necrosis:SpellSetup(reason)
 		if name then -- tab exists
 			for s = offset + 1, offset + numSpells do
 				local spell, sub_name, id = GetSpellBookItemName(s, BOOKTYPE_SPELL)
+				-- 3.3.5a compatibility: GetSpellBookItemName returns only (name, rank) in 3.3.5a
+				if not id then
+					local slotType, spellId = GetSpellBookItemInfo(s, BOOKTYPE_SPELL)
+					id = spellId
+					if not id then
+						local link = GetSpellLink(s, BOOKTYPE_SPELL)
+						id = link and tonumber(link:match("spell:(%d+)"))
+					end
+				end
 				-- spell and sub_name / rank are localized
 
 				if self.Warlock_Spells[id] then -- a warlock spell we care about
