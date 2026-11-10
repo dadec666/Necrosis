@@ -770,6 +770,11 @@ function Necrosis:SetMenusConfig()
 		NecrosisCloseMenu:Enable()
 	end
 
+	if NecrosisMenusConfig1 then NecrosisMenusConfig1:Show() end
+	if NecrosisMenusConfig2 then NecrosisMenusConfig2:Hide() end
+	if NecrosisMenusConfig3 then NecrosisMenusConfig3:Hide() end
+	if NecrosisMenusConfig4 then NecrosisMenusConfig4:Hide() end
+
 	NecrosisMenusConfig:Show()
 end
 

@@ -513,6 +513,9 @@ function Necrosis:SetButtonsConfig()
 	-- set to 1st page
 	Necrosis:SetCompanionPage(0)
 
+	NecrosisButtonsConfig1:Show()
+	NecrosisButtonsConfig2:Hide()
+
 	-- make sure our mount buttons are updated
 	Necrosis:UpdateMountButtons()
 	
@@ -575,48 +578,43 @@ function Necrosis:SetCompanionPage(num)
 end
 
 function Necrosis:UpdateMountButtons()
-	local button, iconTexture, id;
-	local creatureID, creatureName, spellID, icon, active;
-	local offset, selected;
-
-	offset = (NecrosisMountsSelectionFrame.pageMount or 0)*NECROSIS_COMPANIONS_PER_PAGE;
-	--offset = 0;
-	selected = FindCompanionIndex(NecrosisMountsSelectionFrame.idMount);
-	--selected = 0;
+	local offset, selected
+	offset = (NecrosisMountsSelectionFrame.pageMount or 0)*NECROSIS_COMPANIONS_PER_PAGE
+	selected = FindCompanionIndex(NecrosisMountsSelectionFrame.idMount)
 
 	for i = 1, NECROSIS_COMPANIONS_PER_PAGE do
-		button = _G["NecrosisCompanionButton"..i];
-		id = i + (offset or 0);
-		creatureID, creatureName, spellID, icon, active = GetCompanionInfo("MOUNT", id);
-		button.creatureID = creatureID;
-		button.spellID = spellID;
-		button.active = active;
-		if ( creatureID ) then
-			button:SetNormalTexture(icon);
-			button:Enable();
-		else
-			button:Disable();
-		end
-		if ( (id == selected) and creatureID ) then
-			button:SetChecked(true);
-		else
-			button:SetChecked(false);
-		end
-		
-		if ( active ) then
-			_G["NecrosisCompanionButton"..i.."ActiveTexture"]:Show();
-		else
-			_G["NecrosisCompanionButton"..i.."ActiveTexture"]:Hide();
+		local button = _G["NecrosisCompanionButton"..i]
+		if button then
+			local id = i + (offset or 0)
+			local creatureID, creatureName, spellID, icon, active = GetCompanionInfo("MOUNT", id)
+			button.creatureID = creatureID
+			button.spellID = spellID
+			button.active = active
+			if creatureID then
+				button:SetNormalTexture(icon)
+				button:Enable()
+			else
+				button:Disable()
+			end
+			if (id == selected) and creatureID then
+				button:SetChecked(true)
+			else
+				button:SetChecked(false)
+			end
+			
+			local activeTex = _G["NecrosisCompanionButton"..i.."ActiveTexture"]
+			if activeTex then
+				if active then
+					activeTex:Show()
+				else
+					activeTex:Hide()
+				end
+			end
 		end
 	end
 	
-	if ( selected > 0 ) then
-		creatureID, creatureName, spellID, icon, active = GetCompanionInfo("MOUNT", selected);
---		if ( active and creatureID ) then
---			CompanionSummonButton:SetText(PetPaperDollFrameCompanionFrame.mode == "MOUNT" and BINDING_NAME_DISMOUNT or PET_DISMISS);
---		else
---			CompanionSummonButton:SetText(PetPaperDollFrameCompanionFrame.mode == "MOUNT" and MOUNT or SUMMON);
---		end
+	if selected and selected > 0 then
+		local creatureID, creatureName, spellID, icon, active = GetCompanionInfo("MOUNT", selected)
 	end
 end
 

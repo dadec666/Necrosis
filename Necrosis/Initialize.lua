@@ -109,6 +109,33 @@ function Necrosis:Initialize(Config)
 	SlashCmdList["NecrosisCommand"] = Necrosis.SlashHandler
 	SLASH_NecrosisCommand1 = "/necrosis"
 
+	-- Blizzard Interface Options Category (Wiki Ch 10)
+	if not self.BlizzardOptionsPanel then
+		local panel = CreateFrame("Frame", "NecrosisBlizzardOptionsPanel", UIParent)
+		panel.name = "Necrosis"
+
+		local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+		title:SetPoint("TOPLEFT", 16, -16)
+		title:SetText("Necrosis LdC "..(self.Data.Version or "3.0"))
+
+		local desc = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+		desc:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+		desc:SetText("Warlock UI & Shard Management / Менеджер заклинаний, камней и демонов")
+
+		local openBtn = CreateFrame("Button", nil, panel, "OptionsButtonTemplate")
+		openBtn:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -16)
+		openBtn:SetText("Открыть настройки Necrosis")
+		openBtn:SetWidth(200)
+		openBtn:SetHeight(24)
+		openBtn:SetScript("OnClick", function()
+			InterfaceOptionsFrame_Show()
+			Necrosis:OpenConfigPanel()
+		end)
+
+		InterfaceOptions_AddCategory(panel)
+		self.BlizzardOptionsPanel = panel
+	end
+
 	-- On règle la taille de la pierre et des boutons suivant les réglages du SavedVariables
 	NecrosisButton:SetScale(NecrosisConfig.NecrosisButtonScale/100)
 	NecrosisShadowTranceButton:SetScale(NecrosisConfig.ShadowTranceScale/100)

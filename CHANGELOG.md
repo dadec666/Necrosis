@@ -6,7 +6,16 @@ All notable changes to the **Necrosis** addon for World of Warcraft (WotLK 3.3.5
 
 ## [v3.0-r226+] - 2026-11-10
 
-### 🚀 Optimization & Modernization (WotLK 3.3.5a Audit)
+### 🚀 Full WotLK 3.3.5a Modernization (Phases 1 - 7 Compliant with Wiki & Codex)
+- **Phase 1 (Namespace Isolation & Upvalues):** All 39 Lua files enclosed in clean private namespace `local addonName, Necrosis = ...; Necrosis = Necrosis or _G.Necrosis`. Eliminated legacy `getfenv(0)` in favor of `local _G = _G` and cached high-frequency engine functions into local upvalues.
+- **Phase 2 (Bitmask Shard & Bag Engine):** Converted soul bag identification to native WotLK bitmask testing (`bit.band(bagFamily, 4) > 0`) via `GetContainerNumFreeSlots`. Replaced hyperlink string splitting in bag scans with instant native `GetContainerItemID(container, slot) == 6265` with zero garbage collector allocations and `InCombatLockdown()` protection.
+- **Phase 3 (Secure Action Buttons & Combat Queue):** Implemented `CombatQueue` (`QueueCombatAction` & `ProcessCombatQueue`). If stone creation, bag updates, or button setup occur during combat, actions are queued and executed cleanly upon `PLAYER_REGEN_ENABLED` to prevent `Action Blocked / Taint`.
+- **Phase 4 (CLEU Dispatcher & Vararg Events):** Replaced legacy global `arg1..arg12` dependencies in `OnEvent(event, ...)` with native 3.3.5a varargs. Modernized `COMBAT_LOG_EVENT_UNFILTERED` parsing with GUID comparison (`destGUID == playerGUID`) for Nightfall/Backlash procs and Banish fading.
+- **Phase 5 (Dual-Frequency OnUpdate Loop):** Decoupled 0.5s timer ticks from 1.0s ticks to prevent event starvation. Smooth spark animations run at frame rate only when timers exist; texts, antifear, and shard sorting run strictly on throttled ticks.
+- **Phase 6 (Single-Pass Message Processing):** Replaced 20 sequential `string.gsub()` calls in `MsgAddColor()` with a table-driven single-pass pattern matching regex. Routed chat output to `DEFAULT_CHAT_FRAME`.
+- **Phase 7 (UI & Blizzard Interface Options Integration):** Registered Necrosis into standard Blizzard Interface Options (`InterfaceOptions_AddCategory`), fixed nil button index in `UpdateMountButtons()`, and prevented multi-page sub-frame bleed in Options dialogs.
+
+### 🚀 Optimization & Modernization (WotLK 3.3.5a Initial Audit)
 - **Native Buff/Debuff API:** Replaced legacy Vanilla 1.12 tooltip scanning (`NecrosisTooltip:SetUnitDebuff`) with high-performance native 3.3.5a `UnitDebuff()` and `UnitBuff()` calls. Completely eliminated `tostring(nil)` errors and reduced per-frame CPU overhead by ~95%.
 - **Container Loop Fix:** Resolved critical `break` bug in `BagExplore()` and `SoulshardSwitch()` where encountering a soul bag halted scanning of all subsequent containers.
 - **Initialization Overhaul:** Resolved duplicate addon initialization by listening strictly to `PLAYER_LOGIN` with an explicit `self.Loaded` guard, preventing duplicate event hooks and frame re-allocations.
