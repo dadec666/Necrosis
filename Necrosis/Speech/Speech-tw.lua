@@ -21,6 +21,9 @@
 
 ------------------------------------------------------------------------------------------------------
 
+Necrosis = Necrosis or _G.Necrosis or {}
+Necrosis.Speech = Necrosis.Speech or {}
+
 local _G = _G
 -- Necrosis LdC
 -- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 

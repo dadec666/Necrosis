@@ -21,6 +21,10 @@
 
 ------------------------------------------------------------------------------------------------------
 
+Necrosis = Necrosis or _G.Necrosis or {}
+Necrosis.Unit = Necrosis.Unit or {}
+Necrosis.Translation = Necrosis.Translation or {}
+
 local _G = _G
 -- Necrosis LdC
 -- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 

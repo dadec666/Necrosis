@@ -7,6 +7,9 @@ All notable changes to the **Necrosis** addon for World of Warcraft (WotLK 3.3.5
 ## [v3.0-r226+] - 2026-11-10
 
 ### 🚀 Full WotLK 3.3.5a Modernization (Phases 1 - 7 Compliant with Wiki & Codex)
+- **Critical Startup & 3.3.5a Engine Loader Fix:**
+  - Resolved fatal `attempt to index global 'Necrosis' (a nil value)` and `Speech-fr.lua` / `Speech-en.lua` startup crashes on game load. In WoW 3.3.5a (build 12340), varargs (`...`) are not passed to top-level scripts loaded via `.toc` on initial launch; removed faulty `addonName` indexing and added bulletproof fallback initialization `Necrosis = Necrosis or _G.Necrosis or {}` across `Localization.lua`, `Speech/*.lua`, and `Locales/*.lua`.
+  - Added safe fallback detection for `GetAddOnMetadata` when the addon directory name differs from the TOC title.
 - **Phase 1 (Global Core & Upvalues):** Robust initialization of `Necrosis = Necrosis or {}` and `_G.Necrosis` at entry point (`Localization.lua`). Eliminated legacy `getfenv(0)` across all subsystem files in favor of direct `local _G = _G`, and cached high-frequency engine functions into local upvalues without shadowing conflicts.
 - **Phase 2 (Bitmask Shard & Bag Engine):** Converted soul bag identification to native WotLK bitmask testing (`bit.band(bagFamily, 4) > 0`) via `GetContainerNumFreeSlots`. Replaced hyperlink string splitting in bag scans with instant native `GetContainerItemID(container, slot) == 6265` with zero garbage collector allocations and `InCombatLockdown()` protection.
 - **Phase 3 (Secure Action Buttons & Combat Queue):** Implemented `CombatQueue` (`QueueCombatAction` & `ProcessCombatQueue`). If stone creation, bag updates, or button setup occur during combat, actions are queued and executed cleanly upon `PLAYER_REGEN_ENABLED` to prevent `Action Blocked / Taint`.
