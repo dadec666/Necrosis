@@ -488,7 +488,8 @@ function Necrosis:OnUpdate(elapsed)
 end
 
 -- Fonction lancée selon l'événement intercepté
-function Necrosis:OnEvent(event)
+function Necrosis:OnEvent(event, ...)
+	local arg1, arg2, arg3, arg4 = ...
 	if (event == "PLAYER_ENTERING_WORLD") then
 		Local.InWorld = true
 	elseif (event == "PLAYER_LEAVING_WORLD") then
@@ -638,43 +639,47 @@ function Necrosis:OnEvent(event)
 	elseif (event == "UNIT_PET" and arg1 == "player") then
 		self:ChangeDemon()
 
-	-- Lecture du journal de combat
+	-- Lecture du journal de combat (CLEU Dispatcher - Wiki Ch 21)
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		-- Détection de la transe de l'ombre et de  Contrecoup
-		if arg2 == "SPELL_AURA_APPLIED" and arg6 == UnitGUID("player") then
-			self:SelfEffect("BUFF", arg10)
+		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName, spellSchool, auraType = ...
+		local playerGUID = UnitGUID("player")
+
+		-- Détection de la transe de l'ombre et de Contrecoup (Nightfall / Backlash)
+		if eventType == "SPELL_AURA_APPLIED" and destGUID == playerGUID then
+			self:SelfEffect("BUFF", spellName)
 		-- Détection de la fin de la transe de l'ombre et de Contrecoup
-		elseif arg2 == "SPELL_AURA_REMOVED" and arg6 == UnitGUID("player") then
-			self:SelfEffect("DEBUFF", arg10)
-		-- Détection du Déban
-		elseif arg2 == "SPELL_AURA_REMOVED" and arg6 == UnitGUID("focus") and Local.TimerManagement.Banish and arg10 == self.Spell[9].Name then
-				self:Msg("BAN ! BAN ! BAN !")
-				self:RetraitTimerParNom(self.Spell[9], Local.TimerManagement)
-				Local.TimerManagement.Banish = false
+		elseif eventType == "SPELL_AURA_REMOVED" and destGUID == playerGUID then
+			self:SelfEffect("DEBUFF", spellName)
+		-- Détection du Déban (Banish fading from focus)
+		elseif eventType == "SPELL_AURA_REMOVED" and destGUID == UnitGUID("focus") and Local.TimerManagement.Banish and spellName == self.Spell[9].Name then
+			self:Msg("BAN ! BAN ! BAN !")
+			self:RetraitTimerParNom(self.Spell[9], Local.TimerManagement)
+			Local.TimerManagement.Banish = false
 		-- Détection des résists / immunes
-		elseif arg2 == "SPELL_MISSED" and arg3 == UnitGUID("player") and arg6 == UnitGUID("target") then
+		elseif eventType == "SPELL_MISSED" and sourceGUID == playerGUID and destGUID == UnitGUID("target") then
+			local missType = auraType -- For SPELL_MISSED, 12th arg is missType
 			if NecrosisConfig.AntiFearAlert
-				and (arg10 == self.Spell[13].Name or arg10 == self.Spell[19].Name)
-				and arg12 == "IMMUNE"
+				and (spellName == self.Spell[13].Name or spellName == self.Spell[19].Name)
+				and missType == "IMMUNE"
 				then
 					Local.Warning.Antifear.Immune = true
 			end
-			if arg10 == Local.TimerManagement.LastSpell.Name
+			if spellName == Local.TimerManagement.LastSpell.Name
 				and GetTime() <= (Local.TimerManagement.LastSpell.Time + 1.5)
 				then
 					self:RetraitTimerParIndex(Local.TimerManagement.LastSpell.Index, Local.TimerManagement)
 			end
 		-- Détection application d'une pierre de sort/feu sur une arme
-		elseif arg2 == "ENCHANT_APPLIED"
-			and arg6 == UnitGUID("player")
-			and (arg9 == NecrosisConfig.ItemSwitchCombat[1] or NecrosisConfig.ItemSwitchCombat[2])
+		elseif eventType == "ENCHANT_APPLIED"
+			and destGUID == playerGUID
+			and (spellID == NecrosisConfig.ItemSwitchCombat[1] or spellID == NecrosisConfig.ItemSwitchCombat[2])
 			then
-				Local.SomethingOnHand = arg9
+				Local.SomethingOnHand = spellID
 				self:UpdateIcons()
 		-- Détection fin d'enchant
-		elseif arg2 == "ENCHANT_REMOVE"
-			and arg6 == UnitGUID("player")
-			and (arg9 == NecrosisConfig.ItemSwitchCombat[1] or NecrosisConfig.ItemSwitchCombat[2])
+		elseif (eventType == "ENCHANT_REMOVED" or eventType == "ENCHANT_REMOVE")
+			and destGUID == playerGUID
+			and (spellID == NecrosisConfig.ItemSwitchCombat[1] or spellID == NecrosisConfig.ItemSwitchCombat[2])
 			then
 				Local.SomethingOnHand = "Rien"
 				self:UpdateIcons()
