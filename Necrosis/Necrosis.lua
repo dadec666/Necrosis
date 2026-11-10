@@ -38,7 +38,9 @@ NecrosisConfig = {}
 
 -- Variables locales
 local Local = {}
-local _G = _G or getfenv(0)
+local _G = _G
+local addonName, Necrosis = ...
+Necrosis = Necrosis or _G.Necrosis
 
 -- Lua and WoW API Upvalues for high-frequency functions
 local GetTime = GetTime
@@ -59,7 +61,16 @@ local UnitBuff = UnitBuff
 local UnitDebuff = UnitDebuff
 local GetContainerNumSlots = GetContainerNumSlots
 local GetContainerItemLink = GetContainerItemLink
+local GetContainerItemID = GetContainerItemID
+local GetContainerNumFreeSlots = GetContainerNumFreeSlots
+local GetItemCount = GetItemCount
 local GetItemInfo = GetItemInfo
+local PickupContainerItem = PickupContainerItem
+local CursorHasItem = CursorHasItem
+local DeleteCursorItem = DeleteCursorItem
+local PutItemInBackpack = PutItemInBackpack
+local PutItemInBag = PutItemInBag
+local bit_band = bit.band
 
 ------------------------------------------------------------------------------------------------------
 -- FONCTIONS LOCALES
@@ -1818,12 +1829,20 @@ end
 function Necrosis:BagExplore(arg)
 	for container = 0, 4, 1 do
 		Local.BagIsSoulPouch[container + 1] = false
-		local bagName = GetBagName(container)
-		if bagName and self.Translation.Item.SoulPouch then
-			for i = 1, #self.Translation.Item.SoulPouch do
-				if bagName == self.Translation.Item.SoulPouch[i] then
-					Local.BagIsSoulPouch[container + 1] = true
-					break
+		if container > 0 then
+			local _, bagFamily = GetContainerNumFreeSlots(container)
+			if bagFamily and bit_band(bagFamily, 4) > 0 then
+				Local.BagIsSoulPouch[container + 1] = true
+			end
+		end
+		if not Local.BagIsSoulPouch[container + 1] then
+			local bagName = GetBagName(container)
+			if bagName and self.Translation.Item.SoulPouch then
+				for i = 1, #self.Translation.Item.SoulPouch do
+					if bagName == self.Translation.Item.SoulPouch[i] then
+						Local.BagIsSoulPouch[container + 1] = true
+						break
+					end
 				end
 			end
 		end
@@ -1949,24 +1968,21 @@ function Necrosis:BagExplore(arg)
 	if NecrosisConfig.DestroyShard
 		and NecrosisConfig.DestroyCount
 		and NecrosisConfig.DestroyCount > 0
+		and not InCombatLockdown()
 		then
 			for container = 0, 4, 1 do
 				if Local.BagIsSoulPouch[container + 1] then break end
 				for slot=1, GetContainerNumSlots(container), 1 do
-					local itemLink = GetContainerItemLink(container, slot)
-					if (itemLink) then
-						local _, itemID = strsplit(":", itemLink)
-						itemID = tonumber(itemID)
-						if (itemID == 6265) then
-							if (NecrosisConfig.DestroyCount < Local.Soulshard.Count) then
-								PickupContainerItem(container, slot)
-								if (CursorHasItem()) then
-									DeleteCursorItem()
-									Local.Soulshard.Count = GetItemCount(6265)
-								end 
-							end
-							break
+					local itemID = GetContainerItemID(container, slot)
+					if (itemID == 6265) then
+						if (NecrosisConfig.DestroyCount < Local.Soulshard.Count) then
+							PickupContainerItem(container, slot)
+							if (CursorHasItem()) then
+								DeleteCursorItem()
+								Local.Soulshard.Count = GetItemCount(6265)
+							end 
 						end
+						break
 					end
 				end
 				if NecrosisConfig.DestroyCount >= Local.Soulshard.Count then break end
@@ -2032,21 +2048,18 @@ end
 
 -- allows you to find / arrange shards in bags || Fonction qui permet de trouver / ranger les fragments dans les sacs
 function Necrosis:SoulshardSwitch(Type)
+	if InCombatLockdown() then return end
 	if (Type == "CHECK") then Local.Soulshard.Move = 0 end
 	for container = 0, 4, 1 do
 		if not Local.BagIsSoulPouch[container+1] and not (container == NecrosisConfig.SoulshardContainer) then
 			for slot = 1, GetContainerNumSlots(container), 1 do
-				local itemLink = GetContainerItemLink(container, slot)
-				if (itemLink) then
-					local _, itemID = strsplit(":", itemLink)
-					itemID = tonumber(itemID)
-					if (itemID == 6265) then
-						if (Type == "CHECK") then
-							Local.Soulshard.Move = Local.Soulshard.Move + 1
-						elseif (Type == "MOVE") then
-							self:FindSlot(container, slot)
-							Local.Soulshard.Move = Local.Soulshard.Move - 1
-						end
+				local itemID = GetContainerItemID(container, slot)
+				if (itemID == 6265) then
+					if (Type == "CHECK") then
+						Local.Soulshard.Move = Local.Soulshard.Move + 1
+					elseif (Type == "MOVE") then
+						self:FindSlot(container, slot)
+						Local.Soulshard.Move = Local.Soulshard.Move - 1
 					end
 				end
 			end
@@ -2056,19 +2069,15 @@ end
 
 -- finds a new bag / slot when moving shards || Pendant le déplacement des fragments, il faut trouver un nouvel emplacement aux objets déplacés :)
 function Necrosis:FindSlot(shardIndex, shardSlot)
+	if InCombatLockdown() then return end
 	local full = true
-	for slot=1, GetContainerNumSlots(NecrosisConfig.SoulshardContainer), 1 do
-		local itemLink = GetContainerItemLink(NecrosisConfig.SoulshardContainer, slot)
-		local isShard = false
-		if itemLink then
-			local _, itemID = strsplit(":", itemLink)
-			if tonumber(itemID) == 6265 then
-				isShard = true
-			end
-		end
-		if not isShard then
+	local targetContainer = NecrosisConfig.SoulshardContainer
+	if not targetContainer then return end
+	for slot=1, GetContainerNumSlots(targetContainer), 1 do
+		local itemID = GetContainerItemID(targetContainer, slot)
+		if itemID ~= 6265 then
 			PickupContainerItem(shardIndex, shardSlot)
-			PickupContainerItem(NecrosisConfig.SoulshardContainer, slot)
+			PickupContainerItem(targetContainer, slot)
 			if (CursorHasItem()) then
 				if shardIndex == 0 then
 					PutItemInBackpack()
@@ -2080,9 +2089,9 @@ function Necrosis:FindSlot(shardIndex, shardSlot)
 			break
 		end
 	end
-	-- destory extra shards if the option is enabled || Destruction des fragments en sur-nombre si l'option est activée
-	if (full and NecrosisConfig.SoulshardDestroy) then
-		if (NecrosisConfig.DestroyCount < Local.Soulshard.Count) then
+	-- destroy extra shards if the option is enabled || Destruction des fragments en sur-nombre si l'option est activée
+	if (full and NecrosisConfig.SoulshardDestroy and not InCombatLockdown()) then
+		if (NecrosisConfig.DestroyCount and NecrosisConfig.DestroyCount < Local.Soulshard.Count) then
 			PickupContainerItem(shardIndex, shardSlot)
 			if (CursorHasItem()) then
 				DeleteCursorItem()

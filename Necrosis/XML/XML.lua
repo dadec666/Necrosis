@@ -35,7 +35,9 @@
 ------------------------------------------------------------------------------------------------------
 
 -- On définit G comme étant le tableau contenant toutes les frames existantes.
-local _G = getfenv(0)
+local _G = _G
+local addonName, Necrosis = ...
+Necrosis = Necrosis or _G.Necrosis
 
 ------------------------------------------------------------------------------------------------------
 -- ANCHOR FOR THE GRAPHICS/TEXT TIMER || ANCRES DES TIMERS GRAPHIQUES ET TEXTUELS

@@ -33,7 +33,11 @@
 -- Version $LastChangedDate: 2010-08-04 12:04:27 +1000 (Wed, 04 Aug 2010) $
 ------------------------------------------------------------------------------------------------------
 
-Necrosis = {}
+local _G = _G
+local addonName, Necrosis = ...
+Necrosis = Necrosis or {}
+_G[addonName] = Necrosis
+_G.Necrosis = Necrosis
 
 Necrosis.Data = {
 	Version = GetAddOnMetadata("Necrosis", "Version"),

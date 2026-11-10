@@ -35,7 +35,9 @@
 ------------------------------------------------------------------------------------------------------
 
 -- On définit G comme étant le tableau contenant toutes les frames existantes.
-local _G = getfenv(0)
+local _G = _G
+local addonName, Necrosis = ...
+Necrosis = Necrosis or _G.Necrosis
 
 local NECROSIS_COMPANIONS_PER_PAGE = 12;
 local NECROSIS_PAGE_NUMBER = "Page %s of %s";

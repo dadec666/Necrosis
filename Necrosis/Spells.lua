@@ -20,6 +20,10 @@
 --]]
 
 ------------------------------------------------------------------------------------------------------
+
+local _G = _G
+local addonName, Necrosis = ...
+Necrosis = Necrosis or _G.Necrosis
 -- Necrosis LdC
 -- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
