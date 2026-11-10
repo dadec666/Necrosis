@@ -24,30 +24,25 @@
 -- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 --
--- Skins et voix Françaises : Eliah, Ner'zhul
+-- Skins et voix Francaises : Eliah, Ner'zhul
 --
 -- Version Allemande par Geschan
--- Version Espagnole par DosS (Zul’jin)
+-- Version Espagnole par DosS (Zul'jin)
 -- Version Russe par Komsomolka
 --
 -- Version $LastChangedDate: 2010-08-04 12:04:27 +1000 (Wed, 04 Aug 2010) $
 ------------------------------------------------------------------------------------------------------
 
-local _G = _G
+local _G = _G or getfenv(0)
 Necrosis = Necrosis or _G.Necrosis or {}
 _G.Necrosis = Necrosis
 
-local version
-if GetAddOnMetadata then
-	version = GetAddOnMetadata("Necrosis", "Version")
-end
-version = version or "3.0"
+local version = (GetAddOnMetadata and GetAddOnMetadata("Necrosis", "Version")) or "3.0"
 
-Necrosis.Data = {
-	Version = version,
-	AppName = "Necrosis LdC",
-	LastConfig = 20100701
-}
+Necrosis.Data = Necrosis.Data or {}
+Necrosis.Data.Version = version
+Necrosis.Data.AppName = "Necrosis LdC"
+Necrosis.Data.LastConfig = 20100701
 Necrosis.Data.Label = Necrosis.Data.AppName .. " " .. Necrosis.Data.Version
 
 Necrosis.Speech = Necrosis.Speech or {}

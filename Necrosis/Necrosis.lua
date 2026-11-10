@@ -34,11 +34,13 @@
 ------------------------------------------------------------------------------------------------------
 
 -- Variables globales
-NecrosisConfig = {}
+NecrosisConfig = NecrosisConfig or {}
 
 -- Variables locales
 local Local = {}
-local _G = _G
+local _G = _G or getfenv(0)
+Necrosis = Necrosis or _G.Necrosis or {}
+_G.Necrosis = Necrosis
 
 -- Lua and WoW API Upvalues for high-frequency functions
 local GetTime = GetTime
@@ -68,7 +70,22 @@ local CursorHasItem = CursorHasItem
 local DeleteCursorItem = DeleteCursorItem
 local PutItemInBackpack = PutItemInBackpack
 local PutItemInBag = PutItemInBag
-local bit_band = bit.band
+local bit_band = (bit and bit.band) or function(a, b)
+	if not a or not b then return 0 end
+	local p, c = 1, 0
+	while a > 0 and b > 0 do
+		local ra, rb = a % 2, b % 2
+		if ra == 1 and rb == 1 then c = c + p end
+		a, b, p = math.floor(a / 2), math.floor(b / 2), p * 2
+	end
+	return c
+end
+
+local BOOKTYPE_SPELL = BOOKTYPE_SPELL or 'spell'
+local GetSpellName = GetSpellName or function(id, book)
+	local n, r = GetSpellInfo(id, book)
+	return n, r
+end
 
 ------------------------------------------------------------------------------------------------------
 -- FONCTIONS LOCALES
@@ -106,7 +123,7 @@ do
 			elseif ( populate == "array" ) then
 				for i = 1, num do
 					local v = select(i, ...)
-					table.insert(tbl, i, v)
+					tbl[i] = v
 				end
 			end
 		end
@@ -2290,7 +2307,7 @@ function Necrosis:SpellSetup()
 	end
 	del(CurrentSpells)
 
-	for spellID = 1, MAX_SPELLS, 1 do
+	for spellID = 1, (MAX_SPELLS or 1024), 1 do
 		local spellName, subSpellName = GetSpellName(spellID, BOOKTYPE_SPELL)
 		if (spellName) then
 			for index = 1, #self.Spell, 1 do

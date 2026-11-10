@@ -34,7 +34,9 @@
 -- Version $LastChangedDate: 2009-12-10 17:09:53 +1100 (Thu, 10 Dec 2009) $
 ------------------------------------------------------------------------------------------------------
 
-local _G = _G
+local _G = _G or getfenv(0)
+Necrosis = Necrosis or _G.Necrosis or {}
+_G.Necrosis = Necrosis
 local GetTime = GetTime
 local floor = math.floor
 local fmod = math.fmod

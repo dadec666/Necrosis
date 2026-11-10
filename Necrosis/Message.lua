@@ -34,7 +34,9 @@
 ------------------------------------------------------------------------------------------------------
 
 -- One defines G as being the table containing all the existing frames.
-local _G = _G
+local _G = _G or getfenv(0)
+Necrosis = Necrosis or _G.Necrosis or {}
+_G.Necrosis = Necrosis
 
 ------------------------------------------------------------------------------------------------------
 -- Message handler (CONSOLE, CHAT, MESSAGE SYSTEM)

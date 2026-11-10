@@ -21,7 +21,9 @@
 
 ------------------------------------------------------------------------------------------------------
 
-local _G = _G
+local _G = _G or getfenv(0)
+Necrosis = Necrosis or _G.Necrosis or {}
+_G.Necrosis = Necrosis
 -- Necrosis LdC
 -- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
@@ -64,7 +66,7 @@ do
 			elseif ( populate == "array" ) then
 				for i = 1, num do
 					local v = select(i, ...)
-					table.insert(tbl, i, v)
+					tbl[i] = v
 				end
 			end
 		end

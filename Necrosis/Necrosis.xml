@@ -2,12 +2,27 @@
 	<Frame name="Necrosis_Variable_Frame" hidden="false">
 		<Scripts>
 			<OnLoad>
-				self:RegisterEvent("PLAYER_LOGIN")
+				local _g = _G or getfenv(0)
+				Necrosis = Necrosis or _g.Necrosis or {}
+				_g.Necrosis = Necrosis
+				Necrosis.Data = Necrosis.Data or { Version = "3.0", AppName = "Necrosis LdC", LastConfig = 20100701 }
+				Necrosis.Data.Label = Necrosis.Data.AppName .. " " .. Necrosis.Data.Version
+				Necrosis.Speech = Necrosis.Speech or {}
+				Necrosis.Unit = Necrosis.Unit or {}
+				Necrosis.Translation = Necrosis.Translation or {}
+				Necrosis.Config = Necrosis.Config or {}
+				if self and self.RegisterEvent then
+					self:RegisterEvent("PLAYER_LOGIN")
+				end
 			</OnLoad>
 			<OnEvent>
 				if event == "PLAYER_LOGIN" then
-					self:UnregisterEvent("PLAYER_LOGIN")
-					Necrosis:OnLoad()
+					if self and self.UnregisterEvent then
+						self:UnregisterEvent("PLAYER_LOGIN")
+					end
+					if Necrosis and Necrosis.OnLoad then
+						Necrosis:OnLoad()
+					end
 				end
 			</OnEvent>
 		</Scripts>

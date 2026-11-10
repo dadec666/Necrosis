@@ -34,7 +34,9 @@
 ------------------------------------------------------------------------------------------------------
 
 -- On définit _G comme étant le tableau contenant toutes les frames existantes.
-local _G = _G
+local _G = _G or getfenv(0)
+Necrosis = Necrosis or _G.Necrosis or {}
+_G.Necrosis = Necrosis
 
 ------------------------------------------------------------------------------------------------------
 -- FONCTION D'INITIALISATION
@@ -125,7 +127,7 @@ function Necrosis:Initialize(Config)
 			Necrosis:OpenConfigPanel()
 		end)
 
-		InterfaceOptions_AddCategory(panel)
+		if InterfaceOptions_AddCategory then InterfaceOptions_AddCategory(panel) end
 		self.BlizzardOptionsPanel = panel
 	end
 

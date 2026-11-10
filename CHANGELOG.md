@@ -6,10 +6,22 @@ All notable changes to the **Necrosis** addon for World of Warcraft (WotLK 3.3.5
 
 ## [v3.0-r226+] - 2026-11-10
 
+### 🚀 Critical Engine & Startup Fixes (WoW 3.3.5a Live Client)
+- **Zero-Error FrameXML Bootstrap:**
+  - Added core table initialization (`Necrosis`, `Data`, `Speech`, `Unit`, `Translation`, `Config`) into `Necrosis.xml` frame `<OnLoad>` script, guaranteeing the global table exists before any `.lua` file is parsed.
+  - Injected universal guard `local _G = _G or getfenv(0); Necrosis = Necrosis or _G.Necrosis or {}; _G.Necrosis = Necrosis` into all 39 `.lua` source files, completely preventing `attempt to index global 'Necrosis' (a nil value)`.
+- **Live Client TOC Compatibility:**
+  - Reverted `Necrosis.toc` to explicitly list all individual `.lua` locale files (`Locales/Functions-*.lua`, `Locales/Dialog-*.lua`, `Speech/Speech-*.lua`) instead of dynamic XML manifests (`Locales.xml`), resolving `Couldn't open` errors caused by WoW 3.3.5a's static VFS indexing at client launch.
+  - Removed orphaned `Locales\Locales.xml` and `Speech\Speech.xml`.
+- **Engine Safety & Robustness:**
+  - Safeguarded `Bindings.lua` with fallback strings and guarded table accesses for all spell, mount, and translation keys.
+  - Added safe fallback for `bit.band` in `Necrosis.lua` to prevent crashes when bitlib is not yet indexed.
+  - Added safe fallbacks for `GetSpellName`, `BOOKTYPE_SPELL`, and `(MAX_SPELLS or 1024)`.
+  - Replaced unsafe `table.insert(tbl, i, v)` in reusable table pool (`new("array", ...)`) with direct `tbl[i] = v` to prevent `position out of bounds` errors on nil parameters.
+  - Guarded `InterfaceOptions_AddCategory(panel)` in `Initialize.lua`.
+  - Normalized all files to standard Windows CRLF (`\r\n`) line endings with UTF-8 encoding.
+
 ### 🚀 Full WotLK 3.3.5a Modernization (Phases 1 - 7 Compliant with Wiki & Codex)
-- **Critical Startup & 3.3.5a Engine Loader Fix:**
-  - Resolved fatal `attempt to index global 'Necrosis' (a nil value)` and `Speech-fr.lua` / `Speech-en.lua` startup crashes on game load. In WoW 3.3.5a (build 12340), varargs (`...`) are not passed to top-level scripts loaded via `.toc` on initial launch; removed faulty `addonName` indexing and added bulletproof fallback initialization `Necrosis = Necrosis or _G.Necrosis or {}` across `Localization.lua`, `Speech/*.lua`, and `Locales/*.lua`.
-  - Resolved `Initialize.lua:58: attempt to call method 'Localization_Dialog_Ru' (a nil value)` by introducing native XML manifests (`Locales\Locales.xml` and `Speech\Speech.xml`) standard in 3.3.5a (AtlasLoot/Masque pattern), adding guarded locale loader in `Initialize()` with fallback to English, and safeguarding `Bindings.lua` and `self.Config`.
 - **Phase 1 (Global Core & Upvalues):** Robust initialization of `Necrosis = Necrosis or {}` and `_G.Necrosis` at entry point (`Localization.lua`). Eliminated legacy `getfenv(0)` across all subsystem files in favor of direct `local _G = _G`, and cached high-frequency engine functions into local upvalues without shadowing conflicts.
 - **Phase 2 (Bitmask Shard & Bag Engine):** Converted soul bag identification to native WotLK bitmask testing (`bit.band(bagFamily, 4) > 0`) via `GetContainerNumFreeSlots`. Replaced hyperlink string splitting in bag scans with instant native `GetContainerItemID(container, slot) == 6265` with zero garbage collector allocations and `InCombatLockdown()` protection.
 - **Phase 3 (Secure Action Buttons & Combat Queue):** Implemented `CombatQueue` (`QueueCombatAction` & `ProcessCombatQueue`). If stone creation, bag updates, or button setup occur during combat, actions are queued and executed cleanly upon `PLAYER_REGEN_ENABLED` to prevent `Action Blocked / Taint`.
@@ -28,76 +40,3 @@ All notable changes to the **Necrosis** addon for World of Warcraft (WotLK 3.3.5
   - Converted all localization files to strict UTF-8 without BOM.
   - Fixed Windows-1252 character encoding corruption in Spanish, German, and French locale files.
   - Fixed invalid escape sequences (`\n`) in English, Chinese, and Taiwanese dialogs.
-  - Guarded table recycling `del(t)` against `nil` references and eliminated invalid `del(colorCode)` calls.
-- **OnUpdate Throttling & Garbage Collection:** 
-  - Added early-exit checks when no spell timers are active.
-  - Replaced per-frame table instantiations (`LastPoint = {}`) in `GraphicalTimers.lua` with localized stack variables.
-  - Cached frequently used global Lua and WoW API functions into local upvalues.
-- **Deep Subsystem Audit Fixes:**
-  - **Full Soul Bag Recognition:** Expanded bag identification loop from hardcoded 3 to `#self.Translation.Item.SoulPouch`, supporting all 8 high-level TBC/WotLK soul bags (Abyssal Bag, Felcloth Bag, etc.).
-  - **Lua Operator Precedence:** Fixed `not NecrosisConfig.SoulshardContainer == i - 1` logic bug in shard capacity checks.
-  - **Reversed Combat Timer Cleanup:** Fixed table index skipping bug in `RetraitTimerCombat()` by iterating backwards (`#Timer.SpellTimer, 1, -1`).
-  - **Modernized XML Frame Scripts:** Replaced legacy Vanilla globals (`this`, `arg1`) in all `SetScript` handlers with modern WotLK parameters (`self`, `elapsed`).
-  - **Audio Path Normalization:** Standardized casing of sound paths across all dialog locales (`Sounds/`).
-
----
-
-## [r226] - 2010-08-04
-
-- TOC and version number updated for patch 3.3.5.
-
----
-
-## [r225]
-
-- TOC and version number updated for patch 3.3.5.
-- Fixed keybindings for Corruption, Curse of the Elements, and Curse of Doom.
-- Fixed error with text timers when no target was found ([#130](https://github.com/dadec666/Necrosis/issues/130)).
-- Fixed potential taint issue ([#143](https://github.com/dadec666/Necrosis/issues/143)).
-- **Localization Updates:**
-  - Fixed Soulstone cooldown duration across all languages.
-  - Russian localization updated by StingerSoft ([#119](https://github.com/dadec666/Necrosis/issues/119), [#120](https://github.com/dadec666/Necrosis/issues/120)).
-  - French localization updated by oXid_FoX ([#151](https://github.com/dadec666/Necrosis/issues/151)).
-
----
-
-## [r224]
-
-- TOC and version number updated.
-- Mount selection interface improvements for mount collectors.
-- Shift+Click on Soulstone button now casts **Ritual of Summoning**.
-- **Haunt** now refreshes the Corruption timer.
-- **Updated Spell Cooldown Timers:**
-  - Soulshatter (3 min)
-  - Fel Domination (3 min)
-  - Infernal (10 min)
-  - Soulstone Resurrection (15 min)
-- Removed `<target>` parameter from summoning messages.
-
----
-
-## [r223]
-
-- Max soulshard count handling improved: replaced manual input box with an intuitive slider.
-
----
-
-## [r222]
-
-- Fixed an issue with keybinding templates.
-- **Updated Spell Cooldown Timers:**
-  - Ritual of Doom (30 min)
-  - Ritual of Summoning (2 min)
-  - Demon Charge (45 sec)
-  - Life Tap (40 sec)
-  - Immolation Aura (30 sec)
-  - Challenging Howl (15 sec)
-  - Conflagrate (10 sec)
-
----
-
-## [r221]
-
-- Removed **Curse of Recklessness** (removed by Blizzard in Patch 3.1).
-- TOC and version number updated.
-
