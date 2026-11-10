@@ -631,6 +631,7 @@ function Necrosis:OnEvent(event)
 
 		-- On redéfinit les attributs des boutons de sorts de manière situationnelle
 		self:NoCombatAttribute(Local.Stone.Soul.Mode, Local.Stone.Fire.Mode, Local.Stone.Spell.Mode, Local.Menu.Pet, Local.Menu.Buff, Local.Menu.Curse)
+		self:ProcessCombatQueue()
 		self:UpdateIcons()
 
 	-- Quand le démoniste change de démon
@@ -2102,11 +2103,36 @@ function Necrosis:FindSlot(shardIndex, shardSlot)
 end
 
 ------------------------------------------------------------------------------------------------------
+-- COMBAT QUEUE FOR SECURE ATTRIBUTE UPDATES (Wiki Ch 15 & Ch 25)
+------------------------------------------------------------------------------------------------------
+
+function Necrosis:QueueCombatAction(actionKey, funcName, ...)
+	self.CombatQueue = self.CombatQueue or {}
+	self.CombatQueue[actionKey] = {funcName = funcName, args = {...}}
+end
+
+function Necrosis:ProcessCombatQueue()
+	if InCombatLockdown() or not self.CombatQueue then
+		return
+	end
+	for key, item in pairs(self.CombatQueue) do
+		if item.funcName and self[item.funcName] then
+			self[item.funcName](self, unpack(item.args))
+		end
+	end
+	self.CombatQueue = {}
+end
+
+------------------------------------------------------------------------------------------------------
 -- VARIOUS FUNCTIONS || FONCTIONS DES SORTS
 ------------------------------------------------------------------------------------------------------
 
 -- Display or Hide buttons depending on spell availability || Affiche ou masque les boutons de sort à chaque nouveau sort appris
 function Necrosis:ButtonSetup()
+	if InCombatLockdown() then
+		self:QueueCombatAction("ButtonSetup", "ButtonSetup")
+		return
+	end
 	local NBRScale = (100 + (NecrosisConfig.NecrosisButtonScale - 85)) / 100
 	if NecrosisConfig.NecrosisButtonScale <= 95 then
 		NBRScale = 1.1

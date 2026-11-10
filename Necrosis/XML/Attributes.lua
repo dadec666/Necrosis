@@ -48,6 +48,7 @@ Necrosis = Necrosis or _G.Necrosis
 -- On crée les menus sécurisés pour les différents sorts Buff / Démon / Malédictions
 function Necrosis:MenuAttribute(menu)
 	if InCombatLockdown() then
+		self:QueueCombatAction("MenuAttribute_"..tostring(menu), "MenuAttribute", menu)
 		return
 	end
 
@@ -314,6 +315,7 @@ end
 -- Association de la monture au bouton, et de la création des pierres sur un clic droit
 function Necrosis:StoneAttribute(Steed)
 	if InCombatLockdown() then
+		self:QueueCombatAction("StoneAttribute", "StoneAttribute", Steed)
 		return
 	end
 
@@ -537,8 +539,11 @@ end
 ------------------------------------------------------------------------------------------------------
 
 function Necrosis:SoulstoneUpdateAttribute(nostone)
-	-- Si le démoniste est en combat, on ne fait rien :)
-	if InCombatLockdown() or not _G["NecrosisSoulstoneButton"] then
+	if not _G["NecrosisSoulstoneButton"] then
+		return
+	end
+	if InCombatLockdown() then
+		self:QueueCombatAction("SoulstoneUpdateAttribute", "SoulstoneUpdateAttribute", nostone)
 		return
 	end
 
@@ -558,8 +563,11 @@ function Necrosis:SoulstoneUpdateAttribute(nostone)
 end
 
 function Necrosis:HealthstoneUpdateAttribute(nostone)
-	-- Si le démoniste est en combat, on ne fait rien :)
-	if InCombatLockdown() or not _G["NecrosisHealthstoneButton"] then
+	if not _G["NecrosisHealthstoneButton"] then
+		return
+	end
+	if InCombatLockdown() then
+		self:QueueCombatAction("HealthstoneUpdateAttribute", "HealthstoneUpdateAttribute", nostone)
 		return
 	end
 
@@ -572,15 +580,18 @@ function Necrosis:HealthstoneUpdateAttribute(nostone)
 	end
 
 	NecrosisHealthstoneButton:SetAttribute("type1", "macro")
-	NecrosisHealthstoneButton:SetAttribute("macrotext1", "/stopcasting \n/use "..NecrosisConfig.ItemSwitchCombat[3])
+	NecrosisHealthstoneButton:SetAttribute("macrotext1", "/stopcasting\n/use "..NecrosisConfig.ItemSwitchCombat[3])
 	NecrosisHealthstoneButton:SetAttribute("type3", "Trade")
 	NecrosisHealthstoneButton:SetAttribute("ctrl-type1", "Trade")
 	NecrosisHealthstoneButton.Trade = function () self:TradeStone() end
 end
 
 function Necrosis:SpellstoneUpdateAttribute(nostone)
-	-- Si le démoniste est en combat, on ne fait rien :)
-	if InCombatLockdown() or not _G["NecrosisSpellstoneButton"] then
+	if not _G["NecrosisSpellstoneButton"] then
+		return
+	end
+	if InCombatLockdown() then
+		self:QueueCombatAction("SpellstoneUpdateAttribute", "SpellstoneUpdateAttribute", nostone)
 		return
 	end
 
@@ -597,8 +608,11 @@ function Necrosis:SpellstoneUpdateAttribute(nostone)
 end
 
 function Necrosis:FirestoneUpdateAttribute(nostone)
-	-- Si le démoniste est en combat, on ne fait rien :)
-	if InCombatLockdown() or not _G["NecrosisFirestoneButton"] then
+	if not _G["NecrosisFirestoneButton"] then
+		return
+	end
+	if InCombatLockdown() then
+		self:QueueCombatAction("FirestoneUpdateAttribute", "FirestoneUpdateAttribute", nostone)
 		return
 	end
 
