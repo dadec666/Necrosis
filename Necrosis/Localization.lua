@@ -34,9 +34,7 @@
 ------------------------------------------------------------------------------------------------------
 
 local _G = _G
-local addonName, Necrosis = ...
 Necrosis = Necrosis or {}
-_G[addonName] = Necrosis
 _G.Necrosis = Necrosis
 
 Necrosis.Data = {

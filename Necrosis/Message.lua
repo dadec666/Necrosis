@@ -35,8 +35,6 @@
 
 -- One defines G as being the table containing all the existing frames.
 local _G = _G
-local addonName, Necrosis = ...
-Necrosis = Necrosis or _G.Necrosis
 
 ------------------------------------------------------------------------------------------------------
 -- Message handler (CONSOLE, CHAT, MESSAGE SYSTEM)

@@ -42,8 +42,6 @@ local format = string.format
 
 -- Get a reference to the global env variable containing all the frames || On définit G comme étant le tableau contenant toutes les frames existantes.
 local _G = _G
-local addonName, Necrosis = ...
-Necrosis = Necrosis or _G.Necrosis
 
 ------------------------------------------------------------------------------------------------------
 -- FUNCTIONS FOR CREATION OF FRAMES ||FONCTIONS DE CREATION DES FRAMES

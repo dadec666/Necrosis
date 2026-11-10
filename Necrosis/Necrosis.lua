@@ -39,8 +39,6 @@ NecrosisConfig = {}
 -- Variables locales
 local Local = {}
 local _G = _G
-local addonName, Necrosis = ...
-Necrosis = Necrosis or _G.Necrosis
 
 -- Lua and WoW API Upvalues for high-frequency functions
 local GetTime = GetTime
