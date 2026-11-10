@@ -404,39 +404,64 @@ end
 -- FONCTIONS NECROSIS
 ------------------------------------------------------------------------------------------------------
 
--- Fonction lancée à la mise à jour de l'interface (main) -- toutes les 0,1 secondes environ
+-- Fonction lancée à la mise à jour de l'interface (main) - Dual-Frequency Throttled OnUpdate (Wiki Ch 18)
 function Necrosis:OnUpdate(elapsed)
 	Local.LastUpdate[1] = Local.LastUpdate[1] + elapsed
 	Local.LastUpdate[2] = Local.LastUpdate[2] + elapsed
 
-	-- Si des timers sont actifs, on les met à jour le plus vite possible
-	if Local.TimerManagement.SpellTimer and Local.TimerManagement.SpellTimer[1] then
+	local hasTimers = Local.TimerManagement.SpellTimer and Local.TimerManagement.SpellTimer[1]
+
+	-- Si des timers sont actifs, on met à jour la barre/étincelle
+	if hasTimers then
 		if NecrosisConfig.Smooth then
 			NecrosisUpdateTimer(Local.TimerManagement.SpellTimer)
 		end
-
 		if NecrosisConfig.TimerType == 2 then
 			self:TextTimerUpdate(Local.TimerManagement.SpellTimer, Local.TimerManagement.SpellGroup)
 		end
 	end
 
-	-- Toutes les secondes
-	if Local.LastUpdate[1] > 1 then
-	-- Si configuré, tri des fragment toutes les secondes
-		if NecrosisConfig.SoulshardSort and Local.Soulshard.Move > 0  then
+	-- Toutes les demies secondes (0.5s)
+	if Local.LastUpdate[2] >= 0.5 then
+		Local.LastUpdate[2] = 0
+
+		-- Si défilement non-smooth des timers graphiques
+		if hasTimers and not NecrosisConfig.Smooth then
+			NecrosisUpdateTimer(Local.TimerManagement.SpellTimer)
+		end
+
+		-- Si configuré, affichage des avertissements d'Antifear
+		if NecrosisConfig.AntiFearAlert then
+			self:ShowAntiFearWarning()
+		end
+
+		-- Si configuré, on transforme la Sphere en Chrono de Rez
+		if (NecrosisConfig.CountType == 3 or NecrosisConfig.Circle == 2)
+			and (Local.Stone.Soul.Mode == 3 or Local.Stone.Soul.Mode == 4)
+			then
+				Local.LastSphereSkin = self:RezTimerUpdate(
+					Local.TimerManagement.SpellTimer, Local.LastSphereSkin
+				)
+		end
+	end
+
+	-- Toutes les secondes (1.0s)
+	if Local.LastUpdate[1] >= 1.0 then
+		Local.LastUpdate[1] = 0
+
+		-- Si configuré, tri des fragments hors combat
+		if NecrosisConfig.SoulshardSort and Local.Soulshard.Move > 0 and not InCombatLockdown() then
 			self:SoulshardSwitch("MOVE")
 		end
 
-		-- Parcours du tableau des Timers
-		if Local.TimerManagement.SpellTimer[1] then
-			for index = 1, #Local.TimerManagement.SpellTimer, 1 do
+		-- Parcours et expiration des Timers
+		if hasTimers then
+			local TimeLocal = GetTime()
+			for index = 1, #Local.TimerManagement.SpellTimer do
 				if Local.TimerManagement.SpellTimer[index] then
-					-- On enlève les timers terminés
-					local TimeLocal = GetTime()
 					if TimeLocal >= (Local.TimerManagement.SpellTimer[index].TimeMax - 0.5) then
 						local StoneFade = false
 						local MetamorphosisFade = false
-						-- Si le timer était celui de la Pierre d'âme, on prévient le Démoniste
 						if Local.TimerManagement.SpellTimer[index].Name == self.Spell[11].Name then
 							self:Msg(self.ChatMessage.Information.SoulstoneEnd)
 							if NecrosisConfig.Sound then PlaySoundFile(self.Sound.SoulstoneEnd) end
@@ -446,15 +471,11 @@ function Necrosis:OnUpdate(elapsed)
 						elseif Local.TimerManagement.SpellTimer[index].Name == self.Spell[27].Name then
 							MetamorphosisFade = true
 						end
-						-- Sinon on enlève le timer silencieusement (mais pas en cas d'enslave)
 						if not (Local.TimerManagement.SpellTimer[index].Name == self.Spell[10].Name) then
 							Local.TimerManagement = self:RetraitTimerParIndex(index, Local.TimerManagement)
-							index = 0
 							if StoneFade then
-								-- On met à jour l'apparence du bouton de la pierre d'âme
 								self:UpdateIcons()
 							elseif MetamorphosisFade then
-								-- On met à jour l'apparence du bouton de métamorphose
 								self:UpdateMana("Metamorphose")
 							end
 							break
@@ -463,27 +484,6 @@ function Necrosis:OnUpdate(elapsed)
 				end
 			end
 		end
-		Local.LastUpdate[1] = 0
-	-- Toutes les demies secondes
-	elseif Local.LastUpdate[2] > 0.5 then
-		-- Si défilement normal des timers graphiques, alors on met à jour toutes les 0.5 secondes
-		if not NecrosisConfig.Smooth then
-			NecrosisUpdateTimer(Local.TimerManagement.SpellTimer)
-		end
-
-		-- Si configuré, affichage des avertissements d'Antifear
-		if NecrosisConfig.AntiFearAlert then
-			self:ShowAntiFearWarning()
-		end
-		-- Si configuré, on transfome la Sphere en Chrono de Rez
-		if (NecrosisConfig.CountType == 3 or NecrosisConfig.Circle == 2)
-			and (Local.Stone.Soul.Mode == 3 or Local.Stone.Soul.Mode == 4)
-			then
-				Local.LastSphereSkin = self:RezTimerUpdate(
-					Local.TimerManagement.SpellTimer, Local.LastSphereSkin
-				)
-		end
-		Local.LastUpdate[2] = 0
 	end
 end
 
