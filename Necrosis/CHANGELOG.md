@@ -21,6 +21,12 @@ All notable changes to the **Necrosis** addon for World of Warcraft (WotLK 3.3.5
   - Added early-exit checks when no spell timers are active.
   - Replaced per-frame table instantiations (`LastPoint = {}`) in `GraphicalTimers.lua` with localized stack variables.
   - Cached frequently used global Lua and WoW API functions into local upvalues.
+- **Deep Subsystem Audit Fixes:**
+  - **Full Soul Bag Recognition:** Expanded bag identification loop from hardcoded 3 to `#self.Translation.Item.SoulPouch`, supporting all 8 high-level TBC/WotLK soul bags (Abyssal Bag, Felcloth Bag, etc.).
+  - **Lua Operator Precedence:** Fixed `not NecrosisConfig.SoulshardContainer == i - 1` logic bug in shard capacity checks.
+  - **Reversed Combat Timer Cleanup:** Fixed table index skipping bug in `RetraitTimerCombat()` by iterating backwards (`#Timer.SpellTimer, 1, -1`).
+  - **Modernized XML Frame Scripts:** Replaced legacy Vanilla globals (`this`, `arg1`) in all `SetScript` handlers with modern WotLK parameters (`self`, `elapsed`).
+  - **Audio Path Normalization:** Standardized casing of sound paths across all dialog locales (`Sounds/`).
 
 ---
 
@@ -82,3 +88,4 @@ All notable changes to the **Necrosis** addon for World of Warcraft (WotLK 3.3.5
 
 - Removed **Curse of Recklessness** (removed by Blizzard in Patch 3.1).
 - TOC and version number updated.
+
