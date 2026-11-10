@@ -70,8 +70,8 @@ function Necrosis:Msg(msg, type)
 			msg = self:MsgAddColor(msg)
 			local Intro = "|CFFFF00FFNe|CFFFF50FFcr|CFFFF99FFos|CFFFFC4FFis|CFFFFFFFF: "
 			if NecrosisConfig.ChatType then
-				-- ...... on the first chat frame
-				ChatFrame1:AddMessage(Intro..msg, 1.0, 0.7, 1.0, 1.0, UIERRORS_HOLD_TIME)
+				local frame = DEFAULT_CHAT_FRAME or ChatFrame1
+				frame:AddMessage(Intro..msg, 1.0, 0.7, 1.0, 1.0, UIERRORS_HOLD_TIME)
 			else
 				-- ...... on the middle of the screen
 				UIErrorsFrame:AddMessage(Intro..msg, 1.0, 0.7, 1.0, 1.0, UIERRORS_HOLD_TIME)
@@ -84,29 +84,33 @@ end
 -- Color functions
 ------------------------------------------------------------------------------------------------------
 
--- Replace any color strings in the message with its associated value
+local COLOR_MAP = {
+	["<white>"] = "|CFFFFFFFF",
+	["<lightBlue>"] = "|CFF99CCFF",
+	["<brightGreen>"] = "|CFF00FF00",
+	["<lightGreen2>"] = "|CFF66FF66",
+	["<lightGreen1>"] = "|CFF99FF66",
+	["<yellowGreen>"] = "|CFFCCFF66",
+	["<lightYellow>"] = "|CFFFFFF66",
+	["<darkYellow>"] = "|CFFFFCC00",
+	["<lightOrange>"] = "|CFFFFCC66",
+	["<dirtyOrange>"] = "|CFFFF9933",
+	["<darkOrange>"] = "|CFFFF6600",
+	["<redOrange>"] = "|CFFFF3300",
+	["<red>"] = "|CFFFF0000",
+	["<lightRed>"] = "|CFFFF5555",
+	["<lightPurple1>"] = "|CFFFFC4FF",
+	["<lightPurple2>"] = "|CFFFF99FF",
+	["<purple>"] = "|CFFFF50FF",
+	["<darkPurple1>"] = "|CFFFF00FF",
+	["<darkPurple2>"] = "|CFFB700B7",
+	["<close>"] = "|r"
+}
+
+-- Replace any color strings in the message with its associated value in a single pass (Wiki Ch 17)
 function Necrosis:MsgAddColor(msg)
 	if type(msg) == "string" then
-		msg = msg:gsub("<white>", "|CFFFFFFFF")
-		msg = msg:gsub("<lightBlue>", "|CFF99CCFF")
-		msg = msg:gsub("<brightGreen>", "|CFF00FF00")
-		msg = msg:gsub("<lightGreen2>", "|CFF66FF66")
-		msg = msg:gsub("<lightGreen1>", "|CFF99FF66")
-		msg = msg:gsub("<yellowGreen>", "|CFFCCFF66")
-		msg = msg:gsub("<lightYellow>", "|CFFFFFF66")
-		msg = msg:gsub("<darkYellow>", "|CFFFFCC00")
-		msg = msg:gsub("<lightOrange>", "|CFFFFCC66")
-		msg = msg:gsub("<dirtyOrange>", "|CFFFF9933")
-		msg = msg:gsub("<darkOrange>", "|CFFFF6600")
-		msg = msg:gsub("<redOrange>", "|CFFFF3300")
-		msg = msg:gsub("<red>", "|CFFFF0000")
-		msg = msg:gsub("<lightRed>", "|CFFFF5555")
-		msg = msg:gsub("<lightPurple1>", "|CFFFFC4FF")
-		msg = msg:gsub("<lightPurple2>", "|CFFFF99FF")
-		msg = msg:gsub("<purple>", "|CFFFF50FF")
-		msg = msg:gsub("<darkPurple1>", "|CFFFF00FF")
-		msg = msg:gsub("<darkPurple2>", "|CFFB700B7")
-		msg = msg:gsub("<close>", "|r")
+		return (msg:gsub("(<[%a%d]+>)", COLOR_MAP))
 	end
 	return msg
 end
