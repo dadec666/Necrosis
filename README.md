@@ -79,3 +79,4 @@
 - **Оригинальные авторы:** Lomig (Kael'Thas EU/FR), Tarcalion (Nagrand US/Oceanic), Liadora, Nyx.
 - **Локализация:** StingerSoft, Komsomolka, Eliah, Ner'zhul, Geschan, DosS.
 - **Лицензия:** [GNU General Public License v2](LICENSE).
+

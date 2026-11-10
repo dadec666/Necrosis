@@ -82,3 +82,4 @@ All notable changes to the **Necrosis** addon for World of Warcraft (WotLK 3.3.5
 
 - Removed **Curse of Recklessness** (removed by Blizzard in Patch 3.1).
 - TOC and version number updated.
+
