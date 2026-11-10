@@ -37,6 +37,8 @@
 
 -- On définit G comme étant le tableau contenant toutes les frames existantes.
 local _G = _G
+Necrosis = Necrosis or _G.Necrosis or {}
+_G.Necrosis = Necrosis
 
 -- Création des raccourcis claviers
 function Necrosis:BindName()

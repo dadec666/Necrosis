@@ -47,6 +47,7 @@ local _G = _G
 ------------------------------------------------
 
 function Necrosis:Localization_Dialog_Cn()
+	self.Config = self.Config or {}
 
 	function Necrosis:Localization()
 		self:Localization_Speech_Cn();

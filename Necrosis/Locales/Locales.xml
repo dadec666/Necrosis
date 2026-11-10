@@ -1,0 +1,17 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Functions-en.lua"/>
+	<Script file="Functions-fr.lua"/>
+	<Script file="Functions-de.lua"/>
+	<Script file="Functions-es.lua"/>
+	<Script file="Functions-tw.lua"/>
+	<Script file="Functions-cn.lua"/>
+	<Script file="Functions-ru.lua"/>
+
+	<Script file="Dialog-en.lua"/>
+	<Script file="Dialog-fr.lua"/>
+	<Script file="Dialog-de.lua"/>
+	<Script file="Dialog-es.lua"/>
+	<Script file="Dialog-tw.lua"/>
+	<Script file="Dialog-cn.lua"/>
+	<Script file="Dialog-ru.lua"/>
+</Ui>

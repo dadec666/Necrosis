@@ -43,37 +43,32 @@ local _G = _G
 function Necrosis:Initialize(Config)
 
 	-- Initilialisation des Textes (VO / VF / VA / VCT / VCS / VE)
-	if NecrosisConfig.Version then
-		if (NecrosisConfig.Language == "enUS") or (NecrosisConfig.Language == "enGB") then
-			self:Localization_Dialog_En()
-		elseif (NecrosisConfig.Language == "deDE") then
-			self:Localization_Dialog_De()
-		elseif (NecrosisConfig.Language == "zhTW") then
-			self:Localization_Dialog_Tw()
-		elseif (NecrosisConfig.Language == "zhCN") then
-			self:Localization_Dialog_Cn()
-		elseif (NecrosisConfig.Language == "esES") then
-			self:Localization_Dialog_Es()
-		elseif (NecrosisConfig.Language == "ruRU") then
-			self:Localization_Dialog_Ru()
-		else
-			self:Localization_Dialog_Fr()
-		end
-	elseif GetLocale() == "enUS" or GetLocale() == "enGB" then
-		self:Localization_Dialog_En()
-	elseif GetLocale() == "deDE" then
-		self:Localization_Dialog_De()
-	elseif GetLocale() == "zhTW" then
-		self:Localization_Dialog_Tw()
-	elseif GetLocale() == "zhCN" then
-		self:Localization_Dialog_Cn()
-	elseif  GetLocale() == "esES" then
-		self:Localization_Dialog_Es()
-	elseif  GetLocale() == "ruRU" then
+	local lang = (NecrosisConfig and NecrosisConfig.Language) or (GetLocale and GetLocale()) or "enUS"
+	if (lang == "ruRU") and self.Localization_Dialog_Ru then
 		self:Localization_Dialog_Ru()
-	else
+	elseif (lang == "deDE") and self.Localization_Dialog_De then
+		self:Localization_Dialog_De()
+	elseif (lang == "zhTW") and self.Localization_Dialog_Tw then
+		self:Localization_Dialog_Tw()
+	elseif (lang == "zhCN") and self.Localization_Dialog_Cn then
+		self:Localization_Dialog_Cn()
+	elseif (lang == "esES") and self.Localization_Dialog_Es then
+		self:Localization_Dialog_Es()
+	elseif (lang == "frFR") and self.Localization_Dialog_Fr then
 		self:Localization_Dialog_Fr()
+	elseif self.Localization_Dialog_En then
+		self:Localization_Dialog_En()
+	elseif self.Localization_Dialog_Fr then
+		self:Localization_Dialog_Fr()
+	elseif self.Localization_Dialog_Ru then
+		self:Localization_Dialog_Ru()
 	end
+
+	-- Fallback tables en cas d'absence d'une localisation
+	self.TooltipData = self.TooltipData or {}
+	self.Localize = self.Localize or { Utilisation = "Use", Echange = "Trade" }
+	self.ChatMessage = self.ChatMessage or {}
+	self.Config = self.Config or {}
 
 
 	-- On charge (ou on crée la configuration pour le joueur et on l'affiche sur la console
@@ -193,7 +188,13 @@ function Necrosis:Initialize(Config)
 	end
 
 	-- Initialisation des fichiers de langues -- Mise en place ponctuelle du SMS
-	self:Localization()
+	if self.Localization then
+		self:Localization()
+	elseif self.Localization_Speech_Ru and (lang == "ruRU") then
+		self:Localization_Speech_Ru()
+	elseif self.Localization_Speech_En then
+		self:Localization_Speech_En()
+	end
 	if NecrosisConfig.SM then
 		self.Speech.Rez = self.Speech.ShortMessage[1]
 		self.Speech.TP = self.Speech.ShortMessage[2]

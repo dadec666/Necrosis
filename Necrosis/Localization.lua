@@ -37,15 +37,9 @@ local _G = _G
 Necrosis = Necrosis or _G.Necrosis or {}
 _G.Necrosis = Necrosis
 
-local version = (GetAddOnMetadata and GetAddOnMetadata("Necrosis", "Version"))
-if not version and GetNumAddOns and GetAddOnInfo then
-	for i = 1, GetNumAddOns() do
-		local name = GetAddOnInfo(i)
-		if name and name:find("Necrosis") then
-			version = GetAddOnMetadata(i, "Version")
-			break
-		end
-	end
+local version
+if GetAddOnMetadata then
+	version = GetAddOnMetadata("Necrosis", "Version")
 end
 version = version or "3.0"
 
@@ -54,10 +48,9 @@ Necrosis.Data = {
 	AppName = "Necrosis LdC",
 	LastConfig = 20100701
 }
-Necrosis.Data.Label = Necrosis.Data.AppName.." "..Necrosis.Data.Version
+Necrosis.Data.Label = Necrosis.Data.AppName .. " " .. Necrosis.Data.Version
 
 Necrosis.Speech = Necrosis.Speech or {}
 Necrosis.Unit = Necrosis.Unit or {}
 Necrosis.Translation = Necrosis.Translation or {}
-
 Necrosis.Config = Necrosis.Config or {}
