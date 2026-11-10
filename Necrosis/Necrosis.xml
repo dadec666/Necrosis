@@ -2,11 +2,13 @@
 	<Frame name="Necrosis_Variable_Frame" hidden="false">
 		<Scripts>
 			<OnLoad>
-				this:RegisterEvent("PLAYER_LOGIN")
-				this:RegisterEvent("VARIABLES_LOADED")
+				self:RegisterEvent("PLAYER_LOGIN")
 			</OnLoad>
 			<OnEvent>
-				Necrosis:OnLoad()
+				if event == "PLAYER_LOGIN" then
+					self:UnregisterEvent("PLAYER_LOGIN")
+					Necrosis:OnLoad()
+				end
 			</OnEvent>
 		</Scripts>
 	</Frame>

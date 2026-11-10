@@ -1,4 +1,4 @@
-﻿--[[
+--[[
     Necrosis LdC
     Copyright (C) 2005-2008  Lom Enfroy
 
@@ -69,6 +69,7 @@ do
 		return tbl
 	end
 	function del(t)
+		if not t then return end
 		for k in next, t do
 			t[k] = nil
 		end
@@ -203,10 +204,10 @@ function Necrosis:SpellLocalize(tooltip)
 		if not self.TooltipData[button] then
 			self.TooltipData[button] = {}
 		end
-		self.TooltipData[button].Label = "|c00FFFFFF"..self.Spell[buttonName[i]].Name.."|r"
+		local spell = self.Spell[buttonName[i]]
+		self.TooltipData[button].Label = "|c00FFFFFF"..((spell and spell.Name) or "").."|r"
 	end
 	del(buttonTooltip)
-	del(colorCode)
 	del(buttonName)
 	
 	-- Demons
@@ -227,10 +228,10 @@ function Necrosis:SpellLocalize(tooltip)
 		if not self.TooltipData[button] then
 			self.TooltipData[button] = {}
 		end
-		self.TooltipData[button].Label = "|c00FFFFFF"..self.Spell[buttonName[i]].Name.."|r"
+		local spell = self.Spell[buttonName[i]]
+		self.TooltipData[button].Label = "|c00FFFFFF"..((spell and spell.Name) or "").."|r"
 	end
 	del(buttonTooltip)
-	del(colorCode)
 	del(buttonName)
 	
 	-- Curses || Malédiction
@@ -250,9 +251,9 @@ function Necrosis:SpellLocalize(tooltip)
 		if not self.TooltipData[button] then
 			self.TooltipData[button] = {}
 		end
-		self.TooltipData[button].Label = "|c00FFFFFF"..self.Spell[buttonName[i]].Name.."|r"
+		local spell = self.Spell[buttonName[i]]
+		self.TooltipData[button].Label = "|c00FFFFFF"..((spell and spell.Name) or "").."|r"
 	end
 	del(buttonTooltip)
-	del(colorCode)
 	del(buttonName)
 end

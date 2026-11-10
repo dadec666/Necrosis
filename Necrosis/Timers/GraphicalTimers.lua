@@ -34,6 +34,12 @@
 -- Version $LastChangedDate: 2009-12-10 17:09:53 +1100 (Thu, 10 Dec 2009) $
 ------------------------------------------------------------------------------------------------------
 
+local _G = _G
+local GetTime = GetTime
+local floor = math.floor
+local fmod = math.fmod
+local format = string.format
+
 -- Get a reference to the global env variable containing all the frames || On définit G comme étant le tableau contenant toutes les frames existantes.
 local _G = getfenv(0)
 
@@ -210,8 +216,7 @@ function NecrosisUpdateTimer(tableau, Changement)
 		return
 	end
 
-	local LastPoint = {}
-	LastPoint[1], LastPoint[2], LastPoint[3], LastPoint[4], LastPoint[5] = NecrosisTimerFrame0:GetPoint()
+	local pt, relTo, relPt, xOfs, yOfs = NecrosisTimerFrame0:GetPoint()
 	local LastGroup = 0
 
 	local yPosition = - NecrosisConfig.SensListe * 12
@@ -239,15 +244,15 @@ function NecrosisUpdateTimer(tableau, Changement)
 			-- if the frame belongs to a mob group, then move the whole group || Si les Frames appartiennent à un groupe de mob, et qu'on doit changer de groupe
 			if not (tableau[index].Group == LastGroup) and tableau[index].Group > 3 then
 				local f = Necrosis:CreateGroup(Changement, tableau[index].Group)
-				LastPoint[5] = LastPoint[5] + 1.2 * yPosition
+				yOfs = yOfs + 1.2 * yPosition
 				f:ClearAllPoints()
-				f:SetPoint(LastPoint[1], LastPoint[2], LastPoint[3], LastPoint[4], LastPoint[5])
-				LastPoint[5] = LastPoint[5] + 0.2 * yPosition
+				f:SetPoint(pt, relTo, relPt, xOfs, yOfs)
+				yOfs = yOfs + 0.2 * yPosition
 				LastGroup = tableau[index].Group
 			end
 			Frame:ClearAllPoints()
-			LastPoint[5] = LastPoint[5] + yPosition
-			Frame:SetPoint(LastPoint[1], LastPoint[2], LastPoint[3], LastPoint[4], LastPoint[5])
+			yOfs = yOfs + yPosition
+			Frame:SetPoint(pt, relTo, relPt, xOfs, yOfs)
 		end
 
 		-- creation of color timers || Création de la couleur des timers en fonction du temps
@@ -273,24 +278,12 @@ function NecrosisUpdateTimer(tableau, Changement)
 		Spark:SetPoint("CENTER", StatusBar, "LEFT", sparkPosition, 0)
 
 		-- update the clock value on the timer || Affichage du chrono extérieur
-		local minutes, secondes, affichage = 0, 0, nil
-		secondes = tableau[index].TimeMax - floor(GetTime())
-		minutes = floor(secondes / 60 )
-		secondes = math.fmod(secondes, 60)
+		local remSec = tableau[index].TimeMax - floor(GetTime())
+		if remSec < 0 then remSec = 0 end
+		local minutes = floor(remSec / 60)
+		local secondes = fmod(remSec, 60)
 
-		if minutes > 9 then
-			affichage = minutes..":"
-		elseif minutes > 0 then
-			affichage = "0"..minutes..":"
-		else
-			affichage = "0:"
-		end
-
-		if secondes > 9 then
-			affichage = affichage..secondes
-		else
-			affichage = affichage.."0"..secondes
-		end
+		local affichage = format("%02d:%02d", minutes, secondes)
 
 		if (tableau[index].Type == 1 or tableau[index].Type == 3 or tableau[index].Name == Necrosis.Spell[16].Name)
 		and tableau[index].Target and not (tableau[index].Target == "") then

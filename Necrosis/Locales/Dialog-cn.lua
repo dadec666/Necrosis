@@ -85,11 +85,11 @@ function Necrosis:Localization_Dialog_Cn()
 			Ritual = "|c00FFFFFFShift+左键施放灵魂仪式|r"
 		},
 		["Spellstone"] = {
-			Text = {"Right click to create","In Inventory\nLeft click to use","Used", "Used\Click to create"}
+			Text = {"Right click to create","In Inventory\nLeft click to use","Used", "Used\nClick to create"}
 		},
 		["Firestone"] = {
 			Label = "|c00FF4444火焰石|r",
-			Text = {"Right click to create","In Inventory\nLeft click to use","Used", "Used\Click to create"}
+			Text = {"Right click to create","In Inventory\nLeft click to use","Used", "Used\nClick to create"}
 		},
 		["SpellTimer"] = {
 			Text = "启用对目标的法术计时",

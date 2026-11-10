@@ -84,10 +84,10 @@ function Necrosis:Localization_Dialog_Tw()
 			Ritual = "|c00FFFFFFShift+左鍵施放靈魂儀式|r"
 		},
 		["Spellstone"] = {
-			Text = {"按右鍵製造","按左鍵使用","已使用", "已使用\點擊製造"}
+			Text = {"按右鍵製造","按左鍵使用","已使用", "已使用\n點擊製造"}
 		},
 		["Firestone"] = {
-			Text = {"按右鍵製造","按左鍵使用","已使用", "已使用\點擊製造"}
+			Text = {"按右鍵製造","按左鍵使用","已使用", "已使用\n點擊製造"}
 		},
 		["SpellTimer"] = {
 			Label = "|c00FFFFFF法術持續時間|r",

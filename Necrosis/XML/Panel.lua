@@ -252,47 +252,32 @@ function Necrosis:SetPanel(PanelID)
 		end
 	end
 	NecrosisGeneralPageText:SetText(self.Config.Panel[PanelID])
+
+	local panels = {
+		NecrosisMessagesConfig,
+		NecrosisSphereConfig,
+		NecrosisButtonsConfig,
+		NecrosisMenusConfig,
+		NecrosisTimersConfig,
+		NecrosisMiscConfig
+	}
+	for i = 1, #panels do
+		if panels[i] and i ~= PanelID then
+			panels[i]:Hide()
+		end
+	end
+
 	if PanelID == 1 then
-		HideUIPanel(NecrosisSphereConfig)
-		HideUIPanel(NecrosisButtonsConfig)
-		HideUIPanel(NecrosisMenusConfig)
-		HideUIPanel(NecrosisTimersConfig)
-		HideUIPanel(NecrosisMiscConfig)
 		self:SetMessagesConfig()
 	elseif PanelID == 2 then
-		HideUIPanel(NecrosisMessagesConfig)
-		HideUIPanel(NecrosisButtonsConfig)
-		HideUIPanel(NecrosisMenusConfig)
-		HideUIPanel(NecrosisTimersConfig)
-		HideUIPanel(NecrosisMiscConfig)
 		self:SetSphereConfig()
 	elseif PanelID == 3 then
-		HideUIPanel(NecrosisMessagesConfig)
-		HideUIPanel(NecrosisSphereConfig)
-		HideUIPanel(NecrosisMenusConfig)
-		HideUIPanel(NecrosisTimersConfig)
-		HideUIPanel(NecrosisMiscConfig)
 		self:SetButtonsConfig()
 	elseif PanelID == 4 then
-		HideUIPanel(NecrosisMessagesConfig)
-		HideUIPanel(NecrosisSphereConfig)
-		HideUIPanel(NecrosisButtonsConfig)
-		HideUIPanel(NecrosisTimersConfig)
-		HideUIPanel(NecrosisMiscConfig)
 		self:SetMenusConfig()
 	elseif PanelID == 5 then
-		HideUIPanel(NecrosisMessagesConfig)
-		HideUIPanel(NecrosisSphereConfig)
-		HideUIPanel(NecrosisButtonsConfig)
-		HideUIPanel(NecrosisMenusConfig)
-		HideUIPanel(NecrosisMiscConfig)
 		self:SetTimersConfig()
 	elseif PanelID == 6 then
-		HideUIPanel(NecrosisMessagesConfig)
-		HideUIPanel(NecrosisSphereConfig)
-		HideUIPanel(NecrosisButtonsConfig)
-		HideUIPanel(NecrosisMenusConfig)
-		HideUIPanel(NecrosisTimersConfig)
 		self:SetMiscConfig()
 	end
 end

@@ -139,6 +139,7 @@ function Necrosis:MenuAttribute(menu)
 end
 
 function Necrosis:MetamorphosisAttribute()
+	if InCombatLockdown() then return end
 
 	NecrosisMetamorphosisButton:Execute([[
 		ButtonList = table.new(self:GetChildren())
@@ -469,6 +470,7 @@ function Necrosis:NoCombatAttribute(SoulstoneMode, FirestoneMode, SpellstoneMode
 end
 
 function Necrosis:InCombatAttribute(Pet, Buff, Curse)
+	if InCombatLockdown() then return end
 
 	-- Si on veut que le menu s'engage automatiquement en combat
 	if NecrosisConfig.AutomaticMenu and not NecrosisConfig.BlockedMenu then

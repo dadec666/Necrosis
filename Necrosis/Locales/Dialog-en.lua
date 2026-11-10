@@ -86,7 +86,7 @@ function Necrosis:Localization_Dialog_En()
 			Text = {"Right click to create","In Inventory\nLeft click to use","Used", "Used\nClick to create"}
 		},
 		["Firestone"] = {
-			Text = {"Right click to create","In Inventory\nLeft click to use","Used", "Used\Click to create"}
+			Text = {"Right click to create","In Inventory\nLeft click to use","Used", "Used\nClick to create"}
 		},
 		["SpellTimer"] = {
 			Label = "|c00FFFFFFSpell Durations|r",
