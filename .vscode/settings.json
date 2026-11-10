@@ -1,0 +1,17 @@
+{
+    "Lua.runtime.version": "Lua 5.1",
+    "Lua.diagnostics.globals": [
+        "Necrosis",
+        "GetLocale",
+        "GetAddOnMetadata",
+        "DEFAULT_CHAT_FRAME",
+        "UIParent",
+        "SlashCmdList",
+        "CreateFrame",
+        "GetTime",
+        "UnitHealth",
+        "UnitPower",
+        "UnitClass",
+        "GetSpellInfo"
+    ]
+}
