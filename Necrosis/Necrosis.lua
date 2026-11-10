@@ -1817,12 +1817,14 @@ end
 -- Explore bags for stones & shards || Fonction qui fait l'inventaire des éléments utilisés en démonologie : Pierres, Fragments, Composants d'invocation
 function Necrosis:BagExplore(arg)
 	for container = 0, 4, 1 do
-		for i = 1, 3, 1 do
-			if GetBagName(container) == self.Translation.Item.SoulPouch[i] then
-				Local.BagIsSoulPouch[container + 1] = true
-				break
-			else
-				Local.BagIsSoulPouch[container + 1] = false
+		Local.BagIsSoulPouch[container + 1] = false
+		local bagName = GetBagName(container)
+		if bagName and self.Translation.Item.SoulPouch then
+			for i = 1, #self.Translation.Item.SoulPouch do
+				if bagName == self.Translation.Item.SoulPouch[i] then
+					Local.BagIsSoulPouch[container + 1] = true
+					break
+				end
 			end
 		end
 	end
@@ -2014,7 +2016,7 @@ function Necrosis:BagExplore(arg)
 	if NecrosisConfig.SoulshardSort then
 		local CompteMax = GetContainerNumSlots(NecrosisConfig.SoulshardContainer)
 		for i = 1, 5, 1 do
-			if Local.BagIsSoulPouch[i] and (not NecrosisConfig.SoulshardContainer == i - 1) then
+			if Local.BagIsSoulPouch[i] and (NecrosisConfig.SoulshardContainer ~= i - 1) then
 				CompteMax = CompteMax + GetContainerNumSlots(i-1)
 			end
 		end
@@ -2402,7 +2404,7 @@ function Necrosis:ShowAntiFearWarning()
 			self:Msg(self.ChatMessage.Information.FearProtect, "USER")
 			NecrosisAntiFearButton:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\AntiFear"..Local.Warning.Antifear.Icon[Actif].."-02")
 			if NecrosisConfig.Sound then PlaySoundFile(self.Sound.Fear) end
-			ShowUIPanel(NecrosisAntiFearButton)
+			NecrosisAntiFearButton:Show()
 			Local.Warning.Antifear.Blink = GetTime() + 0.6
 			Local.Warning.Antifear.Toggle = 2
 
@@ -2419,7 +2421,7 @@ function Necrosis:ShowAntiFearWarning()
 
 	elseif Local.Warning.Antifear.Actif then	-- No antifear on target, but the button is still visible => gonna hide it
 		Local.Warning.Antifear.Actif = false
-		HideUIPanel(NecrosisAntiFearButton)
+		NecrosisAntiFearButton:Hide()
 	end
 end
 

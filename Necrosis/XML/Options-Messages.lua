@@ -362,7 +362,7 @@ function Necrosis:SetMessagesConfig()
 		NecrosisRoSMessages:Enable()
 	end
 
-	frame:Show()
+	NecrosisMessagesConfig:Show()
 
 end
 
@@ -384,8 +384,8 @@ function Necrosis.Language_Init()
 	end
 end
 
-function Necrosis.Language_Click()
-	local ID = this:GetID()
+function Necrosis.Language_Click(self)
+	local ID = (self and self:GetID()) or (this and this:GetID())
 
 	UIDropDownMenu_SetSelectedID(NecrosisLanguageSelection, ID)
 	if ID == 1 then

@@ -345,5 +345,5 @@ function Necrosis:SetMiscConfig()
 		NecrosisDestroyShardBag:Disable()
 	end
 
-	frame:Show()
+	NecrosisMiscConfig:Show()
 end

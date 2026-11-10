@@ -59,7 +59,7 @@ function Necrosis:RezTimerUpdate(SpellTimer, LastUpdate)
 
 	Secondes = TimeMax - floor(GetTime())
 	Minutes = floor(Secondes/60)
-	Secondes = mod(Secondes, 60)
+	Secondes = Secondes % 60
 
 	-- Le timer numérique
 	if NecrosisConfig.CountType == 3 then
@@ -127,7 +127,7 @@ function Necrosis:TextTimerUpdate(SpellTimer, SpellGroup)
 		-- Affichage du temps restant
 		seconds = SpellTimer[index].TimeMax - Now
 		minutes = floor(seconds/60);
-		seconds = mod(seconds, 60)
+		seconds = seconds % 60
 		if (minutes > 0) then
 			if (minutes > 9) then
 				display = display..minutes..":"

@@ -768,7 +768,7 @@ function Necrosis:SetMenusConfig()
 		NecrosisCloseMenu:Enable()
 	end
 
-	frame:Show()
+	NecrosisMenusConfig:Show()
 end
 
 

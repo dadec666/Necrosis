@@ -49,7 +49,7 @@ function Necrosis:BindName()
 	_G["BINDING_HEADER_Necrosis"] = "Necrosis LdC"
 
 	-- La Sphere
-	_G["BINDING_NAME_CLICK NecrosisButton:LeftButton"] = self.Spell[NecrosisConfig.MainSpell].Name
+	_G["BINDING_NAME_CLICK NecrosisButton:LeftButton"] = (self.Spell[NecrosisConfig.MainSpell] and self.Spell[NecrosisConfig.MainSpell].Name) or "Necrosis"
 
 	-- mounts || Le Cheval
 	if (NecrosisConfig.LeftMount) then
@@ -152,12 +152,13 @@ function Necrosis:BindName()
 	-------------------------------------------------------------------------------------------------------------------------------------------------------
 	
 	-- Le Titre
-	_G["BINDING_HEADER_NecrosisMetamorphosis"] = "Necrosis - "..self.Spell[27].Name
+	local metaName = (self.Spell[27] and self.Spell[27].Name) or "Metamorphosis"
+	_G["BINDING_HEADER_NecrosisMetamorphosis"] = "Necrosis - "..metaName
 	
-	_G["BINDING_NAME_CLICK NecrosisMetamorphosisButton:LeftButton"] = self.Spell[27].Name
+	_G["BINDING_NAME_CLICK NecrosisMetamorphosisButton:LeftButton"] = metaName
 	
 	local buffID = {39, 58, 56, 57}
 	for i = 1, #buffID, 1 do
-		_G["BINDING_NAME_CLICK NecrosisMetamorphosisMenu"..i..":LeftButton"] = self.Spell[ buffID[i] ].Name
+		_G["BINDING_NAME_CLICK NecrosisMetamorphosisMenu"..i..":LeftButton"] = (self.Spell[ buffID[i] ] and self.Spell[ buffID[i] ].Name) or ""
 	end
 end

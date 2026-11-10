@@ -292,7 +292,7 @@ end
 
 -- remove timers during combat || Fonction pour enlever les timers de combat lors de la regen
 function Necrosis:RetraitTimerCombat(Timer)
-	for index = 1, #Timer.SpellTimer, 1 do
+	for index = #Timer.SpellTimer, 1, -1 do
 		if Timer.SpellTimer[index] then
 			-- remove if its a cooldown timer || Si les cooldowns sont nominatifs, on enlève le nom
 			if Timer.SpellTimer[index].Type == 3 then

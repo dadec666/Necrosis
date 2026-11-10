@@ -213,7 +213,7 @@ function Necrosis:SetSphereConfig()
 	UIDropDownMenu_SetSelectedID(NecrosisCountSelection, NecrosisConfig.CountType)
 	UIDropDownMenu_SetText(NecrosisCountSelection, self.Config.Sphere.Count[NecrosisConfig.CountType])
 
-	frame:Show()
+	NecrosisSphereConfig:Show()
 end
 
 
