@@ -40,6 +40,32 @@ local _G = _G
 Necrosis = Necrosis or _G.Necrosis or {}
 _G.Necrosis = Necrosis
 
+local function SetupMenuOffsetSlider(sliderFrame, menuButtonName, decalageTable, axis, menuKey)
+    sliderFrame:SetScript("OnEnter", function(slider)
+        GameTooltip:SetOwner(slider, "ANCHOR_RIGHT")
+        GameTooltip:SetText(slider:GetValue())
+        if not InCombatLockdown() and _G[menuButtonName] then
+            _G[menuButtonName]:SetAttribute("state", "Bloque")
+        end
+    end)
+    sliderFrame:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+        if not InCombatLockdown() and _G[menuButtonName] then
+            local state = NecrosisConfig.BlockedMenu and "Bloque" or "Ferme"
+            _G[menuButtonName]:SetAttribute("state", state)
+        end
+    end)
+    sliderFrame:SetScript("OnValueChanged", function(slider)
+        if GameTooltip:IsOwned(slider) then
+            GameTooltip:SetText(slider:GetValue())
+        end
+        decalageTable[axis] = slider:GetValue()
+        if not InCombatLockdown() then
+            Necrosis:SetOfxy(menuKey)
+        end
+    end)
+end
+
 ------------------------------------------------------------------------------------------------------
 -- CREATION DE LA FRAME DES OPTIONS
 ------------------------------------------------------------------------------------------------------
@@ -398,7 +424,7 @@ function Necrosis:SetMenusConfig()
         frame:SetScript("OnEnter", function(slider)
             GameTooltip:SetOwner(slider, "ANCHOR_RIGHT")
             GameTooltip:SetText(slider:GetValue() .. " %")
-            if _G["NecrosisBuffMenu10"] then
+            if not InCombatLockdown() and _G["NecrosisBuffMenu10"] then
                 NecrosisBuffMenu10:Show()
                 NecrosisBuffMenu10:ClearAllPoints()
                 NecrosisBuffMenu10:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
@@ -406,13 +432,17 @@ function Necrosis:SetMenusConfig()
         end)
         frame:SetScript("OnLeave", function()
             GameTooltip:Hide()
-            Necrosis:CreateMenu()
+            if not InCombatLockdown() then
+                Necrosis:CreateMenu()
+            end
         end)
         frame:SetScript("OnValueChanged", function(slider)
             if slider:GetValue() ~= NecrosisConfig.BanishScale then
-                GameTooltip:SetText(slider:GetValue() .. " %")
+                if GameTooltip:IsOwned(slider) then
+                    GameTooltip:SetText(slider:GetValue() .. " %")
+                end
                 NecrosisConfig.BanishScale = slider:GetValue()
-                if _G["NecrosisBuffMenu10"] then
+                if not InCombatLockdown() and _G["NecrosisBuffMenu10"] then
                     NecrosisBuffMenu10:ClearAllPoints()
                     NecrosisBuffMenu10:SetScale(NecrosisConfig.BanishScale / 100)
                     NecrosisBuffMenu10:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
@@ -433,28 +463,7 @@ function Necrosis:SetMenusConfig()
         frame:ClearAllPoints()
         frame:SetPoint("LEFT", NecrosisMenusConfig2, "BOTTOMLEFT", 35, 200)
 
-        local State = "Ferme"
-        if NecrosisConfig.BlockedMenu then
-            State = "Bloque"
-        end
-        frame:SetScript("OnEnter", function(slider)
-            GameTooltip:SetOwner(slider, "ANCHOR_RIGHT")
-            GameTooltip:SetText(slider:GetValue())
-            if _G["NecrosisBuffMenuButton"] then
-                NecrosisBuffMenuButton:SetAttribute("state", "Bloque")
-            end
-        end)
-        frame:SetScript("OnLeave", function()
-            GameTooltip:Hide()
-            if _G["NecrosisBuffMenuButton"] then
-                NecrosisBuffMenuButton:SetAttribute("state", State)
-            end
-        end)
-        frame:SetScript("OnValueChanged", function(slider)
-            GameTooltip:SetText(slider:GetValue())
-            NecrosisConfig.BuffMenuDecalage.x = slider:GetValue()
-            Necrosis:SetOfxy("Buff")
-        end)
+        SetupMenuOffsetSlider(frame, "NecrosisBuffMenuButton", NecrosisConfig.BuffMenuDecalage, "x", "Buff")
 
         NecrosisBuffOxText:SetText("Offset X")
         NecrosisBuffOxLow:SetText("")
@@ -470,28 +479,7 @@ function Necrosis:SetMenusConfig()
         frame:ClearAllPoints()
         frame:SetPoint("RIGHT", NecrosisMenusConfig2, "BOTTOMRIGHT", 40, 200)
 
-        State = "Ferme"
-        if NecrosisConfig.BlockedMenu then
-            State = "Bloque"
-        end
-        frame:SetScript("OnEnter", function(slider)
-            GameTooltip:SetOwner(slider, "ANCHOR_RIGHT")
-            GameTooltip:SetText(slider:GetValue())
-            if _G["NecrosisBuffMenuButton"] then
-                NecrosisBuffMenuButton:SetAttribute("state", "Bloque")
-            end
-        end)
-        frame:SetScript("OnLeave", function()
-            GameTooltip:Hide()
-            if _G["NecrosisBuffMenuButton"] then
-                NecrosisBuffMenuButton:SetAttribute("state", State)
-            end
-        end)
-        frame:SetScript("OnValueChanged", function(slider)
-            GameTooltip:SetText(slider:GetValue())
-            NecrosisConfig.BuffMenuDecalage.y = slider:GetValue()
-            Necrosis:SetOfxy("Buff")
-        end)
+        SetupMenuOffsetSlider(frame, "NecrosisBuffMenuButton", NecrosisConfig.BuffMenuDecalage, "y", "Buff")
 
         NecrosisBuffOyText:SetText("Offset Y")
         NecrosisBuffOyLow:SetText("")
@@ -547,28 +535,7 @@ function Necrosis:SetMenusConfig()
         frame:ClearAllPoints()
         frame:SetPoint("LEFT", NecrosisMenusConfig3, "BOTTOMLEFT", 35, 200)
 
-        State = "Ferme"
-        if NecrosisConfig.BlockedMenu then
-            State = "Bloque"
-        end
-        frame:SetScript("OnEnter", function(slider)
-            GameTooltip:SetOwner(slider, "ANCHOR_RIGHT")
-            GameTooltip:SetText(slider:GetValue())
-            if _G["NecrosisPetMenuButton"] then
-                NecrosisPetMenuButton:SetAttribute("state", "Bloque")
-            end
-        end)
-        frame:SetScript("OnLeave", function()
-            GameTooltip:Hide()
-            if _G["NecrosisPetMenuButton"] then
-                NecrosisPetMenuButton:SetAttribute("state", State)
-            end
-        end)
-        frame:SetScript("OnValueChanged", function(slider)
-            GameTooltip:SetText(slider:GetValue())
-            NecrosisConfig.PetMenuDecalage.x = slider:GetValue()
-            Necrosis:SetOfxy("Pet")
-        end)
+        SetupMenuOffsetSlider(frame, "NecrosisPetMenuButton", NecrosisConfig.PetMenuDecalage, "x", "Pet")
 
         NecrosisDemonOxText:SetText("Offset X")
         NecrosisDemonOxLow:SetText("")
@@ -584,28 +551,7 @@ function Necrosis:SetMenusConfig()
         frame:ClearAllPoints()
         frame:SetPoint("RIGHT", NecrosisMenusConfig3, "BOTTOMRIGHT", 40, 200)
 
-        State = "Ferme"
-        if NecrosisConfig.BlockedMenu then
-            State = "Bloque"
-        end
-        frame:SetScript("OnEnter", function(slider)
-            GameTooltip:SetOwner(slider, "ANCHOR_RIGHT")
-            GameTooltip:SetText(slider:GetValue())
-            if _G["NecrosisPetMenuButton"] then
-                NecrosisPetMenuButton:SetAttribute("state", "Bloque")
-            end
-        end)
-        frame:SetScript("OnLeave", function()
-            GameTooltip:Hide()
-            if _G["NecrosisPetMenuButton"] then
-                NecrosisPetMenuButton:SetAttribute("state", State)
-            end
-        end)
-        frame:SetScript("OnValueChanged", function(slider)
-            GameTooltip:SetText(slider:GetValue())
-            NecrosisConfig.PetMenuDecalage.y = slider:GetValue()
-            Necrosis:SetOfxy("Pet")
-        end)
+        SetupMenuOffsetSlider(frame, "NecrosisPetMenuButton", NecrosisConfig.PetMenuDecalage, "y", "Pet")
 
         NecrosisDemonOyText:SetText("Offset Y")
         NecrosisDemonOyLow:SetText("")
@@ -661,28 +607,7 @@ function Necrosis:SetMenusConfig()
         frame:ClearAllPoints()
         frame:SetPoint("LEFT", NecrosisMenusConfig4, "BOTTOMLEFT", 35, 200)
 
-        State = "Ferme"
-        if NecrosisConfig.BlockedMenu then
-            State = "Bloque"
-        end
-        frame:SetScript("OnEnter", function(slider)
-            GameTooltip:SetOwner(slider, "ANCHOR_RIGHT")
-            GameTooltip:SetText(slider:GetValue())
-            if _G["NecrosisCurseMenuButton"] then
-                NecrosisCurseMenuButton:SetAttribute("state", "Bloque")
-            end
-        end)
-        frame:SetScript("OnLeave", function()
-            GameTooltip:Hide()
-            if _G["NecrosisCurseMenuButton"] then
-                NecrosisCurseMenuButton:SetAttribute("state", State)
-            end
-        end)
-        frame:SetScript("OnValueChanged", function(slider)
-            GameTooltip:SetText(slider:GetValue())
-            NecrosisConfig.CurseMenuDecalage.x = slider:GetValue()
-            Necrosis:SetOfxy("Curse")
-        end)
+        SetupMenuOffsetSlider(frame, "NecrosisCurseMenuButton", NecrosisConfig.CurseMenuDecalage, "x", "Curse")
 
         NecrosisCurseOxText:SetText("Offset X")
         NecrosisCurseOxLow:SetText("")
@@ -698,28 +623,7 @@ function Necrosis:SetMenusConfig()
         frame:ClearAllPoints()
         frame:SetPoint("RIGHT", NecrosisMenusConfig4, "BOTTOMRIGHT", 40, 200)
 
-        State = "Ferme"
-        if NecrosisConfig.BlockedMenu then
-            State = "Bloque"
-        end
-        frame:SetScript("OnEnter", function(slider)
-            GameTooltip:SetOwner(slider, "ANCHOR_RIGHT")
-            GameTooltip:SetText(slider:GetValue())
-            if _G["NecrosisCurseMenuButton"] then
-                NecrosisCurseMenuButton:SetAttribute("state", "Bloque")
-            end
-        end)
-        frame:SetScript("OnLeave", function()
-            GameTooltip:Hide()
-            if _G["NecrosisCurseMenuButton"] then
-                NecrosisCurseMenuButton:SetAttribute("state", State)
-            end
-        end)
-        frame:SetScript("OnValueChanged", function(slider)
-            GameTooltip:SetText(slider:GetValue())
-            NecrosisConfig.CurseMenuDecalage.y = slider:GetValue()
-            Necrosis:SetOfxy("Curse")
-        end)
+        SetupMenuOffsetSlider(frame, "NecrosisCurseMenuButton", NecrosisConfig.CurseMenuDecalage, "y", "Curse")
 
         NecrosisCurseOyText:SetText("Offset Y")
         NecrosisCurseOyLow:SetText("")

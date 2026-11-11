@@ -219,6 +219,7 @@ end
 ------------------------------------------------------------------------------------------------------
 
 function Necrosis.SlashHandler(arg1)
+    arg1 = arg1 or ""
     if arg1:lower():find("recall") then
         Necrosis:Recall()
     elseif arg1:lower():find("reset") and not InCombatLockdown() then

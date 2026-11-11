@@ -251,8 +251,7 @@ function Necrosis:RetraitTimerParIndex(index, Timer)
         -- remove the mob group timer || Suppression du timer du groupe de mob
         if Timer.SpellTimer[index] and Timer.SpellGroup[Timer.SpellTimer[index].Group] then
             if Timer.SpellGroup[Timer.SpellTimer[index].Group].Visible then
-                Timer.SpellGroup[Timer.SpellTimer[index].Group].Visible = Timer.SpellGroup
-                    [Timer.SpellTimer[index].Group].Visible
+                Timer.SpellGroup[Timer.SpellTimer[index].Group].Visible = Timer.SpellGroup[Timer.SpellTimer[index].Group].Visible
                     - 1
                 -- Hide the frame groups if empty || On cache la Frame des groupes si elle est vide
                 if Timer.SpellGroup[Timer.SpellTimer[index].Group].Visible <= 0 then

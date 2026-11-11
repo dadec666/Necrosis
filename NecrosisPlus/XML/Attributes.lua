@@ -40,6 +40,16 @@ local _G = _G
 Necrosis = Necrosis or _G.Necrosis or {}
 _G.Necrosis = Necrosis
 
+local function FormatSpellNameWithRank(spell)
+    if not spell or not spell.Name then
+        return nil
+    end
+    if spell.Rank and spell.Rank ~= "" then
+        return spell.Name .. "(" .. spell.Rank .. ")"
+    end
+    return spell.Name
+end
+
 ------------------------------------------------------------------------------------------------------
 -- DEFINITION OF INITIAL MENU ATTRIBUTES || DEFINITION INITIALE DES ATTRIBUTS DES MENUS
 ------------------------------------------------------------------------------------------------------
@@ -217,25 +227,16 @@ function Necrosis:BuffSpellAttribute()
     end
 
     -- Cas particulier : Bouton de Banish
-    if _G["NecrosisBuffMenu10"] then
-        local SpellName_Rank = self.Spell[9].Name .. "(" .. self.Spell[9].Rank .. ")"
+    if _G["NecrosisBuffMenu10"] and self.Spell[9] and self.Spell[9].Name then
+        local rank = self.Spell[9].Rank or ""
+        local SpellName_Rank = FormatSpellNameWithRank(self.Spell[9])
 
         NecrosisBuffMenu10:SetAttribute("unit*", "target") -- associate left & right clicks with target
         NecrosisBuffMenu10:SetAttribute("ctrl-unit*", "focus") -- associate CTRL+left or right clicks with focus
 
-        if self.Spell[9].Rank:find("1") then -- the warlock can only do Banish(Rank 1)
-            -- left & right click will perform the same macro
-            NecrosisBuffMenu10:SetAttribute("type*", "macro")
-            NecrosisBuffMenu10:SetAttribute("macrotext*", "/focus\n/cast " .. SpellName_Rank)
-
-            -- Si le démoniste control + click le bouton de banish || if the warlock uses ctrl-click then
-            -- On rebanish la dernière cible bannie || rebanish the previously banished target
-            NecrosisBuffMenu10:SetAttribute("ctrl-type*", "spell")
-            NecrosisBuffMenu10:SetAttribute("ctrl-spell*", SpellName_Rank)
-        end
-
-        if self.Spell[9].Rank:find("2") then -- the warlock has Banish(rank 2)
-            local Rank1 = SpellName_Rank:gsub("2", "1")
+        if rank:find("2") then -- the warlock has Banish(rank 2)
+            local rank1 = rank:gsub("2", "1")
+            local Rank1 = self.Spell[9].Name .. "(" .. rank1 .. ")"
 
             -- so lets use the "harmbutton" special attribute!
             -- assign Banish(rank 2) to LEFT click
@@ -249,10 +250,26 @@ function Necrosis:BuffSpellAttribute()
             NecrosisBuffMenu10:SetAttribute("macrotext-banishrank1", "/focus\n/cast " .. Rank1)
 
             -- allow focused target to be rebanished with CTRL+LEFT or RIGHT click
+            -- harmbutton remaps "1"/"2" to "banishrank2"/"banishrank1" before ctrl-* lookup
+            NecrosisBuffMenu10:SetAttribute("ctrl-type-banishrank2", "spell")
+            NecrosisBuffMenu10:SetAttribute("ctrl-spell-banishrank2", SpellName_Rank)
+            NecrosisBuffMenu10:SetAttribute("ctrl-type-banishrank1", "spell")
+            NecrosisBuffMenu10:SetAttribute("ctrl-spell-banishrank1", Rank1)
             NecrosisBuffMenu10:SetAttribute("ctrl-type1", "spell")
             NecrosisBuffMenu10:SetAttribute("ctrl-spell1", SpellName_Rank)
             NecrosisBuffMenu10:SetAttribute("ctrl-type2", "spell")
             NecrosisBuffMenu10:SetAttribute("ctrl-spell2", Rank1)
+        else -- the warlock can only do Banish(Rank 1)
+            -- left & right click will perform the same macro
+            NecrosisBuffMenu10:SetAttribute("harmbutton1", nil)
+            NecrosisBuffMenu10:SetAttribute("harmbutton2", nil)
+            NecrosisBuffMenu10:SetAttribute("type*", "macro")
+            NecrosisBuffMenu10:SetAttribute("macrotext*", "/focus\n/cast " .. SpellName_Rank)
+
+            -- Si le démoniste control + click le bouton de banish || if the warlock uses ctrl-click then
+            -- On rebanish la dernière cible bannie || rebanish the previously banished target
+            NecrosisBuffMenu10:SetAttribute("ctrl-type*", "spell")
+            NecrosisBuffMenu10:SetAttribute("ctrl-spell*", SpellName_Rank)
         end
     end
 end
@@ -329,9 +346,10 @@ function Necrosis:StoneAttribute(Steed)
     local buffID = { 51, 52, 53, 54 }
     for i = 1, #itemName, 1 do
         local f = _G["Necrosis" .. itemName[i] .. "Button"]
-        if f then
+        local spellName = FormatSpellNameWithRank(self.Spell[buffID[i]])
+        if f and spellName then
             f:SetAttribute("type2", "spell")
-            f:SetAttribute("spell2", self.Spell[buffID[i]].Name .. "(" .. self.Spell[buffID[i]].Rank .. ")")
+            f:SetAttribute("spell2", spellName)
         end
     end
 
@@ -343,11 +361,14 @@ function Necrosis:StoneAttribute(Steed)
         if NecrosisConfig.LeftMount then
             local leftMountName = GetSpellInfo(NecrosisConfig.LeftMount)
             NecrosisMountButton:SetAttribute("spell1", leftMountName)
-        else
-            if self.Spell[2].ID then
-                NecrosisMountButton:SetAttribute("spell1", self.Spell[2].Name)
+            if not NecrosisConfig.RightMount and self.Spell[1] then
                 NecrosisMountButton:SetAttribute("spell2", self.Spell[1].Name)
-            else
+            end
+        else
+            if self.Spell[2] and self.Spell[2].ID then
+                NecrosisMountButton:SetAttribute("spell1", self.Spell[2].Name)
+                NecrosisMountButton:SetAttribute("spell2", self.Spell[1] and self.Spell[1].Name)
+            elseif self.Spell[1] then
                 NecrosisMountButton:SetAttribute("spell*", self.Spell[1].Name)
             end
         end
@@ -405,7 +426,10 @@ end
 -- DEFINITION DES ATTRIBUTS DES SORTS EN FONCTION DU COMBAT / REGEN
 ------------------------------------------------------------------------------------------------------
 
-function Necrosis:NoCombatAttribute(_SoulstoneMode, _FirestoneMode, _SpellstoneMode, Pet, Buff, Curse)
+function Necrosis:NoCombatAttribute(_SoulstoneMode, FirestoneMode, SpellstoneMode, Pet, Buff, Curse)
+    if InCombatLockdown() then
+        return
+    end
     -- Si on veut que le menu s'engage automatiquement en combat
     -- Et se désengage à la fin
     if NecrosisConfig.AutomaticMenu and not NecrosisConfig.BlockedMenu then
@@ -473,7 +497,11 @@ function Necrosis:NoCombatAttribute(_SoulstoneMode, _FirestoneMode, _SpellstoneM
 
     -- Si on connait l'emplacement de la pierre de sort,
     -- Alors cliquer sur le bouton de pierre de sort l'équipe.
-    if NecrosisConfig.ItemSwitchCombat[1] and _G["NecrosisSpellstoneButton"] then
+    if
+        NecrosisConfig.ItemSwitchCombat[1]
+        and _G["NecrosisSpellstoneButton"]
+        and (SpellstoneMode == 2 or SpellstoneMode == 3)
+    then
         NecrosisSpellstoneButton:SetAttribute("type1", "macro")
         NecrosisSpellstoneButton:SetAttribute(
             "macrotext*",
@@ -482,7 +510,11 @@ function Necrosis:NoCombatAttribute(_SoulstoneMode, _FirestoneMode, _SpellstoneM
     end
     -- Si on connait l'emplacement de la pierre de feu,
     -- Alors cliquer sur le bouton de pierre de feu l'équipe.
-    if NecrosisConfig.ItemSwitchCombat[2] and _G["NecrosisFirestoneButton"] then
+    if
+        NecrosisConfig.ItemSwitchCombat[2]
+        and _G["NecrosisFirestoneButton"]
+        and (FirestoneMode == 2 or FirestoneMode == 3)
+    then
         NecrosisFirestoneButton:SetAttribute("type1", "macro")
         NecrosisFirestoneButton:SetAttribute(
             "macrotext*",
@@ -526,7 +558,11 @@ function Necrosis:InCombatAttribute(Pet, Buff, Curse)
 
     -- Si on connait le nom de la pierre de sort,
     -- Alors le clic gauche utiliser la pierre
-    if NecrosisConfig.ItemSwitchCombat[1] and _G["NecrosisSpellstoneButton"] then
+    if
+        NecrosisConfig.ItemSwitchCombat[1]
+        and _G["NecrosisSpellstoneButton"]
+        and (GetItemCount(NecrosisConfig.ItemSwitchCombat[1]) or 0) > 0
+    then
         NecrosisSpellstoneButton:SetAttribute("type1", "macro")
         NecrosisSpellstoneButton:SetAttribute(
             "macrotext*",
@@ -536,7 +572,11 @@ function Necrosis:InCombatAttribute(Pet, Buff, Curse)
 
     -- Si on connait le nom de la pierre de feu,
     -- Alors le clic sur le bouton équipera la pierre
-    if NecrosisConfig.ItemSwitchCombat[2] and _G["NecrosisFirestoneButton"] then
+    if
+        NecrosisConfig.ItemSwitchCombat[2]
+        and _G["NecrosisFirestoneButton"]
+        and (GetItemCount(NecrosisConfig.ItemSwitchCombat[2]) or 0) > 0
+    then
         NecrosisFirestoneButton:SetAttribute("type1", "macro")
         NecrosisFirestoneButton:SetAttribute(
             "macrotext*",
@@ -546,7 +586,11 @@ function Necrosis:InCombatAttribute(Pet, Buff, Curse)
 
     -- Si on connait le nom de la pierre de soin,
     -- Alors le clic gauche sur le bouton utilisera la pierre
-    if NecrosisConfig.ItemSwitchCombat[3] and _G["NecrosisHealthstoneButton"] then
+    if
+        NecrosisConfig.ItemSwitchCombat[3]
+        and _G["NecrosisHealthstoneButton"]
+        and (GetItemCount(NecrosisConfig.ItemSwitchCombat[3]) or 0) > 0
+    then
         NecrosisHealthstoneButton:SetAttribute("type1", "macro")
         NecrosisHealthstoneButton:SetAttribute(
             "macrotext1",
@@ -556,7 +600,11 @@ function Necrosis:InCombatAttribute(Pet, Buff, Curse)
 
     -- Si on connait le nom de la pierre d'âme,
     -- Alors le clic gauche sur le bouton utilisera la pierre
-    if NecrosisConfig.ItemSwitchCombat[4] and _G["NecrosisSoulstoneButton"] then
+    if
+        NecrosisConfig.ItemSwitchCombat[4]
+        and _G["NecrosisSoulstoneButton"]
+        and (GetItemCount(NecrosisConfig.ItemSwitchCombat[4]) or 0) > 0
+    then
         NecrosisSoulstoneButton:SetAttribute("type1", "item")
         NecrosisSoulstoneButton:SetAttribute("unit", "target")
         NecrosisSoulstoneButton:SetAttribute("item1", NecrosisConfig.ItemSwitchCombat[4])
@@ -579,8 +627,12 @@ function Necrosis:SoulstoneUpdateAttribute(nostone)
     -- Si le démoniste n'a pas de pierre dans son inventaire,
     -- Un clic gauche crée la pierre
     if nostone then
-        NecrosisSoulstoneButton:SetAttribute("type1", "spell")
-        NecrosisSoulstoneButton:SetAttribute("spell1", self.Spell[51].Name .. "(" .. self.Spell[51].Rank .. ")")
+        local createSpell = FormatSpellNameWithRank(self.Spell[51])
+        NecrosisSoulstoneButton:SetAttribute("type1", createSpell and "spell" or nil)
+        NecrosisSoulstoneButton:SetAttribute("spell1", createSpell)
+        NecrosisSoulstoneButton:SetAttribute("type3", nil)
+        NecrosisSoulstoneButton:SetAttribute("item1", nil)
+        NecrosisSoulstoneButton:SetAttribute("item3", nil)
         return
     end
 
@@ -603,8 +655,11 @@ function Necrosis:HealthstoneUpdateAttribute(nostone)
     -- Si le démoniste n'a pas de pierre dans son inventaire,
     -- Un clic gauche crée la pierre
     if nostone then
-        NecrosisHealthstoneButton:SetAttribute("type1", "spell")
-        NecrosisHealthstoneButton:SetAttribute("spell1", self.Spell[52].Name .. "(" .. self.Spell[52].Rank .. ")")
+        local createSpell = FormatSpellNameWithRank(self.Spell[52])
+        NecrosisHealthstoneButton:SetAttribute("type1", createSpell and "spell" or nil)
+        NecrosisHealthstoneButton:SetAttribute("spell1", createSpell)
+        NecrosisHealthstoneButton:SetAttribute("type3", nil)
+        NecrosisHealthstoneButton:SetAttribute("ctrl-type1", nil)
         return
     end
 
@@ -629,8 +684,10 @@ function Necrosis:SpellstoneUpdateAttribute(nostone)
     -- Si le démoniste n'a pas de pierre dans son inventaire,
     -- Un clic gauche crée la pierre
     if nostone then
-        NecrosisSpellstoneButton:SetAttribute("type1", "spell")
-        NecrosisSpellstoneButton:SetAttribute("spell*", self.Spell[53].Name .. "(" .. self.Spell[53].Rank .. ")")
+        local createSpell = FormatSpellNameWithRank(self.Spell[53])
+        NecrosisSpellstoneButton:SetAttribute("type1", createSpell and "spell" or nil)
+        NecrosisSpellstoneButton:SetAttribute("spell*", createSpell)
+        NecrosisSpellstoneButton:SetAttribute("macrotext*", nil)
         return
     end
 
@@ -650,8 +707,10 @@ function Necrosis:FirestoneUpdateAttribute(nostone)
     -- Si le démoniste n'a pas de pierre dans son inventaire,
     -- Un clic gauche crée la pierre
     if nostone then
-        NecrosisFirestoneButton:SetAttribute("type1", "spell")
-        NecrosisFirestoneButton:SetAttribute("spell*", self.Spell[54].Name .. "(" .. self.Spell[54].Rank .. ")")
+        local createSpell = FormatSpellNameWithRank(self.Spell[54])
+        NecrosisFirestoneButton:SetAttribute("type1", createSpell and "spell" or nil)
+        NecrosisFirestoneButton:SetAttribute("spell*", createSpell)
+        NecrosisFirestoneButton:SetAttribute("macrotext*", nil)
         return
     end
 

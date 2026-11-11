@@ -70,10 +70,16 @@ function Necrosis:SetSphereConfig()
         frame:SetPoint("CENTER", NecrosisSphereConfig, "BOTTOMLEFT", 225, 400)
 
         local NBx, NBy
+        local function UpdateSphereCenter()
+            local cx, cy = NecrosisButton:GetCenter()
+            if cx and cy then
+                local scale = (NecrosisConfig.NecrosisButtonScale or 100) / 100
+                NBx = cx * scale
+                NBy = cy * scale
+            end
+        end
         frame:SetScript("OnEnter", function(slider)
-            NBx, NBy = NecrosisButton:GetCenter()
-            NBx = NBx * (NecrosisConfig.NecrosisButtonScale / 100)
-            NBy = NBy * (NecrosisConfig.NecrosisButtonScale / 100)
+            UpdateSphereCenter()
             GameTooltip:SetOwner(slider, "ANCHOR_RIGHT")
             GameTooltip:SetText(slider:GetValue() .. " %")
         end)
@@ -82,16 +88,26 @@ function Necrosis:SetSphereConfig()
         end)
         frame:SetScript("OnValueChanged", function(slider)
             if slider:GetValue() ~= NecrosisConfig.NecrosisButtonScale then
-                NecrosisButton:ClearAllPoints()
-                GameTooltip:SetText(slider:GetValue() .. " %")
+                if InCombatLockdown() then
+                    return
+                end
+                if not NBx or not NBy then
+                    UpdateSphereCenter()
+                end
+                if GameTooltip:IsOwned(slider) then
+                    GameTooltip:SetText(slider:GetValue() .. " %")
+                end
                 NecrosisConfig.NecrosisButtonScale = slider:GetValue()
-                NecrosisButton:SetPoint(
-                    "CENTER",
-                    "UIParent",
-                    "BOTTOMLEFT",
-                    NBx / (NecrosisConfig.NecrosisButtonScale / 100),
-                    NBy / (NecrosisConfig.NecrosisButtonScale / 100)
-                )
+                if NBx and NBy then
+                    NecrosisButton:ClearAllPoints()
+                    NecrosisButton:SetPoint(
+                        "CENTER",
+                        "UIParent",
+                        "BOTTOMLEFT",
+                        NBx / (NecrosisConfig.NecrosisButtonScale / 100),
+                        NBy / (NecrosisConfig.NecrosisButtonScale / 100)
+                    )
+                end
                 NecrosisButton:SetScale(NecrosisConfig.NecrosisButtonScale / 100)
                 Necrosis:ButtonSetup()
             end

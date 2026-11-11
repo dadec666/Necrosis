@@ -72,10 +72,10 @@ if GetLocale() == "ruRU" then
     -- Traduction du nom des objets utilisés par Necrosis
     Necrosis.Translation.Item = {
         ["Soulshard"] = "Осколок души",
-        ["Soulstone"] = "[Кк]амень души", --[Кк]
-        ["Healthstone"] = "[Кк]амень здоровья", --[Кк]
-        ["Spellstone"] = "[Кк]амень чар", --[Кк]
-        ["Firestone"] = "[Кк]амень огня", --[Кк]
+        ["Soulstone"] = "Камень души",
+        ["Healthstone"] = "Камень здоровья",
+        ["Spellstone"] = "Камень чар",
+        ["Firestone"] = "Камень огня",
         ["InfernalStone"] = "Камень инфернала",
         ["DemoniacStone"] = "Демоническая статуэтка",
         ["Hearthstone"] = "Камень возвращения",
@@ -86,7 +86,6 @@ if GetLocale() == "ruRU" then
             "Сумка из ткани Скверны",
             "Черная сумка теней",
             "Сумка Бездны",
-            "Черная сумка теней",
             "Сумка из сердцевинной ткани Скверны",
         },
     }

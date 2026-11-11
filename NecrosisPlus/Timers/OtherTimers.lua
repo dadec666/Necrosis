@@ -60,6 +60,9 @@ function Necrosis:RezTimerUpdate(SpellTimer, LastUpdate)
     end
 
     Secondes = TimeMax - floor(GetTime())
+    if Secondes < 0 then
+        Secondes = 0
+    end
     Minutes = floor(Secondes / 60)
     Secondes = Secondes % 60
 
@@ -95,6 +98,9 @@ end
 -- Allows the viewing of recorded timers || Permet l'affichage des timers textuels
 -- and other textual timers || Allows the posting of text timers
 function Necrosis:TextTimerUpdate(SpellTimer, SpellGroup)
+    if not _G["NecrosisListSpells"] then
+        return
+    end
     if not SpellTimer[1] then
         NecrosisListSpells:SetText("")
         return
@@ -109,12 +115,16 @@ function Necrosis:TextTimerUpdate(SpellTimer, SpellGroup)
 
     for index in ipairs(SpellTimer) do
         -- Changement de la couleur suivant le temps restant
-        local percent = (floor(SpellTimer[index].TimeMax - Now) / SpellTimer[index].Time) * 100
+        local duration = (SpellTimer[index].Time and SpellTimer[index].Time > 0) and SpellTimer[index].Time or 1
+        local percent = (floor(SpellTimer[index].TimeMax - Now) / duration) * 100
+        if percent < 0 then
+            percent = 0
+        end
         local color = NecrosisTimerColor(percent)
 
         -- Affichage de l'entête si on change de groupe
-        if SpellTimer[index].Group ~= LastGroup and SpellTimer[index].Group > 3 then
-            if SpellTimer[index].Group and SpellGroup[SpellTimer[index].Group] then
+        if SpellTimer[index].Group and SpellTimer[index].Group ~= LastGroup and SpellTimer[index].Group > 3 then
+            if SpellGroup[SpellTimer[index].Group] then
                 if SpellGroup[SpellTimer[index].Group].Name then
                     display = display .. "<purple>-------------------------------\n"
                     display = display .. SpellGroup[SpellTimer[index].Group].Name
@@ -128,6 +138,9 @@ function Necrosis:TextTimerUpdate(SpellTimer, SpellGroup)
 
         -- Affichage du temps restant
         seconds = SpellTimer[index].TimeMax - Now
+        if seconds < 0 then
+            seconds = 0
+        end
         minutes = floor(seconds / 60)
         seconds = seconds % 60
         if minutes > 0 then

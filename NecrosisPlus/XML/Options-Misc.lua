@@ -178,6 +178,7 @@ function Necrosis:SetMiscConfig()
             NecrosisConfig.DestroyCount = slider:GetValue()
             NecrosisDestroyShard:SetChecked(true)
             NecrosisConfig.DestroyShard = true
+            Necrosis:BagExplore()
         end)
 
         NecrosisDestroyCountLow:SetText("1")
@@ -268,22 +269,19 @@ function Necrosis:SetMiscConfig()
         frame:SetPoint("CENTER", NecrosisMiscConfig, "BOTTOMLEFT", 225, 150)
 
         local STx, STy, BLx, BLy, AFx, AFy, CAx, CAy
+        local function UpdateHiddenCenters()
+            local scale = (NecrosisConfig.ShadowTranceScale or 100) / 100
+            local x, y = NecrosisShadowTranceButton:GetCenter()
+            STx, STy = (x or 0) * scale, (y or 0) * scale
+            x, y = NecrosisBacklashButton:GetCenter()
+            BLx, BLy = (x or 0) * scale, (y or 0) * scale
+            x, y = NecrosisAntiFearButton:GetCenter()
+            AFx, AFy = (x or 0) * scale, (y or 0) * scale
+            x, y = NecrosisCreatureAlertButton:GetCenter()
+            CAx, CAy = (x or 0) * scale, (y or 0) * scale
+        end
         frame:SetScript("OnEnter", function(slider)
-            STx, STy = NecrosisShadowTranceButton:GetCenter()
-            STx = STx * (NecrosisConfig.ShadowTranceScale / 100)
-            STy = STy * (NecrosisConfig.ShadowTranceScale / 100)
-
-            BLx, BLy = NecrosisBacklashButton:GetCenter()
-            BLx = BLx * (NecrosisConfig.ShadowTranceScale / 100)
-            BLy = BLy * (NecrosisConfig.ShadowTranceScale / 100)
-
-            AFx, AFy = NecrosisAntiFearButton:GetCenter()
-            AFx = AFx * (NecrosisConfig.ShadowTranceScale / 100)
-            AFy = AFy * (NecrosisConfig.ShadowTranceScale / 100)
-
-            CAx, CAy = NecrosisCreatureAlertButton:GetCenter()
-            CAx = CAx * (NecrosisConfig.ShadowTranceScale / 100)
-            CAy = CAy * (NecrosisConfig.ShadowTranceScale / 100)
+            UpdateHiddenCenters()
 
             NecrosisShadowTranceButton:Show()
             NecrosisBacklashButton:Show()
@@ -303,7 +301,12 @@ function Necrosis:SetMiscConfig()
         end)
         frame:SetScript("OnValueChanged", function(slider)
             if slider:GetValue() ~= NecrosisConfig.ShadowTranceScale then
-                GameTooltip:SetText(slider:GetValue() .. "%")
+                if not (STx and STy and BLx and BLy and AFx and AFy and CAx and CAy) then
+                    UpdateHiddenCenters()
+                end
+                if GameTooltip:IsOwned(slider) then
+                    GameTooltip:SetText(slider:GetValue() .. "%")
+                end
                 NecrosisConfig.ShadowTranceScale = slider:GetValue()
 
                 NecrosisShadowTranceButton:ClearAllPoints()

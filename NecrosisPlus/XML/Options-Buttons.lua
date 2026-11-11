@@ -301,17 +301,19 @@ function Necrosis:SetButtonsConfig()
                     "NecrosisCurseMenuButton",
                     "NecrosisMetamorphosisButton",
                 }
-                local loc = { -121, -87, -53, -17, 17, 53, 87, 121 }
-                for i in ipairs(ButtonName) do
-                    if _G[ButtonName[i]] then
-                        _G[ButtonName[i]]:SetPoint("CENTER", "UIParent", "CENTER", loc[i], -100)
-                        NecrosisConfig.FramePosition[ButtonName[i]] = {
-                            "CENTER",
-                            "UIParent",
-                            "CENTER",
-                            loc[i],
-                            -100,
-                        }
+                local loc = { -144, -108, -72, -36, 0, 36, 72, 108, 144 }
+                if not InCombatLockdown() then
+                    for i in ipairs(ButtonName) do
+                        if _G[ButtonName[i]] then
+                            _G[ButtonName[i]]:SetPoint("CENTER", "UIParent", "CENTER", loc[i], -100)
+                            NecrosisConfig.FramePosition[ButtonName[i]] = {
+                                "CENTER",
+                                "UIParent",
+                                "CENTER",
+                                loc[i],
+                                -100,
+                            }
+                        end
                     end
                 end
                 Necrosis:Drag()
@@ -708,6 +710,12 @@ function Necrosis:SetButtonsConfig()
     NecrosisButtonsConfig2Text:SetText(self.Config.Menus["Options Generales"])
     NecrosisRotationText:SetText(self.Config.Buttons["Rotation des boutons"])
     NecrosisLockButtons:SetText(self.Config.Buttons["Fixer les boutons autour de la sphere"])
+    if _G["NecrosisLeftMountText"] then
+        _G["NecrosisLeftMountText"]:SetText(self.Config.Buttons["Monture - Clic gauche"])
+    end
+    if _G["NecrosisRightMountText"] then
+        _G["NecrosisRightMountText"]:SetText(self.Config.Buttons["Monture - Clic droit"])
+    end
 
     frame = _G["NecrosisButtonsConfig"]
     frame:Show()
@@ -720,7 +728,7 @@ function Necrosis:SetCompanionPage(num)
     NecrosisMountsSelectionFrame.pageMount = num
 
     num = num + 1 --For easier usage
-    local maxpage = ceil(GetNumCompanions("MOUNT") / NECROSIS_COMPANIONS_PER_PAGE)
+    local maxpage = math.max(1, ceil(GetNumCompanions("MOUNT") / NECROSIS_COMPANIONS_PER_PAGE))
     NecrosisCompanionPageNumber:SetFormattedText(NECROSIS_PAGE_NUMBER, num, maxpage)
 
     if num <= 1 then

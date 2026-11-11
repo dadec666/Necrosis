@@ -674,19 +674,16 @@ function Necrosis:CreateWarlockPopup()
     end)
 
     -- Place the button window at its saved location || Placement de la fenêtre à l'endroit sauvegardé ou à l'emplacement par défaut
-    if NecrosisConfig.FramePosition then
-        if NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"] then
-            frame:ClearAllPoints()
-            frame:SetPoint(
-                NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"][1],
-                NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"][2],
-                NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"][3],
-                NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"][4],
-                NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"][5]
-            )
-        end
+    frame:ClearAllPoints()
+    if NecrosisConfig.FramePosition and NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"] then
+        frame:SetPoint(
+            NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"][1],
+            NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"][2],
+            NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"][3],
+            NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"][4],
+            NecrosisConfig.FramePosition["NecrosisCreatureAlertButton"][5]
+        )
     else
-        frame:ClearAllPoints()
         frame:SetPoint("CENTER", UIParent, "CENTER", -50, 0)
     end
 
@@ -718,19 +715,16 @@ function Necrosis:CreateWarlockPopup()
     end)
 
     -- Place the button window at its saved location || Placement de la fenêtre à l'endroit sauvegardé ou à l'emplacement par défaut
-    if NecrosisConfig.FramePosition then
-        if NecrosisConfig.FramePosition["NecrosisAntiFearButton"] then
-            frame:ClearAllPoints()
-            frame:SetPoint(
-                NecrosisConfig.FramePosition["NecrosisAntiFearButton"][1],
-                NecrosisConfig.FramePosition["NecrosisAntiFearButton"][2],
-                NecrosisConfig.FramePosition["NecrosisAntiFearButton"][3],
-                NecrosisConfig.FramePosition["NecrosisAntiFearButton"][4],
-                NecrosisConfig.FramePosition["NecrosisAntiFearButton"][5]
-            )
-        end
+    frame:ClearAllPoints()
+    if NecrosisConfig.FramePosition and NecrosisConfig.FramePosition["NecrosisAntiFearButton"] then
+        frame:SetPoint(
+            NecrosisConfig.FramePosition["NecrosisAntiFearButton"][1],
+            NecrosisConfig.FramePosition["NecrosisAntiFearButton"][2],
+            NecrosisConfig.FramePosition["NecrosisAntiFearButton"][3],
+            NecrosisConfig.FramePosition["NecrosisAntiFearButton"][4],
+            NecrosisConfig.FramePosition["NecrosisAntiFearButton"][5]
+        )
     else
-        frame:ClearAllPoints()
         frame:SetPoint("CENTER", UIParent, "CENTER", 50, 0)
     end
 end

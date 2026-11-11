@@ -83,6 +83,10 @@ function Necrosis:SetTimersConfig()
         frame:SetPoint("LEFT", NecrosisTimersConfig, "BOTTOMLEFT", 25, 325)
 
         frame:SetScript("OnClick", function(btn)
+            if InCombatLockdown() then
+                btn:SetChecked(NecrosisConfig.ShowSpellTimers)
+                return
+            end
             NecrosisConfig.ShowSpellTimers = btn:GetChecked()
             if NecrosisConfig.ShowSpellTimers then
                 NecrosisSpellTimerButton:Show()
@@ -208,12 +212,22 @@ function Necrosis.Timer_Click(self)
             _G["NecrosisTimerFrame" .. index]:Hide()
             index = index + 1
         end
+        index = 1
+        while _G["NecrosisSpellTimer" .. index] do
+            _G["NecrosisSpellTimer" .. index]:Hide()
+            index = index + 1
+        end
     elseif ID == 3 then
         NecrosisTimerUpward:Disable()
         NecrosisTimerOnLeft:Enable()
         local index = 1
         while _G["NecrosisTimerFrame" .. index] do
             _G["NecrosisTimerFrame" .. index]:Hide()
+            index = index + 1
+        end
+        index = 1
+        while _G["NecrosisSpellTimer" .. index] do
+            _G["NecrosisSpellTimer" .. index]:Hide()
             index = index + 1
         end
     else

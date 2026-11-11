@@ -92,6 +92,141 @@ local GetSpellName = GetSpellName or function(id, book)
     return n, r
 end
 
+local CYRILLIC_LOWER = {
+    ["\208\129"] = "\209\145",
+    ["\208\144"] = "\208\176",
+    ["\208\145"] = "\208\177",
+    ["\208\146"] = "\208\178",
+    ["\208\147"] = "\208\179",
+    ["\208\148"] = "\208\180",
+    ["\208\149"] = "\208\181",
+    ["\208\150"] = "\208\182",
+    ["\208\151"] = "\208\183",
+    ["\208\152"] = "\208\184",
+    ["\208\153"] = "\208\185",
+    ["\208\154"] = "\208\186",
+    ["\208\155"] = "\208\187",
+    ["\208\156"] = "\208\188",
+    ["\208\157"] = "\208\189",
+    ["\208\158"] = "\208\190",
+    ["\208\159"] = "\208\191",
+    ["\208\160"] = "\209\128",
+    ["\208\161"] = "\209\129",
+    ["\208\162"] = "\209\130",
+    ["\208\163"] = "\209\131",
+    ["\208\164"] = "\209\132",
+    ["\208\165"] = "\209\133",
+    ["\208\166"] = "\209\134",
+    ["\208\167"] = "\209\135",
+    ["\208\168"] = "\209\136",
+    ["\208\169"] = "\209\137",
+    ["\208\170"] = "\209\138",
+    ["\208\171"] = "\209\139",
+    ["\208\172"] = "\209\140",
+    ["\208\173"] = "\209\141",
+    ["\208\174"] = "\209\142",
+    ["\208\175"] = "\209\143",
+}
+
+local function ToLowerUtf8(str)
+    if not str then
+        return ""
+    end
+    -- Lowercase ASCII [A-Z] explicitly because CRT string.lower corrupts UTF-8 lead byte 0xD0 under CP1251 locales
+    local asciiLowered = str:gsub("[A-Z]", function(c)
+        return string.char(c:byte() + 32)
+    end)
+    return (asciiLowered:gsub("\208[\129\144-\175]", CYRILLIC_LOWER))
+end
+
+local function GetTooltipNumLines()
+    local numLines = NecrosisTooltip and tonumber(NecrosisTooltip:NumLines()) or 10
+    if numLines < 10 then
+        numLines = 10
+    end
+    return numLines
+end
+
+function Necrosis:MatchStoneName(text, stoneKey)
+    if not text or not stoneKey then
+        return false
+    end
+    local needle = self.Translation and self.Translation.Item and self.Translation.Item[stoneKey]
+    if not needle or needle == "" then
+        return false
+    end
+    return ToLowerUtf8(text):find(ToLowerUtf8(needle), 1, true) ~= nil
+end
+
+function Necrosis:FindTooltipLine(needle)
+    if not needle or needle == "" then
+        return nil
+    end
+    local lowerNeedle = ToLowerUtf8(needle)
+    local numLines = GetTooltipNumLines()
+    for i = 1, numLines, 1 do
+        local line = _G["NecrosisTooltipTextLeft" .. i]
+        local lineText = line and line:GetText()
+        if lineText and ToLowerUtf8(lineText):find(lowerNeedle, 1, true) then
+            return lineText
+        end
+    end
+    return nil
+end
+
+function Necrosis:GetWeaponEnchantStone(spellName)
+    if not spellName or spellName == "" then
+        return nil
+    end
+    if
+        self:MatchStoneName(spellName, "Spellstone")
+        or (NecrosisConfig.ItemSwitchCombat[1] and spellName == NecrosisConfig.ItemSwitchCombat[1])
+    then
+        return "Spellstone"
+    elseif
+        self:MatchStoneName(spellName, "Firestone")
+        or (NecrosisConfig.ItemSwitchCombat[2] and spellName == NecrosisConfig.ItemSwitchCombat[2])
+    then
+        return "Firestone"
+    end
+    return nil
+end
+
+local function ScanBagSlotForStones(self, container, slot)
+    local itemLink = GetContainerItemLink(container, slot)
+    if not itemLink then
+        return
+    end
+    local itemName = GetItemInfo(itemLink) or itemLink:match("%[(.-)%]")
+    if not itemName then
+        return
+    end
+    if self:MatchStoneName(itemName, "Soulstone") then
+        Local.Stone.Soul.OnHand = container
+        Local.Stone.Soul.Location = { container, slot }
+        NecrosisConfig.ItemSwitchCombat[4] = itemName
+        self:SoulstoneUpdateAttribute()
+    elseif self:MatchStoneName(itemName, "Healthstone") then
+        Local.Stone.Health.OnHand = container
+        Local.Stone.Health.Location = { container, slot }
+        NecrosisConfig.ItemSwitchCombat[3] = itemName
+        self:HealthstoneUpdateAttribute()
+    elseif self:MatchStoneName(itemName, "Spellstone") then
+        Local.Stone.Spell.OnHand = container
+        Local.Stone.Spell.Location = { container, slot }
+        NecrosisConfig.ItemSwitchCombat[1] = itemName
+        self:SpellstoneUpdateAttribute()
+    elseif self:MatchStoneName(itemName, "Firestone") then
+        Local.Stone.Fire.OnHand = container
+        Local.Stone.Fire.Location = { container, slot }
+        NecrosisConfig.ItemSwitchCombat[2] = itemName
+        self:FirestoneUpdateAttribute()
+    elseif self:MatchStoneName(itemName, "Hearthstone") then
+        Local.Stone.Hearth.OnHand = container
+        Local.Stone.Hearth.Location = { container, slot }
+    end
+end
+
 ------------------------------------------------------------------------------------------------------
 -- FONCTIONS LOCALES
 ------------------------------------------------------------------------------------------------------
@@ -620,13 +755,18 @@ function Necrosis:OnEvent(event, ...)
             Local.Warning.Antifear.Immune = false
         end
         if NecrosisConfig.CreatureAlert and UnitCanAttack("player", "target") and not UnitIsDead("target") then
-            Local.Warning.Banishable = true
-            if UnitCreatureType("target") == self.Unit.Demon then
+            local creatureType = UnitCreatureType("target")
+            if creatureType == self.Unit.Demon then
+                Local.Warning.Banishable = true
                 NecrosisCreatureAlertButton:Show()
                 NecrosisCreatureAlertButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\DemonAlert")
-            elseif UnitCreatureType("target") == self.Unit.Elemental then
+            elseif creatureType == self.Unit.Elemental then
+                Local.Warning.Banishable = true
                 NecrosisCreatureAlertButton:Show()
                 NecrosisCreatureAlertButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\ElemAlert")
+            elseif Local.Warning.Banishable then
+                Local.Warning.Banishable = false
+                NecrosisCreatureAlertButton:Hide()
             end
         elseif Local.Warning.Banishable then
             Local.Warning.Banishable = false
@@ -685,7 +825,7 @@ function Necrosis:OnEvent(event, ...)
             and spellName == self.Spell[9].Name
         then
             self:Msg("BAN ! BAN ! BAN !")
-            self:RetraitTimerParNom(self.Spell[9], Local.TimerManagement)
+            self:RetraitTimerParNom(self.Spell[9].Name, Local.TimerManagement)
             Local.TimerManagement.Banish = false
         -- Détection des résists / immunes
         elseif eventType == "SPELL_MISSED" and sourceGUID == playerGUID and destGUID == UnitGUID("target") then
@@ -704,21 +844,18 @@ function Necrosis:OnEvent(event, ...)
                 self:RetraitTimerParIndex(Local.TimerManagement.LastSpell.Index, Local.TimerManagement)
             end
         -- Détection application d'une pierre de sort/feu sur une arme
-        elseif
-            eventType == "ENCHANT_APPLIED"
-            and destGUID == playerGUID
-            and (spellID == NecrosisConfig.ItemSwitchCombat[1] or spellID == NecrosisConfig.ItemSwitchCombat[2])
-        then
-            Local.SomethingOnHand = spellID
-            self:UpdateIcons()
+        elseif eventType == "ENCHANT_APPLIED" and destGUID == playerGUID then
+            local enchantStone = self:GetWeaponEnchantStone(spellID)
+            if enchantStone then
+                Local.SomethingOnHand = enchantStone
+                self:UpdateIcons()
+            end
         -- Détection fin d'enchant
-        elseif
-            (eventType == "ENCHANT_REMOVED" or eventType == "ENCHANT_REMOVE")
-            and destGUID == playerGUID
-            and (spellID == NecrosisConfig.ItemSwitchCombat[1] or spellID == NecrosisConfig.ItemSwitchCombat[2])
-        then
-            Local.SomethingOnHand = "Rien"
-            self:UpdateIcons()
+        elseif (eventType == "ENCHANT_REMOVED" or eventType == "ENCHANT_REMOVE") and destGUID == playerGUID then
+            if self:GetWeaponEnchantStone(spellID) then
+                Local.SomethingOnHand = "Rien"
+                self:UpdateIcons()
+            end
         end
 
     -- Si on change d'arme, on regarde si un enchantement de sort / feu est sur la nouvelle
@@ -927,8 +1064,8 @@ function Necrosis:SpellManagement()
                 self:InsertTimerParTable(11, Local.SpellCasted.TargetName, "", Local.TimerManagement)
         -- Create a timer if a healthstone was used || Si le sort était une pierre de soin
         elseif
-            Local.SpellCasted.Name:find(self.Translation.Item.Healthstone)
-            and not Local.SpellCasted.Name:find(self.Translation.Misc.Create)
+            self:MatchStoneName(Local.SpellCasted.Name, "Healthstone")
+            and not Local.SpellCasted.Name:find(self.Translation.Misc.Create, 1, true)
         then
             Local.TimerManagement = self:InsertTimerStone("Healthstone", nil, nil, Local.TimerManagement)
         -- Create a timer for any other spell cast (if valid) || Pour les autres sorts castés, tentative de timer si valable
@@ -1044,7 +1181,7 @@ function Necrosis:SpellManagement()
                     end
                     if not SortActif and self.Spell[spell].Type ~= 0 and spell ~= 10 then
                         if spell == 9 then
-                            if Local.SpellCasted.Rank:find("1") then
+                            if Local.SpellCasted.Rank and Local.SpellCasted.Rank:find("1") then
                                 self.Spell[spell].Length = 20
                             else
                                 self.Spell[spell].Length = 30
@@ -1196,9 +1333,9 @@ function Necrosis:BuildTooltip(button, Type, anchor, sens)
             if Local.Stone.Soul.Location then
                 self:MoneyToggle()
                 NecrosisTooltip:SetBagItem(Local.Stone.Soul.Location[1], Local.Stone.Soul.Location[2])
-                local text6 = NecrosisTooltipTextLeft6 and NecrosisTooltipTextLeft6:GetText()
-                if text6 and text6:find(self.Translation.Misc.Cooldown) then
-                    GameTooltip:AddLine(text6)
+                local cooldownText = self:FindTooltipLine(self.Translation.Misc.Cooldown)
+                if cooldownText then
+                    GameTooltip:AddLine(cooldownText)
                 end
             end
         -- Pierre de vie
@@ -1214,9 +1351,9 @@ function Necrosis:BuildTooltip(button, Type, anchor, sens)
             if Local.Stone.Health.Location then
                 self:MoneyToggle()
                 NecrosisTooltip:SetBagItem(Local.Stone.Health.Location[1], Local.Stone.Health.Location[2])
-                local text6 = NecrosisTooltipTextLeft6 and NecrosisTooltipTextLeft6:GetText()
-                if text6 and text6:find(self.Translation.Misc.Cooldown) then
-                    GameTooltip:AddLine(text6)
+                local cooldownText = self:FindTooltipLine(self.Translation.Misc.Cooldown)
+                if cooldownText then
+                    GameTooltip:AddLine(cooldownText)
                 end
             end
             if Local.Soulshard.Count > 0 and not (start3 > 0 and duration3 > 0) then
@@ -1251,9 +1388,9 @@ function Necrosis:BuildTooltip(button, Type, anchor, sens)
         if Local.Stone.Hearth.Location then
             self:MoneyToggle()
             NecrosisTooltip:SetBagItem(Local.Stone.Hearth.Location[1], Local.Stone.Hearth.Location[2])
-            local text5 = NecrosisTooltipTextLeft5 and NecrosisTooltipTextLeft5:GetText()
-            if text5 and text5:find(self.Translation.Misc.Cooldown) then
-                GameTooltip:AddLine(self.Translation.Item.Hearthstone .. " - " .. text5)
+            local cooldownText = self:FindTooltipLine(self.Translation.Misc.Cooldown)
+            if cooldownText then
+                GameTooltip:AddLine(self.Translation.Item.Hearthstone .. " - " .. cooldownText)
             else
                 GameTooltip:AddLine(self.TooltipData[Type].Right .. GetBindLocation())
             end
@@ -1270,17 +1407,29 @@ function Necrosis:BuildTooltip(button, Type, anchor, sens)
         if Local.Soulshard.Count == 0 then
             GameTooltip:AddLine("|c00FF4444" .. self.TooltipData.Main.Soulshard .. Local.Soulshard.Count .. "|r")
         end
-    elseif (Type == "Mount") and self.Spell[2].ID then
+    elseif
+        Type == "Mount"
+        and (
+            (self.Spell[1] and self.Spell[1].ID)
+            or (self.Spell[2] and self.Spell[2].ID)
+            or NecrosisConfig.LeftMount
+            or NecrosisConfig.RightMount
+        )
+    then
         if NecrosisConfig.LeftMount then
             local leftMountName = GetSpellInfo(NecrosisConfig.LeftMount)
-            GameTooltip:AddLine(leftMountName)
-        else
-            --use tooltip for default mounts
+            if leftMountName then
+                GameTooltip:AddLine(leftMountName)
+            end
+        elseif (self.Spell[1] and self.Spell[1].ID) or (self.Spell[2] and self.Spell[2].ID) then
+            -- use tooltip for default mounts
             GameTooltip:AddLine(self.TooltipData[Type].Text)
         end
         if NecrosisConfig.RightMount then
             local rightMountName = GetSpellInfo(NecrosisConfig.RightMount)
-            GameTooltip:AddLine(rightMountName)
+            if rightMountName then
+                GameTooltip:AddLine(rightMountName)
+            end
         end
     elseif Type == "Armor" then
         if self.Spell[31].ID then
@@ -1421,24 +1570,24 @@ end
 -- Fonction mettant à jour les boutons Necrosis et donnant l'état du bouton de la pierre d'âme
 function Necrosis:UpdateIcons()
     -- Si la fonction a été appelée pour détecter un enchantement, on le détecte !
-    if Local.SomethingOnHand == "Truc" then
-        local hasMainHandEnchant = GetWeaponEnchantInfo()
-        if hasMainHandEnchant then
-            self:MoneyToggle()
-            NecrosisTooltip:SetInventoryItem("player", 16)
-            local text8 = NecrosisTooltipTextLeft8 and NecrosisTooltipTextLeft8:GetText()
-            local itemName = text8 and tostring(text8)
-            if itemName and NecrosisConfig.ItemSwitchCombat[1] then
-                if itemName:find(NecrosisConfig.ItemSwitchCombat[1]) then
-                    Local.SomethingOnHand = NecrosisConfig.ItemSwitchCombat[1]
-                end
-            end
-            if itemName and NecrosisConfig.ItemSwitchCombat[2] then
-                if itemName:find(NecrosisConfig.ItemSwitchCombat[2]) then
-                    Local.SomethingOnHand = NecrosisConfig.ItemSwitchCombat[2]
-                end
+    local hasMainHandEnchant = GetWeaponEnchantInfo()
+    if not hasMainHandEnchant then
+        Local.SomethingOnHand = "Rien"
+    elseif Local.SomethingOnHand == "Truc" then
+        self:MoneyToggle()
+        NecrosisTooltip:SetInventoryItem("player", 16)
+        local foundStone = "Rien"
+        local numLines = GetTooltipNumLines()
+        for i = 1, numLines, 1 do
+            local line = _G["NecrosisTooltipTextLeft" .. i]
+            local lineText = line and line:GetText()
+            local matched = self:GetWeaponEnchantStone(lineText)
+            if matched then
+                foundStone = matched
+                break
             end
         end
+        Local.SomethingOnHand = foundStone
     end
 
     -- Pierre d'âme
@@ -1527,11 +1676,13 @@ function Necrosis:UpdateIcons()
 
     -- Pierre de sort
     -----------------------------------------------
+    local hasSpellstoneEnchant = (Local.SomethingOnHand == "Spellstone")
+        or (NecrosisConfig.ItemSwitchCombat[1] and Local.SomethingOnHand == NecrosisConfig.ItemSwitchCombat[1])
 
     -- Pierre dans l'inventaire...
     if Local.Stone.Spell.OnHand then
         -- ... et sur l'arme = mode 3, sinon = mode 2
-        if Local.SomethingOnHand == NecrosisConfig.ItemSwitchCombat[1] then
+        if hasSpellstoneEnchant then
             Local.Stone.Spell.Mode = 3
         else
             Local.Stone.Spell.Mode = 2
@@ -1539,7 +1690,7 @@ function Necrosis:UpdateIcons()
     -- Pierre inexistante...
     else
         -- ... mais sur l'arme = mode 4, sinon = mode 1
-        if Local.SomethingOnHand == NecrosisConfig.ItemSwitchCombat[1] then
+        if hasSpellstoneEnchant then
             Local.Stone.Spell.Mode = 4
         else
             Local.Stone.Spell.Mode = 1
@@ -1559,11 +1710,13 @@ function Necrosis:UpdateIcons()
 
     -- Pierre de feu
     -----------------------------------------------
+    local hasFirestoneEnchant = (Local.SomethingOnHand == "Firestone")
+        or (NecrosisConfig.ItemSwitchCombat[2] and Local.SomethingOnHand == NecrosisConfig.ItemSwitchCombat[2])
 
     -- Pierre dans l'inventaire...
     if Local.Stone.Fire.OnHand then
         -- ... et sur l'arme = mode 3, sinon = mode 2
-        if Local.SomethingOnHand == NecrosisConfig.ItemSwitchCombat[2] then
+        if hasFirestoneEnchant then
             Local.Stone.Fire.Mode = 3
         else
             Local.Stone.Fire.Mode = 2
@@ -1571,7 +1724,7 @@ function Necrosis:UpdateIcons()
     -- Pierre inexistante...
     else
         -- ... mais sur l'arme = mode 4, sinon = mode 1
-        if Local.SomethingOnHand == NecrosisConfig.ItemSwitchCombat[2] then
+        if hasFirestoneEnchant then
             Local.Stone.Fire.Mode = 4
         else
             Local.Stone.Fire.Mode = 1
@@ -1595,16 +1748,23 @@ function Necrosis:UpdateHealth()
     local health = UnitHealth("player")
     if NecrosisConfig.Circle == 4 then
         local healthMax = UnitHealthMax("player")
-        if health == healthMax then
-            if Local.LastSphereSkin ~= NecrosisConfig.NecrosisColor .. "\\Shard32" then
-                Local.LastSphereSkin = NecrosisConfig.NecrosisColor .. "\\Shard32"
-                NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\" .. Local.LastSphereSkin)
-            end
-        else
-            local taux = math.floor(health / (healthMax / 16))
-            if Local.LastSphereSkin ~= NecrosisConfig.NecrosisColor .. "\\Shard" .. taux then
-                Local.LastSphereSkin = NecrosisConfig.NecrosisColor .. "\\Shard" .. taux
-                NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\" .. Local.LastSphereSkin)
+        if healthMax > 0 then
+            if health == healthMax then
+                if Local.LastSphereSkin ~= NecrosisConfig.NecrosisColor .. "\\Shard32" then
+                    Local.LastSphereSkin = NecrosisConfig.NecrosisColor .. "\\Shard32"
+                    NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\" .. Local.LastSphereSkin)
+                end
+            else
+                local taux = math.floor(health / (healthMax / 16))
+                if taux < 0 then
+                    taux = 0
+                elseif taux > 16 then
+                    taux = 16
+                end
+                if Local.LastSphereSkin ~= NecrosisConfig.NecrosisColor .. "\\Shard" .. taux then
+                    Local.LastSphereSkin = NecrosisConfig.NecrosisColor .. "\\Shard" .. taux
+                    NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\" .. Local.LastSphereSkin)
+                end
             end
         end
     end
@@ -1624,7 +1784,7 @@ function Necrosis:UpdateMana(Metamorphose)
     local manaMax = UnitManaMax("player")
 
     -- Si le pourtour de la pierre affiche la mana
-    if NecrosisConfig.Circle == 3 then
+    if NecrosisConfig.Circle == 3 and manaMax > 0 then
         if mana == manaMax then
             if Local.LastSphereSkin ~= NecrosisConfig.NecrosisColor .. "\\Shard32" then
                 Local.LastSphereSkin = NecrosisConfig.NecrosisColor .. "\\Shard32"
@@ -1632,6 +1792,11 @@ function Necrosis:UpdateMana(Metamorphose)
             end
         else
             local taux = math.floor(mana / (manaMax / 16))
+            if taux < 0 then
+                taux = 0
+            elseif taux > 16 then
+                taux = 16
+            end
             if Local.LastSphereSkin ~= NecrosisConfig.NecrosisColor .. "\\Shard" .. taux then
                 Local.LastSphereSkin = NecrosisConfig.NecrosisColor .. "\\Shard" .. taux
                 NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\" .. Local.LastSphereSkin)
@@ -1704,20 +1869,17 @@ function Necrosis:UpdateMana(Metamorphose)
                 for i = 1, 7, 1 do
                     ManaPet[i] = false
                 end
-            elseif self.Spell[4].ID then
-                if self.Spell[4].Mana > mana then
+            else
+                if self.Spell[4].ID and self.Spell[4].Mana > mana then
                     for i = 2, 7, 1 do
                         ManaPet[i] = false
                     end
-                elseif self.Spell[8].ID then
-                    if self.Spell[8].Mana > mana then
-                        ManaPet[7] = false
-                        ManaPet[8] = false
-                    elseif self.Spell[30].ID then
-                        if self.Spell[30].Mana > mana then
-                            ManaPet[8] = false
-                        end
-                    end
+                end
+                if self.Spell[8].ID and self.Spell[8].Mana > mana then
+                    ManaPet[6] = false
+                end
+                if self.Spell[30].ID and self.Spell[30].Mana > mana then
+                    ManaPet[7] = false
                 end
             end
         end
@@ -1813,7 +1975,8 @@ function Necrosis:UpdateMana(Metamorphose)
                     Local.Desatured["Armor"] = false
                 end
             end
-        elseif _G["NecrosisBuffMenu7"] and self.Spell[38].ID and not Local.BuffActif.SoulLink then
+        end
+        if _G["NecrosisBuffMenu7"] and self.Spell[38].ID and not Local.BuffActif.SoulLink then
             if self.Spell[38].Mana > mana then
                 if not Local.Desatured["SoulLink"] then
                     NecrosisBuffMenu7:GetNormalTexture():SetDesaturated(1)
@@ -1922,6 +2085,9 @@ end
 
 -- Explore bags for stones & shards || Fonction qui fait l'inventaire des éléments utilisés en démonologie : Pierres, Fragments, Composants d'invocation
 function Necrosis:BagExplore(arg)
+    if arg and (type(arg) ~= "number" or arg < 0 or arg > 4) then
+        return
+    end
     for container = 0, 4, 1 do
         Local.BagIsSoulPouch[container + 1] = false
         if container > 0 then
@@ -1955,111 +2121,34 @@ function Necrosis:BagExplore(arg)
             -- skip if its a known soul bag (which can only store shards) || Parcours des emplacements des sacs
             if not Local.BagIsSoulPouch[container + 1] then
                 for slot = 1, GetContainerNumSlots(container), 1 do
-                    local itemLink = GetContainerItemLink(container, slot)
-                    if itemLink then
-                        local itemName = GetItemInfo(itemLink) or itemLink:match("%[(.-)%]")
-                        -- if there is an item located in that bag slot || Dans le cas d'un emplacement non vide
-                        if itemName then
-                            -- check if its a soulstone || Si c'est une pierre d'âme, on note son existence et son emplacement
-                            if itemName:find(self.Translation.Item.Soulstone) then
-                                Local.Stone.Soul.OnHand = container
-                                Local.Stone.Soul.Location = { container, slot }
-                                NecrosisConfig.ItemSwitchCombat[4] = itemName
-
-                                -- update its button attributes on the sphere || On attache des actions au bouton de la pierre
-                                self:SoulstoneUpdateAttribute()
-                            -- check if its a healthstone || Même chose pour une pierre de soin
-                            elseif itemName:find(self.Translation.Item.Healthstone) then
-                                Local.Stone.Health.OnHand = container
-                                Local.Stone.Health.Location = { container, slot }
-                                NecrosisConfig.ItemSwitchCombat[3] = itemName
-
-                                -- update its button attributes on the sphere || On attache des actions au bouton de la pierre
-                                self:HealthstoneUpdateAttribute()
-                            -- check if its a spellstone || Et encore pour la pierre de sort
-                            elseif itemName:find(self.Translation.Item.Spellstone) then
-                                Local.Stone.Spell.OnHand = container
-                                Local.Stone.Spell.Location = { container, slot }
-                                NecrosisConfig.ItemSwitchCombat[1] = itemName
-
-                                -- update its button attributes on the sphere || On attache des actions au bouton de la pierre
-                                self:SpellstoneUpdateAttribute()
-                            -- check if its a firestone || La pierre de feu maintenant
-                            elseif itemName:find(self.Translation.Item.Firestone) then
-                                Local.Stone.Fire.OnHand = container
-                                NecrosisConfig.ItemSwitchCombat[2] = itemName
-
-                                -- update its button attributes on the sphere || On attache des actions au bouton de la pierre
-                                self:FirestoneUpdateAttribute()
-                            -- check if its a hearthstone || et enfin la pierre de foyer
-                            elseif itemName:find(self.Translation.Item.Hearthstone) then
-                                Local.Stone.Hearth.OnHand = container
-                                Local.Stone.Hearth.Location = { container, slot }
-                            end
-                        end
-                    end
+                    ScanBagSlotForStones(self, container, slot)
                 end
             end
         end
     else
         if Local.Stone.Soul.OnHand == arg then
             Local.Stone.Soul.OnHand = nil
+            Local.Stone.Soul.Location = nil
         end
         if Local.Stone.Health.OnHand == arg then
             Local.Stone.Health.OnHand = nil
+            Local.Stone.Health.Location = nil
         end
         if Local.Stone.Fire.OnHand == arg then
             Local.Stone.Fire.OnHand = nil
+            Local.Stone.Fire.Location = nil
         end
         if Local.Stone.Spell.OnHand == arg then
             Local.Stone.Spell.OnHand = nil
+            Local.Stone.Spell.Location = nil
         end
         if Local.Stone.Hearth.OnHand == arg then
             Local.Stone.Hearth.OnHand = nil
+            Local.Stone.Hearth.Location = nil
         end
-        for slot = 1, GetContainerNumSlots(arg), 1 do
-            local itemLink = GetContainerItemLink(arg, slot)
-            if itemLink then
-                local itemName = GetItemInfo(itemLink) or itemLink:match("%[(.-)%]")
-                -- if there is an item located in that bag slot || Dans le cas d'un emplacement non vide
-                if itemName then
-                    -- check if its a soulstone || Si c'est une pierre d'âme, on note son existence et son emplacement
-                    if itemName:find(self.Translation.Item.Soulstone) then
-                        Local.Stone.Soul.OnHand = arg
-                        Local.Stone.Soul.Location = { arg, slot }
-                        NecrosisConfig.ItemSwitchCombat[4] = itemName
-
-                        -- update its button attributes on the sphere || On attache des actions au bouton de la pierre
-                        self:SoulstoneUpdateAttribute()
-                    -- check if its a healthstone || Même chose pour une pierre de soin
-                    elseif itemName:find(self.Translation.Item.Healthstone) then
-                        Local.Stone.Health.OnHand = arg
-                        Local.Stone.Health.Location = { arg, slot }
-                        NecrosisConfig.ItemSwitchCombat[3] = itemName
-
-                        -- update its button attributes on the sphere || On attache des actions au bouton de la pierre
-                        self:HealthstoneUpdateAttribute()
-                    -- check if its a spellstone || Et encore pour la pierre de sort
-                    elseif itemName:find(self.Translation.Item.Spellstone) then
-                        Local.Stone.Spell.OnHand = arg
-                        Local.Stone.Spell.Location = { arg, slot }
-                        NecrosisConfig.ItemSwitchCombat[1] = itemName
-
-                        -- update its button attributes on the sphere || On attache des actions au bouton de la pierre
-                        self:SpellstoneUpdateAttribute()
-                    -- check if its a firestone || La pierre de feu maintenant
-                    elseif itemName:find(self.Translation.Item.Firestone) then
-                        Local.Stone.Fire.OnHand = arg
-                        NecrosisConfig.ItemSwitchCombat[2] = itemName
-
-                        -- update its button attributes on the sphere || On attache des actions au bouton de la pierre
-                        self:FirestoneUpdateAttribute()
-                    -- check if its a hearthstone || et enfin la pierre de foyer
-                    elseif itemName:find(self.Translation.Item.Hearthstone) then
-                        Local.Stone.Hearth.OnHand = arg
-                        Local.Stone.Hearth.Location = { arg, slot }
-                    end
-                end
+        if not Local.BagIsSoulPouch[arg + 1] then
+            for slot = 1, GetContainerNumSlots(arg), 1 do
+                ScanBagSlotForStones(self, arg, slot)
             end
         end
     end
@@ -2077,20 +2166,19 @@ function Necrosis:BagExplore(arg)
         and not InCombatLockdown()
     then
         for container = 0, 4, 1 do
-            if Local.BagIsSoulPouch[container + 1] then
-                break
-            end
-            for slot = 1, GetContainerNumSlots(container), 1 do
-                local itemID = GetContainerItemID(container, slot)
-                if itemID == 6265 then
-                    if NecrosisConfig.DestroyCount < Local.Soulshard.Count then
-                        PickupContainerItem(container, slot)
-                        if CursorHasItem() then
-                            DeleteCursorItem()
-                            Local.Soulshard.Count = GetItemCount(6265)
+            if not Local.BagIsSoulPouch[container + 1] then
+                for slot = 1, GetContainerNumSlots(container), 1 do
+                    local itemID = GetContainerItemID(container, slot)
+                    if itemID == 6265 then
+                        if NecrosisConfig.DestroyCount < Local.Soulshard.Count then
+                            PickupContainerItem(container, slot)
+                            if CursorHasItem() then
+                                DeleteCursorItem()
+                                Local.Soulshard.Count = GetItemCount(6265)
+                            end
                         end
+                        break
                     end
-                    break
                 end
             end
             if NecrosisConfig.DestroyCount >= Local.Soulshard.Count then
@@ -2438,10 +2526,19 @@ function Necrosis:SpellSetup()
         if spellName then
             for index = 1, #self.Spell, 1 do
                 if self.Spell[index].Name == spellName then
-                    self:MoneyToggle()
-                    NecrosisTooltip:SetSpell(bookIndex, 1)
-                    local text2 = NecrosisTooltipTextLeft2 and NecrosisTooltipTextLeft2:GetText()
-                    local ManaCost = text2 and select(3, text2:find("(%d+)"))
+                    local _, _, _, powerCost = GetSpellInfo(bookIndex, BOOKTYPE_SPELL)
+                    local ManaCost = (powerCost and powerCost > 0) and powerCost or nil
+                    if not ManaCost then
+                        self:MoneyToggle()
+                        NecrosisTooltip:SetSpell(bookIndex, BOOKTYPE_SPELL)
+                        local text2 = NecrosisTooltipTextLeft2 and NecrosisTooltipTextLeft2:GetText()
+                        if text2 and not text2:find("%%") then
+                            local manaWord = _G.MANA or "Mana"
+                            if powerCost == nil or text2:find(manaWord, 1, true) then
+                                ManaCost = select(3, text2:find("(%d+)"))
+                            end
+                        end
+                    end
                     if not self.Spell[index].ID then
                         self.Spell[index].ID = bookIndex
                     end
@@ -2623,13 +2720,20 @@ end
 function Necrosis:TradeStone()
     -- if a friendly target is selected then trade the stone || Dans ce cas si un pj allié est sélectionné, on lui donne la pierre
     -- else use it || Sinon, on l'utilise
-    if Local.Trade.Request and Local.Stone.Health.OnHand and not Local.Trade.Complete then
+    if
+        Local.Trade.Request
+        and Local.Stone.Health.OnHand
+        and Local.Stone.Health.Location
+        and not Local.Trade.Complete
+    then
         PickupContainerItem(Local.Stone.Health.Location[1], Local.Stone.Health.Location[2])
         ClickTradeButton(1)
         Local.Trade.Complete = true
         return
     elseif
-        UnitExists("target")
+        Local.Stone.Health.OnHand
+        and Local.Stone.Health.Location
+        and UnitExists("target")
         and UnitIsPlayer("target")
         and not (UnitCanAttack("player", "target") or UnitName("target") == UnitName("player"))
     then
@@ -2643,7 +2747,8 @@ function Necrosis:TradeStone()
 end
 
 function Necrosis:MoneyToggle()
-    for index = 1, 10 do
+    local numLines = GetTooltipNumLines()
+    for index = 1, numLines do
         local text = _G["NecrosisTooltipTextLeft" .. index]
         if text then
             text:SetText(nil)
