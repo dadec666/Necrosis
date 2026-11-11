@@ -1,4 +1,4 @@
-# Necrosis LdC (WoW 3.3.5a Edition)
+# Necrosis Plus (WoW 3.3.5a Edition)
 
 [![WoW Version](https://img.shields.io/badge/WoW-3.3.5a%20(12340)-blue.svg)](https://github.com/dadec666/Necrosis)
 [![Interface](https://img.shields.io/badge/Interface-30300-brightgreen.svg)](https://github.com/dadec666/Necrosis)
@@ -6,9 +6,9 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](LICENSE)
 [![Status: Modernized](https://img.shields.io/badge/Status-Fully%20Modernized-success.svg)](https://github.com/dadec666/Necrosis)
 
-**Necrosis LdC** — легендарный аддон для Чернокнижников (Warlock) в World of Warcraft: Wrath of the Lich King (3.3.5a, build 12340, Interface 30300). Аддон предоставляет эргономичный круговой интерфейс, таймеры заклинаний, продвинутый менеджмент осколков душ, радиальные меню призыва демонов, наложения баффов, проклятий и камней.
+**Necrosis Plus** (переименованная и модернизированная редакция *Necrosis LdC*) — аддон для Чернокнижников (Warlock) в World of Warcraft: Wrath of the Lich King (3.3.5a, build 12340, Interface 30300). Аддон предоставляет эргономичный круговой интерфейс, таймеры заклинаний, продвинутый менеджмент осколков душ, радиальные меню призыва демонов, наложения баффов, проклятий и камней.
 
-Данный релиз представляет собой **глубокую архитектурную модернизацию чистой версии 3.0 (r225/r226)**, полностью переработанную в соответствии со стандартами современного аддоностроения 3.3.5a (*MilkyWay Codex* и *NeticSoul WoW 3.3.5a Addon Wiki*).
+Данный релиз представляет собой **глубокую архитектурную модернизацию версии 3.0 (r225/r226)** под именем **Necrosis Plus** (папка аддона `NecrosisPlus`), полностью переработанную в соответствии со стандартами аддоностроения 3.3.5a (*MilkyWay Codex* и *NeticSoul WoW 3.3.5a Addon Wiki*).
 
 ---
 
@@ -69,7 +69,7 @@
    - Вывод сообщений перенаправлен на стандартный первичный фрейм `DEFAULT_CHAT_FRAME`.
 
 7. **Фаза 7: Blizzard Interface Options и стабилизация UI (Wiki Ch 10 & 22–24)**
-   - Аддон интегрирован в системные настройки игры: `InterfaceOptions_AddCategory` (**Esc ➔ Интерфейс ➔ Модификации ➔ Necrosis**).
+   - Аддон интегрирован в системные настройки игры: `InterfaceOptions_AddCategory` (**Esc ➔ Интерфейс ➔ Модификации ➔ Necrosis Plus**).
    - Устранён сбой `attempt to index local 'button' (a nil value)` при обновлении списка верховых животных (`UpdateMountButtons`).
    - Исключено наложение вкладок меню и кнопок: при переключении страниц подфреймы принудительно инициализируются с 1-й страницы.
 
@@ -81,13 +81,14 @@
    ```bash
    git clone https://github.com/dadec666/Necrosis.git
    ```
-2. Скопируйте папку **`Necrosis`** в директорию аддонов вашего клиента World of Warcraft:
+2. Скопируйте папку **`NecrosisPlus`** в директорию аддонов вашего клиента World of Warcraft:
    ```text
-   World of Warcraft/Interface/AddOns/Necrosis
+   World of Warcraft/Interface/AddOns/NecrosisPlus
    ```
-   > ⚠️ **Важно:** Убедитесь, что внутри `Interface/AddOns/Necrosis` напрямую лежат файлы `Necrosis.toc`, `Necrosis.lua` и т.д. (без лишнего уровня вложенности).
+   > ⚠️ **Важно:** Убедитесь, что внутри `Interface/AddOns/NecrosisPlus` напрямую лежат файлы `NecrosisPlus.toc`, `Necrosis.lua` и т.д. (без лишнего уровня вложенности), а старая папка `Interface/AddOns/Necrosis` удалена во избежание конфликта.
 
-3. Запустите игру. В меню выбора персонажа нажмите кнопку **«Модификации»** в левом нижнем углу и убедитесь, что **Necrosis** включен.
+3. *(Опционально, при переходе с обычного Necrosis)* Чтобы сохранить прежние настройки персонажа (`NecrosisConfig`), скопируйте файл `WTF/Account/<Аккаунт>/<Сервер>/<Персонаж>/SavedVariables/Necrosis.lua` в `NecrosisPlus.lua`.
+4. Полностью перезапустите клиент игры. В меню выбора персонажа нажмите кнопку **«Модификации»** в левом нижнем углу и убедитесь, что **Necrosis Plus** включён.
 
 ---
 
@@ -95,8 +96,8 @@
 
 | Действие / Команда | Назначение |
 |---|---|
-| `/necrosis` или `/necro` | Открыть главное окно настроек Necrosis |
-| **Esc ➔ Интерфейс ➔ Модификации ➔ Necrosis** | Системное меню настроек Blizzard |
+| `/necrosis` или `/necrosisplus` | Открыть главное окно настроек Necrosis Plus |
+| **Esc ➔ Интерфейс ➔ Модификации ➔ Necrosis Plus** | Системное меню настроек Blizzard |
 | **Shift + Левый клик по сфере** | Перемещение центральной сферы и кнопок по экрану |
 | **Правый клик по сфере** | Быстрое меню / вызов окна настроек |
 | **Колесо мыши над сферой** | Быстрая настройка лимита осколков душ |

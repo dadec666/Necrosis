@@ -58,10 +58,10 @@ function Necrosis:BindName()
 	-------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	-- Le Titre
-	_G["BINDING_HEADER_Necrosis"] = "Necrosis LdC"
+	_G["BINDING_HEADER_Necrosis"] = "Necrosis Plus"
 
 	-- La Sphere
-	_G["BINDING_NAME_CLICK NecrosisButton:LeftButton"] = (NecrosisConfig and NecrosisConfig.MainSpell and self.Spell[NecrosisConfig.MainSpell] and self.Spell[NecrosisConfig.MainSpell].Name) or "Necrosis"
+	_G["BINDING_NAME_CLICK NecrosisButton:LeftButton"] = (NecrosisConfig and NecrosisConfig.MainSpell and self.Spell[NecrosisConfig.MainSpell] and self.Spell[NecrosisConfig.MainSpell].Name) or "Necrosis Plus"
 
 	-- mounts || Le Cheval
 	if (NecrosisConfig and NecrosisConfig.LeftMount) then
@@ -101,7 +101,7 @@ function Necrosis:BindName()
 	-------------------------------------------------------------------------------------------------------------------------------------------------------
 	
 	local buffMenuName = (self.Config.Menus and self.Config.Menus["Menu des Buffs"]) or "Buffs"
-	_G["BINDING_HEADER_NecrosisSpell"] = "Necrosis - " .. buffMenuName
+	_G["BINDING_HEADER_NecrosisSpell"] = "Necrosis Plus - " .. buffMenuName
 	_G["BINDING_NAME_CLICK NecrosisBuffMenuButton:LeftButton"] = buffMenuName
 	
 	local buffID = {31, -- demon armor
@@ -127,7 +127,7 @@ function Necrosis:BindName()
 	-------------------------------------------------------------------------------------------------------------------------------------------------------
 	
 	local petMenuName = (self.Config.Menus and self.Config.Menus["Menu des Demons"]) or "Demons"
-	_G["BINDING_HEADER_NecrosisPet"] = "Necrosis - " .. petMenuName
+	_G["BINDING_HEADER_NecrosisPet"] = "Necrosis Plus - " .. petMenuName
 	_G["BINDING_NAME_CLICK NecrosisPetMenuButton:LeftButton"] = petMenuName
 	
 	for i = 2, 6, 1 do
@@ -149,7 +149,7 @@ function Necrosis:BindName()
 	-------------------------------------------------------------------------------------------------------------------------------------------------------
 	
 	local curseMenuName = (self.Config.Menus and self.Config.Menus["Menu des Maledictions"]) or "Curses"
-	_G["BINDING_HEADER_NecrosisCurse"] = "Necrosis - " .. curseMenuName
+	_G["BINDING_HEADER_NecrosisCurse"] = "Necrosis Plus - " .. curseMenuName
 	_G["BINDING_NAME_CLICK NecrosisCurseMenuButton:LeftButton"] = curseMenuName
 	
 	local buffID = {23, -- curse of weakness
@@ -169,7 +169,7 @@ function Necrosis:BindName()
 	
 	-- Le Titre
 	local metaName = (self.Spell[27] and self.Spell[27].Name) or "Metamorphosis"
-	_G["BINDING_HEADER_NecrosisMetamorphosis"] = "Necrosis - " .. metaName
+	_G["BINDING_HEADER_NecrosisMetamorphosis"] = "Necrosis Plus - " .. metaName
 	
 	_G["BINDING_NAME_CLICK NecrosisMetamorphosisButton:LeftButton"] = metaName
 	

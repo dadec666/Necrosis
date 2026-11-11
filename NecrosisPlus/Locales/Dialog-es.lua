@@ -61,7 +61,7 @@ function Necrosis:Localization_Dialog_Es()
 
 	self.TooltipData = {
 		["Main"] = {
-			Label = "|c00FFFFFFNecrosis|r",
+			Label = "|c00FFFFFFNecrosis Plus|r",
 			Stone = {
 				[true] = "S\195\173",
 				[false] = "No",
@@ -154,11 +154,11 @@ function Necrosis:Localization_Dialog_Es()
 	}
 
 	self.Sound = {
-		["Fear"] = "Interface\\AddOns\\Necrosis\\Sounds\\Fear-En.mp3",
-		["SoulstoneEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\SoulstoneEnd-En.mp3",
-		["EnslaveEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\EnslaveDemonEnd-En.mp3",
-		["ShadowTrance"] = "Interface\\AddOns\\Necrosis\\Sounds\\ShadowTrance-En.mp3",
-		["Backlash"] = "Interface\\AddOns\\Necrosis\\Sounds\\Backlash-Fr.mp3",
+		["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-En.mp3",
+		["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-En.mp3",
+		["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-En.mp3",
+		["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-En.mp3",
+		["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-Fr.mp3",
 	}
 
 	self.ProcText = {
@@ -174,7 +174,7 @@ function Necrosis:Localization_Dialog_Es()
 			["FullDestroySuffix"] = " est\195\161 llena; \194\161 Los pr\195\179ximos Fragmentos de Alma ser\195\161n destruidos !",
 		},
 		["Interface"] = {
-			["Welcome"] = "<white>\194\161 /necrosis para mostrar el men\195\186 de preferencias !",
+			["Welcome"] = "<white>\194\161 /necrosis (/necrosisplus) para mostrar el men\195\186 de preferencias !",
 			["TooltipOn"] = "Consejos detallados activados" ,
 			["TooltipOff"] = "Consejos detallados desactivados",
 			["MessageOn"] = "Mensaje Chat activado",
@@ -183,8 +183,8 @@ function Necrosis:Localization_Dialog_Es()
 			["UserConfig"] = "<lightYellow>Configuraci\195\179n cargada."
 		},
 		["Help"] = {
-			"/necrosis <lightOrange>recall<white> -- <lightBlue>Centrar Necrosis y todos los botones en el medio de la pantalla",
-			"/necrosis <lightOrange>reset<white> -- <lightBlue>Reinicia Necrosis entero",
+			"/necrosis <lightOrange>recall<white> -- <lightBlue>Centrar Necrosis Plus y todos los botones en el medio de la pantalla",
+			"/necrosis <lightOrange>reset<white> -- <lightBlue>Reinicia Necrosis Plus entero",
 		},
 		["Information"] = {
 			["FearProtect"] = "\194\161\194\161\194\161 Tu objetivo tiene una protecci\195\179n contra miedo !!!",
@@ -205,9 +205,9 @@ function Necrosis:Localization_Dialog_Es()
 	}
 
 	self.Config.Messages = {
-		["Position"] = "<- Los mensajes de Sistema de Necrosis aparecer\195\161n aqu\195\173 ->",
+		["Position"] = "<- Los mensajes de Sistema de Necrosis Plus aparecer\195\161n aqu\195\173 ->",
 		["Afficher les bulles d'aide"] = "Mostrar consejos detallados",
-		["Afficher les messages dans la zone systeme"] = "Mensajes de Necrosis como mensajes de sistema",
+		["Afficher les messages dans la zone systeme"] = "Mensajes de Necrosis Plus como mensajes de sistema",
 		["Activer les messages aleatoires de TP et de Rez"] = "Activar discursos aleatorios",
 		["Utiliser des messages courts"] = "Usar mensajes cortos",
 		["Activer egalement les messages pour les Demons"] = "Activar discursos aleatorios (demonio)",
@@ -220,11 +220,11 @@ function Necrosis:Localization_Dialog_Es()
 	}
 
 	self.Config.Sphere = {
-		["Taille de la sphere"] = "Tama\195\177o del bot\195\179n Necrosis",
-		["Skin de la pierre Necrosis"] = "Color de la Esfera Necrosis",
+		["Taille de la sphere"] = "Tama\195\177o del bot\195\179n Necrosis Plus",
+		["Skin de la pierre Necrosis"] = "Color de la Esfera Necrosis Plus",
 		["Evenement montre par la sphere"] = "Evento mostrado en la Esfera",
 		["Sort caste par la sphere"] = "Hechizo lanzado desde la Esfera",
-		["Afficher le compteur numerique"] = "Mostrar la contabilizaci\195\179n de Fragmentos en Necrosis",
+		["Afficher le compteur numerique"] = "Mostrar la contabilizaci\195\179n de Fragmentos en Necrosis Plus",
 		["Type de compteur numerique"] = "Tipo de Piedra contabilizada"
 	}
 	self.Config.Sphere.Colour = {
@@ -299,7 +299,7 @@ function Necrosis:Localization_Dialog_Es()
 		["Detruit les fragments si le sac plein"] = "Destruir nuevos fragmentos si la bolsa est\195\161 llena",
 		["Choix du sac contenant les fragments"] = "Selecci\195\179n de Contenedor de Fragmentos de Alma",
 		["Nombre maximum de fragments a conserver"] = "N\195\186mero m\195\161ximo de fragmentos a guardar",
-		["Verrouiller Necrosis sur l'interface"] = "Bloquear Necrosis",
+		["Verrouiller Necrosis sur l'interface"] = "Bloquear Necrosis Plus",
 		["Afficher les boutons caches"] = "Perm\195\173teme ver los botones ocultos para arrastrarlos",
 		["Taille des boutons caches"] = "Tama\195\177o de los botones de aviso"
 	}

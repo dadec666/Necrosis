@@ -60,7 +60,7 @@ function Necrosis:Localization_Dialog_En()
 
 	self.TooltipData = {
 		["Main"] = {
-			Label = "|c00FFFFFFNecrosis|r",
+			Label = "|c00FFFFFFNecrosis Plus|r",
 			Stone = {
 				[true] = "Yes",
 				[false] = "No",
@@ -153,11 +153,11 @@ function Necrosis:Localization_Dialog_En()
 	}
 
 	self.Sound = {
-		["Fear"] = "Interface\\AddOns\\Necrosis\\Sounds\\Fear-En.mp3",
-		["SoulstoneEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\SoulstoneEnd-En.mp3",
-		["EnslaveEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\EnslaveDemonEnd-En.mp3",
-		["ShadowTrance"] = "Interface\\AddOns\\Necrosis\\Sounds\\ShadowTrance-En.mp3",
-		["Backlash"] = "Interface\\AddOns\\Necrosis\\Sounds\\Backlash-Fr.mp3",
+		["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-En.mp3",
+		["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-En.mp3",
+		["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-En.mp3",
+		["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-En.mp3",
+		["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-Fr.mp3",
 	}
 
 	self.ProcText = {
@@ -173,7 +173,7 @@ function Necrosis:Localization_Dialog_En()
 			["FullDestroySuffix"] = " is full; New shards will be destroyed!",
 		},
 		["Interface"] = {
-			["Welcome"] = "<white>/necrosis to show the setting menu!",
+			["Welcome"] = "<white>/necrosis (/necrosisplus) to show the setting menu!",
 			["TooltipOn"] = "Tooltips turned on" ,
 			["TooltipOff"] = "Tooltips turned off",
 			["MessageOn"] = "Chat messaging turned on",
@@ -182,8 +182,8 @@ function Necrosis:Localization_Dialog_En()
 			["UserConfig"] = "<lightYellow>Configuration loaded."
 		},
 		["Help"] = {
-			"/necrosis <lightOrange>recall<white> -- <lightBlue>Center Necrosis and all buttons in the middle of the screen",
-			"/necrosis <lightOrange>reset<white> -- <lightBlue>Reset Necrosis entirely",
+			"/necrosis <lightOrange>recall<white> -- <lightBlue>Center Necrosis Plus and all buttons in the middle of the screen",
+			"/necrosis <lightOrange>reset<white> -- <lightBlue>Reset Necrosis Plus entirely",
 		},
 		["Information"] = {
 			["FearProtect"] = "Your target has got fear protection!",
@@ -204,9 +204,9 @@ function Necrosis:Localization_Dialog_En()
 	}
 
 	self.Config.Messages = {
-		["Position"] = "<- Necrosis system messages will appear here ->",
+		["Position"] = "<- Necrosis Plus system messages will appear here ->",
 		["Afficher les bulles d'aide"] = "Show tooltips",
-		["Afficher les messages dans la zone systeme"] = "Show Necrosis messages in the system frame",
+		["Afficher les messages dans la zone systeme"] = "Show Necrosis Plus messages in the system frame",
 		["Activer les messages aleatoires de TP et de Rez"] = "Activate random speeches",
 		["Utiliser des messages courts"] = "Use short messages",
 		["Activer egalement les messages pour les Demons"] = "Activate random speeches for demons too",
@@ -219,7 +219,7 @@ function Necrosis:Localization_Dialog_En()
 	}
 
 	self.Config.Sphere = {
-		["Taille de la sphere"] = "Size of the Necrosis button",
+		["Taille de la sphere"] = "Size of the Necrosis Plus button",
 		["Skin de la pierre Necrosis"] = "Skin of the Sphere",
 		["Evenement montre par la sphere"] = "Event shown by the Sphere",
 		["Sort caste par la sphere"] = "Spell casted by the Sphere",
@@ -298,7 +298,7 @@ function Necrosis:Localization_Dialog_En()
 		["Detruit les fragments si le sac plein"] = "Destroy all new shards if the bag is full.",
 		["Choix du sac contenant les fragments"] = "Selection of Soul Shard Container",
 		["Nombre maximum de fragments a conserver"] = "Maximum number of shards to keep",
-		["Verrouiller Necrosis sur l'interface"] = "Lock Necrosis",
+		["Verrouiller Necrosis sur l'interface"] = "Lock Necrosis Plus",
 		["Afficher les boutons caches"] = "Let me see hidden buttons to drag them",
 		["Taille des boutons caches"] = "Size of hidden buttons"
 	}

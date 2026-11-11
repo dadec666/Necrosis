@@ -37,11 +37,11 @@ local _G = _G or getfenv(0)
 Necrosis = Necrosis or _G.Necrosis or {}
 _G.Necrosis = Necrosis
 
-local version = (GetAddOnMetadata and GetAddOnMetadata("Necrosis", "Version")) or "3.0"
+local version = (GetAddOnMetadata and (GetAddOnMetadata("NecrosisPlus", "Version") or GetAddOnMetadata("Necrosis", "Version"))) or "3.0"
 
 Necrosis.Data = Necrosis.Data or {}
 Necrosis.Data.Version = version
-Necrosis.Data.AppName = "Necrosis LdC"
+Necrosis.Data.AppName = "Necrosis Plus"
 Necrosis.Data.LastConfig = 20100701
 Necrosis.Data.Label = Necrosis.Data.AppName .. " " .. Necrosis.Data.Version
 

@@ -103,15 +103,16 @@ function Necrosis:Initialize(Config)
 	-- Enregistrement de la commande console
 	SlashCmdList["NecrosisCommand"] = Necrosis.SlashHandler
 	SLASH_NecrosisCommand1 = "/necrosis"
+	SLASH_NecrosisCommand2 = "/necrosisplus"
 
 	-- Blizzard Interface Options Category (Wiki Ch 10)
 	if not self.BlizzardOptionsPanel then
 		local panel = CreateFrame("Frame", "NecrosisBlizzardOptionsPanel", UIParent)
-		panel.name = "Necrosis"
+		panel.name = "Necrosis Plus"
 
 		local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 		title:SetPoint("TOPLEFT", 16, -16)
-		title:SetText("Necrosis LdC "..(self.Data.Version or "3.0"))
+		title:SetText("Necrosis Plus "..(self.Data.Version or "3.0"))
 
 		local desc = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 		desc:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
@@ -119,7 +120,7 @@ function Necrosis:Initialize(Config)
 
 		local openBtn = CreateFrame("Button", nil, panel, "OptionsButtonTemplate")
 		openBtn:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -16)
-		openBtn:SetText("Открыть настройки Necrosis")
+		openBtn:SetText("Открыть настройки Necrosis Plus")
 		openBtn:SetWidth(200)
 		openBtn:SetHeight(24)
 		openBtn:SetScript("OnClick", function()

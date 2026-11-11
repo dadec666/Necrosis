@@ -1,7 +1,7 @@
 ## Interface: 30300
-## Title: Necrosis
-## Title-ruRU: Necrosis (Русский)
-## Title-frFR: Necrosis (Français)
+## Title: Necrosis Plus
+## Title-ruRU: Necrosis Plus (Русский)
+## Title-frFR: Necrosis Plus (Français)
 ## Notes: Warlock UI & Shard Management
 ## Notes-frFR: Gestion graphique des shards.
 ## Notes-ruRU: Менеджер заклинаний, камней и демонов для чернокнижника.

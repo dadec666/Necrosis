@@ -61,7 +61,7 @@ function Necrosis:Localization_Dialog_Tw()
 
 	self.TooltipData = {
 		["Main"] = {
-			Label = "|c00FFFFFFNecrosis|r",
+			Label = "|c00FFFFFFNecrosis Plus|r",
 			Stone = {
 				[true] = "是";
 				[false] = "否";
@@ -154,11 +154,11 @@ function Necrosis:Localization_Dialog_Tw()
 	}
 
 	self.Sound = {
-		["Fear"] = "Interface\\AddOns\\Necrosis\\Sounds\\Fear-En.mp3",
-		["SoulstoneEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\SoulstoneEnd-En.mp3",
-		["EnslaveEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\EnslaveDemonEnd-En.mp3",
-		["ShadowTrance"] = "Interface\\AddOns\\Necrosis\\Sounds\\ShadowTrance-En.mp3",
-		["Backlash"] = "Interface\\AddOns\\Necrosis\\Sounds\\Backlash-En.mp3",
+		["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-En.mp3",
+		["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-En.mp3",
+		["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-En.mp3",
+		["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-En.mp3",
+		["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-En.mp3",
 	}
 
 	self.ProcText = {
@@ -173,7 +173,7 @@ function Necrosis:Localization_Dialog_Tw()
 			["FullDestroySuffix"] = "滿了；下個碎片將被摧毀！",
 		},
 		["Interface"] = {
-			["Welcome"] = "<white>/necrosis 顯示設定功能表",
+			["Welcome"] = "<white>/necrosis (/necrosisplus) 顯示設定功能表",
 			["TooltipOn"] = "打開提示" ,
 			["TooltipOff"] = "關閉提示",
 			["MessageOn"] = "打開聊天訊息通知",
@@ -182,7 +182,7 @@ function Necrosis:Localization_Dialog_Tw()
 			["UserConfig"] = "<lightYellow>配置已載入"
 		},
 		["Help"] = {
-			"/necrosis <lightOrange>recall<white> -- <lightBlue>將Necrosis置於螢幕中央",
+			"/necrosis <lightOrange>recall<white> -- <lightBlue>將Necrosis Plus置於螢幕中央",
 			"/necrosis <lightOrange>reset<white> -- <lightBlue>重置所有設定",
 		},
 		["Information"] = {
@@ -203,9 +203,9 @@ function Necrosis:Localization_Dialog_Tw()
 	}
 
 	self.Config.Messages = {
-		["Position"] = "<- 這裡將顯示Necrosis的系統訊息 ->",
+		["Position"] = "<- 這裡將顯示Necrosis Plus的系統訊息 ->",
 		["Afficher les bulles d'aide"] = "顯示提示",
-		["Afficher les messages dans la zone systeme"] = "宣告Necrosis訊息為系統訊息",
+		["Afficher les messages dans la zone systeme"] = "宣告Necrosis Plus訊息為系統訊息",
 		["Activer les messages aleatoires de TP et de Rez"] = "顯示隨機訊息",
 		["Utiliser des messages courts"] = "採用簡短訊息",
 		["Activer egalement les messages pour les Demons"] = "啟用招喚惡魔的隨機訊息",
@@ -218,8 +218,8 @@ function Necrosis:Localization_Dialog_Tw()
 	}
 
 	self.Config.Sphere = {
-		["Taille de la sphere"] = "Necrosis按鈕的大小",
-		["Skin de la pierre Necrosis"] = "Necrosis球體的外觀",
+		["Taille de la sphere"] = "Necrosis Plus按鈕的大小",
+		["Skin de la pierre Necrosis"] = "Necrosis Plus球體的外觀",
 		["Evenement montre par la sphere"] = "球體事件顯示",
 		["Sort caste par la sphere"] = "球體施放的法術",
 		["Afficher le compteur numerique"] = "顯示碎片數量",
@@ -297,7 +297,7 @@ function Necrosis:Localization_Dialog_Tw()
 		["Detruit les fragments si le sac plein"] = "如果包包滿了，摧毀所有新的碎片",
 		["Choix du sac contenant les fragments"] = "選擇靈魂碎片包包",
 		["Nombre maximum de fragments a conserver"] = "靈魂碎片最大保存量",
-		["Verrouiller Necrosis sur l'interface"] = "鎖定Necrosis主體及周圍的按鈕",
+		["Verrouiller Necrosis sur l'interface"] = "鎖定Necrosis Plus主體及周圍的按鈕",
 		["Afficher les boutons caches"] = "顯示隱藏的按鈕以便能拖曳它",
 		["Taille des boutons caches"] = "暗影冥思和反恐按鈕的大小"
 	}

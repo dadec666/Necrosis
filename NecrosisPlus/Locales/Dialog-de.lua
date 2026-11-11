@@ -60,7 +60,7 @@ function Necrosis:Localization_Dialog_De()
 
 	self.TooltipData = {
 		["Main"] = {
-			Label = "|c00FFFFFFNecrosis|r",
+			Label = "|c00FFFFFFNecrosis Plus|r",
 			Stone = {
 				[true] = "Ja";
 				[false] = "Nein";
@@ -154,11 +154,11 @@ function Necrosis:Localization_Dialog_De()
 
 
 	self.Sound = {
-		["Fear"] = "Interface\\AddOns\\Necrosis\\Sounds\\Fear-En.mp3",
-		["SoulstoneEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\SoulstoneEnd-En.mp3",
-		["EnslaveEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\EnslaveDemonEnd-En.mp3",
-		["ShadowTrance"] = "Interface\\AddOns\\Necrosis\\Sounds\\ShadowTrance-En.mp3",
-		["Backlash"] = "Interface\\AddOns\\Necrosis\\Sounds\\Backlash-Fr.mp3",
+		["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-En.mp3",
+		["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-En.mp3",
+		["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-En.mp3",
+		["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-En.mp3",
+		["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-Fr.mp3",
 	}
 
 
@@ -174,7 +174,7 @@ function Necrosis:Localization_Dialog_De()
 			["FullDestroySuffix"] = " ist voll; folgende Seelensplitter werden zerst\195\182rt !",
 		},
 		["Interface"] = {
-			["Welcome"] = "<white>/necrosis f\195\188r das Einstellungsmen\195\188.",
+			["Welcome"] = "<white>/necrosis (/necrosisplus) f\195\188r das Einstellungsmen\195\188.",
 			["TooltipOn"] = "Tooltips an" ,
 			["TooltipOff"] = "Tooltips aus",
 			["MessageOn"] = "Chat Nachrichten an",
@@ -183,8 +183,8 @@ function Necrosis:Localization_Dialog_De()
 			["UserConfig"] = "<lightYellow>Einstellungen geladen."
 		},
 		["Help"] = {
-			"/necrosis <lightOrange>recall<white> -- <lightBlue>Zentriere Necrosis und alle Buttons in der Mitte des Bildschirms",
-			"/necrosis <lightOrange>reset<white> -- <lightBlue>Setzt Necrosis komplett auf Grundeinstellungen zur\195\188ck",
+			"/necrosis <lightOrange>recall<white> -- <lightBlue>Zentriere Necrosis Plus und alle Buttons in der Mitte des Bildschirms",
+			"/necrosis <lightOrange>reset<white> -- <lightBlue>Setzt Necrosis Plus komplett auf Grundeinstellungen zur\195\188ck",
 		},
 		["Information"] = {
 			["FearProtect"] = "Dein Ziel hat Fear-Protection!!!",
@@ -205,9 +205,9 @@ function Necrosis:Localization_Dialog_De()
 	}
 
 	self.Config.Messages = {
-		["Position"] = "<- Hier werden Nachrichten von Necrosis erscheinen ->",
+		["Position"] = "<- Hier werden Nachrichten von Necrosis Plus erscheinen ->",
 		["Afficher les bulles d'aide"] = "Zeige Tooltips",
-		["Afficher les messages dans la zone systeme"] = "Zeige Nachrichten von Necrosis im System Frame",
+		["Afficher les messages dans la zone systeme"] = "Zeige Nachrichten von Necrosis Plus im System Frame",
 		["Activer les messages aleatoires de TP et de Rez"] = "Zuf\195\164llige Spr\195\188che",
 		["Utiliser des messages courts"] = "Benutzte kurze Nachrichten",
 		["Activer egalement les messages pour les Demons"] = "Zuf\195\164llige Spr\195\188che f\195\188r D\195\164monen auch",
@@ -221,7 +221,7 @@ function Necrosis:Localization_Dialog_De()
 
 	self.Config.Sphere = {
 		["Taille de la sphere"] = "Gr\195\182\195\159e der Sph\195\164re",
-		["Skin de la pierre Necrosis"] = "Aussehen der Necrosis Sph\195\164re",
+		["Skin de la pierre Necrosis"] = "Aussehen der Necrosis Plus Sph\195\164re",
 		["Evenement montre par la sphere"] = "Anzeige in der grafischen Sph\195\164re",
 		["Sort caste par la sphere"] = "Zauber der durch Klick auf die\nSph\195\164re gewirkt wird",
 		["Afficher le compteur numerique"] = "Zeige die gew\195\164hlte Anzeige in der Sph\195\164re",
@@ -299,7 +299,7 @@ function Necrosis:Localization_Dialog_De()
 		["Detruit les fragments si le sac plein"] = "Zerst\195\182re neue Seelensplitter,\nwenn die Tasche voll ist.",
 		["Choix du sac contenant les fragments"] = "W\195\164hle die Seelensplitter-Tasche",
 		["Nombre maximum de fragments a conserver"] = "Maximale Anzahl der zu behaltenden Splitter:",
-		["Verrouiller Necrosis sur l'interface"] = "Sperre Necrosis",
+		["Verrouiller Necrosis sur l'interface"] = "Sperre Necrosis Plus",
 		["Afficher les boutons caches"] = "Zeige versteckte Buttons um sie zu verschieben",
 		["Taille des boutons caches"] = "Gr\195\182\195\159e des versteckten Buttons"
 	}

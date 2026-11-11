@@ -62,7 +62,7 @@ function Necrosis:Localization_Dialog_Cn()
 
 	self.TooltipData = {
 		["Main"] = {
-			Label = "|c00FFFFFFNecrosis|r",
+			Label = "|c00FFFFFFNecrosis Plus|r",
 			Stone = {
 				[true] = "是",
 				[false] = "否",
@@ -155,11 +155,11 @@ function Necrosis:Localization_Dialog_Cn()
 	}
 
 	self.Sound = {
-		["Fear"] = "Interface\\AddOns\\Necrosis\\Sounds\\Fear-En.mp3",
-		["SoulstoneEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\SoulstoneEnd-En.mp3",
-		["EnslaveEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\EnslaveDemonEnd-En.mp3",
-		["ShadowTrance"] = "Interface\\AddOns\\Necrosis\\Sounds\\ShadowTrance-En.mp3",
-		["Backlash"] = "Interface\\AddOns\\Necrosis\\Sounds\\Backlash-En.mp3",
+		["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-En.mp3",
+		["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-En.mp3",
+		["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-En.mp3",
+		["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-En.mp3",
+		["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-En.mp3",
 	}
 
 	NECROSIS_NIGHTFALL_TEXT = {
@@ -175,7 +175,7 @@ function Necrosis:Localization_Dialog_Cn()
 			["FullDestroySuffix"] = " 满了; 下个碎片将被摧毁!",
 		},
 		["Interface"] = {
-			["Welcome"] = "<white>/necrosis 显示设置菜单!",
+			["Welcome"] = "<white>/necrosis (/necrosisplus) 显示设置菜单!",
 			["TooltipOn"] = "打开提示" ,
 			["TooltipOff"] = "关闭提示",
 			["MessageOn"] = "打开聊天信息通知",
@@ -184,8 +184,8 @@ function Necrosis:Localization_Dialog_Cn()
 			["UserConfig"] = "<lightYellow>配置已加载。",
 		},
 		["Help"] = {
-			"/necrosis <lightOrange>recall<white> -- <lightBlue>将Necrosis和所有按钮置于屏幕中间",
-			"/necrosis <lightOrange>reset<white> -- <lightBlue>Reset Necrosis entirely",
+			"/necrosis <lightOrange>recall<white> -- <lightBlue>将Necrosis Plus和所有按钮置于屏幕中间",
+			"/necrosis <lightOrange>reset<white> -- <lightBlue>Reset Necrosis Plus entirely",
 		},
 		["Information"] = {
 			["FearProtect"] = "你的目标对恐惧免疫!!!!",
@@ -205,9 +205,9 @@ function Necrosis:Localization_Dialog_Cn()
 	}
 
 	self.Config.Messages = {
-		["Position"] = "<- 这儿将显示Necrosis的信息 ->",
+		["Position"] = "<- 这儿将显示Necrosis Plus的信息 ->",
 		["Afficher les bulles d'aide"] = "显示提示",
-		["Afficher les messages dans la zone systeme"] = "宣告Necrosis信息作为系统信息",
+		["Afficher les messages dans la zone systeme"] = "宣告Necrosis Plus信息作为系统信息",
 		["Activer les messages aleatoires de TP et de Rez"] = "随机显示召唤的信息",
 		["Utiliser des messages courts"] = "Use short messages",
 		["Activer egalement les messages pour les Demons"] = "激活随机语言 (恶魔)",
@@ -220,8 +220,8 @@ function Necrosis:Localization_Dialog_Cn()
 	}
 
 	self.Config.Sphere = {
-		["Taille de la sphere"] = "Necrosis按钮的大小",
-		["Skin de la pierre Necrosis"] = "Necrosis球体的皮肤",
+		["Taille de la sphere"] = "Necrosis Plus按钮的大小",
+		["Skin de la pierre Necrosis"] = "Necrosis Plus球体的皮肤",
 		["Evenement montre par la sphere"] = "图形显示",
 		["Sort caste par la sphere"] = "Spell casted by the Sphere",
 		["Afficher le compteur numerique"] = "显示碎片数量",
@@ -300,7 +300,7 @@ function Necrosis:Localization_Dialog_Cn()
 		["Detruit les fragments si le sac plein"] = "如果包满摧毁所有新的碎片。",
 		["Choix du sac contenant les fragments"] = "选择灵魂碎片包",
 		["Nombre maximum de fragments a conserver"] = "Maximum number of shards to keep",
-		["Verrouiller Necrosis sur l'interface"] = "锁定 Necrosis球体及周围的按钮。",
+		["Verrouiller Necrosis sur l'interface"] = "锁定 Necrosis Plus球体及周围的按钮。",
 		["Afficher les boutons caches"] = "显示隐藏的按钮以拖动它。",
 		["Taille des boutons caches"] = "暗影冥思和反恐按钮的大小"
 	}

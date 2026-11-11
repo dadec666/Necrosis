@@ -60,7 +60,7 @@ function Necrosis:Localization_Dialog_Fr()
 
 	self.TooltipData = {
 		["Main"] = {
-			Label = "|c00FFFFFFNecrosis|r",
+			Label = "|c00FFFFFFNecrosis Plus|r",
 			Stone = {
 				[true] = "Oui";
 				[false] = "Non";
@@ -153,11 +153,11 @@ function Necrosis:Localization_Dialog_Fr()
 	}
 
 	self.Sound = {
-		["Fear"] = "Interface\\AddOns\\Necrosis\\Sounds\\Fear-Fr.mp3",
-		["SoulstoneEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\SoulstoneEnd-Fr.mp3",
-		["EnslaveEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\EnslaveDemonEnd-Fr.mp3",
-		["ShadowTrance"] = "Interface\\AddOns\\Necrosis\\Sounds\\ShadowTrance-Fr.mp3",
-		["Backlash"] = "Interface\\AddOns\\Necrosis\\Sounds\\Backlash-Fr.mp3",
+		["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-Fr.mp3",
+		["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-Fr.mp3",
+		["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-Fr.mp3",
+		["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-Fr.mp3",
+		["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-Fr.mp3",
 	}
 
 	self.ProcText = {
@@ -173,7 +173,7 @@ function Necrosis:Localization_Dialog_Fr()
 			["FullDestroySuffix"] = " est plein ; Les prochains fragments seront d\195\169truits !",
 		},
 		["Interface"] = {
-			["Welcome"] = "<white>/necrosis pour les options !",
+			["Welcome"] = "<white>/necrosis (/necrosisplus) pour les options !",
 			["TooltipOn"] = "Bulles d'aide activ\195\169es" ,
 			["TooltipOff"] = "Bulles d'aide d\195\169sactiv\195\169es",
 			["MessageOn"] = "Messages Pierre d'\195\162me et Invocation de joueur activ\195\169s",
@@ -182,8 +182,8 @@ function Necrosis:Localization_Dialog_Fr()
 			["UserConfig"] = "<lightYellow>Configuration charg\195\169e"
 		},
 		["Help"] = {
-			"/necrosis <lightOrange>recall<white> -- <lightBlue>Centre Necrosis et tous les boutons au milieu de l'\195\169cran",
-			"/necrosis <lightOrange>reset<white> -- <lightBlue>R\195\169initialise totalement Necrosis",
+			"/necrosis <lightOrange>recall<white> -- <lightBlue>Centre Necrosis Plus et tous les boutons au milieu de l'\195\169cran",
+			"/necrosis <lightOrange>reset<white> -- <lightBlue>R\195\169initialise totalement Necrosis Plus",
 		},
 		["Information"] = {
 			["FearProtect"] = "La cible est prot\195\169g\195\169e contre la peur !!!!",
@@ -204,9 +204,9 @@ function Necrosis:Localization_Dialog_Fr()
 	}
 
 	self.Config.Messages = {
-		["Position"] = "<- Position des messages systeme Necrosis ->",
+		["Position"] = "<- Position des messages systeme Necrosis Plus ->",
 		["Afficher les bulles d'aide"] = "Afficher les bulles d'aide",
-		["Afficher les messages dans la zone systeme"] = "Afficher les messages de Necrosis dans la zone syst\195\168me",
+		["Afficher les messages dans la zone systeme"] = "Afficher les messages de Necrosis Plus dans la zone syst\195\168me",
 		["Activer les messages aleatoires de TP et de Rez"] = "Activer les messages al\195\169atoires de TP et de Rez",
 		["Utiliser des messages courts"] = "Utiliser des messages courts",
 		["Activer egalement les messages pour les Demons"] = "Activer \195\169galement les messages pour les D\195\169mons",
@@ -298,7 +298,7 @@ function Necrosis:Localization_Dialog_Fr()
 		["Detruit les fragments si le sac plein"] = "D\195\169truit les fragments si le sac plein",
 		["Choix du sac contenant les fragments"] = "Choix du sac contenant les fragments",
 		["Nombre maximum de fragments a conserver"] = "Nombre maximum de fragments \195\160 conserver",
-		["Verrouiller Necrosis sur l'interface"] = "Verrouiller Necrosis sur l'interface",
+		["Verrouiller Necrosis sur l'interface"] = "Verrouiller Necrosis Plus sur l'interface",
 		["Afficher les boutons caches"] = "Afficher les boutons cach\195\169s pour les d\195\169placer",
 		["Taille des boutons caches"] = "Taille des boutons cach\195\169s"
 	}

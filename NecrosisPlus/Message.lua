@@ -323,7 +323,7 @@ function Necrosis:Speech_Then(Spell, DemonName, Speech)
 		end
 		Speech.Steed = {}
 		if _G["NecrosisMountButton"] then
-			NecrosisMountButton:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\MountButton-02")
+			NecrosisMountButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\MountButton-02")
 		end
 	-- messages to be posted after a 'Ritual of Souls' is cast -Draven (April 3rd, 2008)
 	elseif Spell.Name == Necrosis.Spell[50].Name then

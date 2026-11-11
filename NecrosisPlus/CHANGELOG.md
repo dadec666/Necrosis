@@ -1,8 +1,18 @@
 # Changelog
 
-All notable changes to the **Necrosis** addon for World of Warcraft (WotLK 3.3.5a) are documented in this file.
+All notable changes to the **Necrosis Plus** addon for World of Warcraft (WotLK 3.3.5a) are documented in this file.
 
 ---
+
+## [3.0 (r225) plus] - 2026-11-11
+
+### ✨ Rebranding & Addon Rename (`Necrosis` ➔ `Necrosis Plus`)
+- **Addon Folder & Metadata:**
+  - Renamed addon directory from `Necrosis/` to `NecrosisPlus/` and TOC/package descriptors (`NecrosisPlus.toc`, `NecrosisPlus.warperia`).
+  - Updated TOC display titles (`## Title: Necrosis Plus`, `## Title-ruRU`, `## Title-frFR`), `Necrosis.Data.AppName` (`Necrosis Plus`), Blizzard Interface Options category/button labels, sphere tooltip title, keybinding headers (`BINDING_HEADER_*`), and localized UI strings across all 7 languages (`cn`, `de`, `en`, `es`, `fr`, `ru`, `tw`).
+- **Asset Paths & Compatibility:**
+  - Updated all 85 texture and sound paths (`Interface\AddOns\NecrosisPlus\UI\...` and `Interface\AddOns\NecrosisPlus\Sounds\...`) across `Necrosis.lua`, `Message.lua`, `Timers\OtherTimers.lua`, `XML\XML.lua`, `XML\Options-Sphere.lua`, and `Locales\Dialog-*.lua`.
+  - Preserved `SavedVariablesPerCharacter: NecrosisConfig` and added `/necrosisplus` as an alias alongside `/necrosis`.
 
 ## [v3.0-r226+] - 2026-11-10
 

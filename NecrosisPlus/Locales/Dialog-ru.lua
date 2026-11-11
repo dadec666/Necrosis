@@ -60,7 +60,7 @@ function Necrosis:Localization_Dialog_Ru()
 
 	self.TooltipData = {
 		["Main"] = {
-			Label = "|c00FFFFFFNecrosis|r",
+			Label = "|c00FFFFFFNecrosis Plus|r",
 			Stone = {
 				[true] = "Есть",
 				[false] = "Нет",
@@ -153,11 +153,11 @@ function Necrosis:Localization_Dialog_Ru()
 	}
 
 	self.Sound = {
-		["Fear"] = "Interface\\AddOns\\Necrosis\\Sounds\\Fear-Ru.mp3",
-		["SoulstoneEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\SoulstoneEnd-Ru.mp3",
-		["EnslaveEnd"] = "Interface\\AddOns\\Necrosis\\Sounds\\EnslaveDemonEnd-Ru.mp3",
-		["ShadowTrance"] = "Interface\\AddOns\\Necrosis\\Sounds\\ShadowTrance-Ru.mp3",
-		["Backlash"] = "Interface\\AddOns\\Necrosis\\Sounds\\Backlash-Ru.mp3",
+		["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-Ru.mp3",
+		["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-Ru.mp3",
+		["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-Ru.mp3",
+		["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-Ru.mp3",
+		["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-Ru.mp3",
 	}
 
 	self.ProcText = {
@@ -173,7 +173,7 @@ function Necrosis:Localization_Dialog_Ru()
 			["FullDestroySuffix"] = " полна. Следующий осколок души будет уничтожен!",
 		},
 		["Interface"] = {
-			["Welcome"] = "<white>Введите /necrosis для отображения окна настроек",
+			["Welcome"] = "<white>Введите /necrosis (или /necrosisplus) для отображения окна настроек",
 			["TooltipOn"] = "[+] Всплывающие подсказки включены" ,
 			["TooltipOff"] = "[-] Всплывающие подскажки выключены",
 			["MessageOn"] = "[+] Оповещения в окне чата - включены",
@@ -182,8 +182,8 @@ function Necrosis:Localization_Dialog_Ru()
 			["UserConfig"] = "<lightYellow>Конфигурация успешно загружена."
 		},
 		["Help"] = {
-			"/necrosis <lightOrange>recall<white> -- <lightBlue>Команда для размещение окна Necrosis и его кнопок в центре экрана.",
-			"/necrosis <lightOrange>reset<white> -- <lightBlue>Команда полностью страсывает все настройки Necrosis до настроек по-умолчанию.",
+			"/necrosis <lightOrange>recall<white> -- <lightBlue>Команда для размещение окна Necrosis Plus и его кнопок в центре экрана.",
+			"/necrosis <lightOrange>reset<white> -- <lightBlue>Команда полностью страсывает все настройки Necrosis Plus до настроек по-умолчанию.",
 		},
 		["Information"] = {
 			["FearProtect"] = "Ваша цель не поддается страху!",
@@ -204,9 +204,9 @@ function Necrosis:Localization_Dialog_Ru()
 	}
 
 	self.Config.Messages = {
-		["Position"] = "<- Сообщения Necrosis будут расположены здесь ->",
+		["Position"] = "<- Сообщения Necrosis Plus будут расположены здесь ->",
 		["Afficher les bulles d'aide"] = "Показывать подсказки",
-		["Afficher les messages dans la zone systeme"] = "Показывать сообщения Necrosis в системном окне",
+		["Afficher les messages dans la zone systeme"] = "Показывать сообщения Necrosis Plus в системном окне",
 		["Activer les messages aleatoires de TP et de Rez"] = "Включить различные оповещения",
 		["Utiliser des messages courts"] = "Использовать только 'короткие' сообщения",
 		["Activer egalement les messages pour les Demons"] = "Показывать сообщения для демонов",
@@ -219,7 +219,7 @@ function Necrosis:Localization_Dialog_Ru()
 	}
 
 	self.Config.Sphere = {
-		["Taille de la sphere"] = "Размер кнопок Necrosis",
+		["Taille de la sphere"] = "Размер кнопок Necrosis Plus",
 		["Skin de la pierre Necrosis"] = "Вид Сферы",
 		["Evenement montre par la sphere"] = "На Сфере отображать",
 		["Sort caste par la sphere"] = "Заклинание Сферы",
@@ -298,7 +298,7 @@ function Necrosis:Localization_Dialog_Ru()
 		["Detruit les fragments si le sac plein"] = "Разрушать все новые осколки, если сумка полна",
 		["Choix du sac contenant les fragments"] = "Выбор контейнера для осколков душ",
 		["Nombre maximum de fragments a conserver"] = "Максимальное кол-во хранимых осколков душ",
-		["Verrouiller Necrosis sur l'interface"] = "Заблокировать Necrosis",
+		["Verrouiller Necrosis sur l'interface"] = "Заблокировать Necrosis Plus",
 		["Afficher les boutons caches"] = "Показать скрытые значки для их перемещения",
 		["Taille des boutons caches"] = "Размер скрытых значков"
 	}

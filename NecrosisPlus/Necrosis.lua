@@ -619,10 +619,10 @@ function Necrosis:OnEvent(event, ...)
 				Local.Warning.Banishable = true
 				if UnitCreatureType("target") == self.Unit.Demon then
 					NecrosisCreatureAlertButton:Show()
-					NecrosisCreatureAlertButton:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\DemonAlert")
+					NecrosisCreatureAlertButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\DemonAlert")
 				elseif UnitCreatureType("target") == self.Unit.Elemental then
 					NecrosisCreatureAlertButton:Show()
-					NecrosisCreatureAlertButton:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\ElemAlert")
+					NecrosisCreatureAlertButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\ElemAlert")
 				end
 		elseif Local.Warning.Banishable then
 			Local.Warning.Banishable = false
@@ -800,21 +800,21 @@ function Necrosis:SelfEffect(action, nom)
 		if nom == self.Spell[1].Name or  nom == self.Spell[2].Name or nom == "NomCheval1" or nom == "NomCheval2" then
 			Local.BuffActif.Mount = true
 			if _G["NecrosisMountButton"] then
-				NecrosisMountButton:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\MountButton-02")
+				NecrosisMountButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\MountButton-02")
 				NecrosisMountButton:GetNormalTexture():SetDesaturated(nil)
 			end
 		-- Changement du bouton de la domination corrompue si celle-ci est activée + Timer de cooldown
 		elseif  nom == self.Spell[15].Name then
 			Local.BuffActif.Domination = true
 			if _G["NecrosisPetMenu1"] then
-				NecrosisPetMenu1:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\Domination-02")
+				NecrosisPetMenu1:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\Domination-02")
 				NecrosisPetMenu1:GetNormalTexture():SetDesaturated(nil)
 			end
 		-- Changement du bouton du lien spirituel si celui-ci est activé
 		elseif nom == self.Spell[38].Name then
 			Local.BuffActif.SoulLink = true
 			if _G["NecrosisBuffMenu7"] then
-				NecrosisBuffMenu7:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\SoulLink-02")
+				NecrosisBuffMenu7:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\SoulLink-02")
 				NecrosisBuffMenu7:GetNormalTexture():SetDesaturated(nil)
 			end
 		-- si Contrecoup, pouf on affiche l'icone et on proc le son
@@ -835,19 +835,19 @@ function Necrosis:SelfEffect(action, nom)
 		if nom == self.Spell[1].Name or  nom == self.Spell[2].Name or nom == "NomCheval1" or nom == "NomCheval2" then
 			Local.BuffActif.Mount = false
 			if _G["NecrosisMountButton"] then
-				NecrosisMountButton:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\MountButton-01")
+				NecrosisMountButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\MountButton-01")
 			end
 		-- Changement du bouton de Domination quand le Démoniste n'est plus sous son emprise
 		elseif  nom == self.Spell[15].Name then
 			Local.BuffActif.Domination = false
 			if _G["NecrosisPetMenu1"] then
-				NecrosisPetMenu1:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\Domination-01")
+				NecrosisPetMenu1:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\Domination-01")
 			end
 		-- Changement du bouton du Lien Spirituel quand le Démoniste n'est plus sous son emprise
 		elseif nom == self.Spell[38].Name then
 			Local.BuffActif.SoulLink = false
 			if _G["NecrosisBuffMenu7"] then
-				NecrosisBuffMenu7:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\SoulLink-01")
+				NecrosisBuffMenu7:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\SoulLink-01")
 			end
 		-- hide the shadowtrance (nightfall) or backlash buttons when the state is ended.
 		elseif nom == self.Translation.Proc.ShadowTrance or nom == self.Translation.Proc.Backlash then
@@ -1422,7 +1422,7 @@ function Necrosis:UpdateIcons()
 
 	-- Affichage de l'icone liée au mode
 	if _G["NecrosisSoulstoneButton"] then
-		NecrosisSoulstoneButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\SoulstoneButton-0"..Local.Stone.Soul.Mode)
+		NecrosisSoulstoneButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\SoulstoneButton-0"..Local.Stone.Soul.Mode)
 	end
 
 	-- Pierre de vie
@@ -1441,7 +1441,7 @@ function Necrosis:UpdateIcons()
 
 	-- Affichage de l'icone liée au mode
 	if _G["NecrosisHealthstoneButton"] then
-		NecrosisHealthstoneButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\HealthstoneButton-0"..Local.Stone.Health.Mode)
+		NecrosisHealthstoneButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\HealthstoneButton-0"..Local.Stone.Health.Mode)
 	end
 
 	-- Pierre de sort
@@ -1471,7 +1471,7 @@ function Necrosis:UpdateIcons()
 
 	-- Affichage de l'icone liée au mode
 	if _G["NecrosisSpellstoneButton"] then
-		NecrosisSpellstoneButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\SpellstoneButton-0"..Local.Stone.Spell.Mode)
+		NecrosisSpellstoneButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\SpellstoneButton-0"..Local.Stone.Spell.Mode)
 	end
 
 	-- Pierre de feu
@@ -1501,7 +1501,7 @@ function Necrosis:UpdateIcons()
 
 	-- Affichage de l'icone liée au mode
 	if _G["NecrosisFirestoneButton"] then
-		NecrosisFirestoneButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\FirestoneButton-0"..Local.Stone.Fire.Mode)
+		NecrosisFirestoneButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\FirestoneButton-0"..Local.Stone.Fire.Mode)
 	end
 end
 
@@ -1513,13 +1513,13 @@ function Necrosis:UpdateHealth()
 		if health == healthMax then
 			if not (Local.LastSphereSkin == NecrosisConfig.NecrosisColor.."\\Shard32") then
 				Local.LastSphereSkin = NecrosisConfig.NecrosisColor.."\\Shard32"
-				NecrosisButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\"..Local.LastSphereSkin)
+				NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..Local.LastSphereSkin)
 			end
 		else
 			local taux = math.floor(health / (healthMax / 16))
 			if not (Local.LastSphereSkin == NecrosisConfig.NecrosisColor.."\\Shard"..taux) then
 				Local.LastSphereSkin = NecrosisConfig.NecrosisColor.."\\Shard"..taux
-				NecrosisButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\"..Local.LastSphereSkin)
+				NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..Local.LastSphereSkin)
 			end
 		end
 	end
@@ -1541,13 +1541,13 @@ function Necrosis:UpdateMana(Metamorphose)
 		if mana == manaMax then
 			if not (Local.LastSphereSkin == NecrosisConfig.NecrosisColor.."\\Shard32") then
 				Local.LastSphereSkin = NecrosisConfig.NecrosisColor.."\\Shard32"
-				NecrosisButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\"..Local.LastSphereSkin)
+				NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..Local.LastSphereSkin)
 			end
 		else
 			local taux = math.floor(mana / (manaMax / 16))
 			if not (Local.LastSphereSkin == NecrosisConfig.NecrosisColor.."\\Shard"..taux) then
 				Local.LastSphereSkin = NecrosisConfig.NecrosisColor.."\\Shard"..taux
-				NecrosisButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\"..Local.LastSphereSkin)
+				NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..Local.LastSphereSkin)
 			end
 		end
 	end
@@ -1663,14 +1663,14 @@ function Necrosis:UpdateMana(Metamorphose)
 			and Local.Summon.LastDemonType == self.Translation.DemonName[i]
 			and not (Local.Summon.LastDemonType == Local.Summon.DemonType)
 			then
-				PetManaButton:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\"..PetNameHere[i].."1")
+				PetManaButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..PetNameHere[i].."1")
 				Local.Summon.LastDemonType = nil
 		end
 		if PetManaButton
 			and Local.Summon.DemonType
 			and Local.Summon.DemonType == self.Translation.DemonName[i]
 			then
-				PetManaButton:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\"..PetNameHere[i].."2")
+				PetManaButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..PetNameHere[i].."2")
 		elseif PetManaButton and ManaPet[i] then
 			if Local.Desatured["NecrosisPetMenu"..(i + 1)] then
 				PetManaButton:GetNormalTexture():SetDesaturated(nil)
@@ -2015,22 +2015,22 @@ function Necrosis:BagExplore(arg)
 		if (Local.Soulshard.Count <= 32) then
 			if not (Local.LastSphereSkin == NecrosisConfig.NecrosisColor.."\\Shard"..Local.Soulshard.Count) then
 				Local.LastSphereSkin = NecrosisConfig.NecrosisColor.."\\Shard"..Local.Soulshard.Count
-				NecrosisButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\"..Local.LastSphereSkin)
+				NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..Local.LastSphereSkin)
 			end
 		elseif not (Local.LastSphereSkin == NecrosisConfig.NecrosisColor.."\\Shard32") then
 			Local.LastSphereSkin = NecrosisConfig.NecrosisColor.."\\Shard32"
-			NecrosisButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\"..Local.LastSphereSkin)
+			NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..Local.LastSphereSkin)
 		end
 	elseif NecrosisConfig.Circle == 2 and (Local.Stone.Soul.Mode == 1 or Local.Stone.Soul.Mode == 2) then
 
 		if (Local.Soulshard.Count <= 32) then
 			if not (Local.LastSphereSkin == NecrosisConfig.NecrosisColor:gsub("Turquoise", "Bleu"):gsub("Rose", "Bleu"):gsub("Orange", "Bleu").."\\Shard"..Local.Soulshard.Count) then
 				Local.LastSphereSkin = NecrosisConfig.NecrosisColor:gsub("Turquoise", "Bleu"):gsub("Rose", "Bleu"):gsub("Orange", "Bleu").."\\Shard"..Local.Soulshard.Count
-				NecrosisButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\"..Local.LastSphereSkin)
+				NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..Local.LastSphereSkin)
 			end
 		elseif not (Local.LastSphereSkin == NecrosisConfig.NecrosisColor:gsub("Turquoise", "Bleu"):gsub("Rose", "Bleu"):gsub("Orange", "Bleu").."\\Shard32") then
 			Local.LastSphereSkin = NecrosisConfig.NecrosisColor:gsub("Turquoise", "Bleu"):gsub("Rose", "Bleu"):gsub("Orange", "Bleu").."\\Shard32"
-			NecrosisButton:SetNormalTexture("Interface\\AddOns\\Necrosis\\UI\\"..Local.LastSphereSkin)
+			NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..Local.LastSphereSkin)
 		end
 	end
 	if NecrosisConfig.ShowCount then
@@ -2457,7 +2457,7 @@ function Necrosis:ShowAntiFearWarning()
 		if not Local.Warning.Antifear.Actif then
 			Local.Warning.Antifear.Actif = true
 			self:Msg(self.ChatMessage.Information.FearProtect, "USER")
-			NecrosisAntiFearButton:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\AntiFear"..Local.Warning.Antifear.Icon[Actif].."-02")
+			NecrosisAntiFearButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\AntiFear"..Local.Warning.Antifear.Icon[Actif].."-02")
 			if NecrosisConfig.Sound then PlaySoundFile(self.Sound.Fear) end
 			NecrosisAntiFearButton:Show()
 			Local.Warning.Antifear.Blink = GetTime() + 0.6
@@ -2471,7 +2471,7 @@ function Necrosis:ShowAntiFearWarning()
 				Local.Warning.Antifear.Toggle = 1
 			end
 			Local.Warning.Antifear.Blink = GetTime() + 0.4
-			NecrosisAntiFearButton:SetNormalTexture("Interface\\Addons\\Necrosis\\UI\\AntiFear"..Local.Warning.Antifear.Icon[Actif].."-0"..Local.Warning.Antifear.Toggle)
+			NecrosisAntiFearButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\AntiFear"..Local.Warning.Antifear.Icon[Actif].."-0"..Local.Warning.Antifear.Toggle)
 		end
 
 	elseif Local.Warning.Antifear.Actif then	-- No antifear on target, but the button is still visible => gonna hide it
