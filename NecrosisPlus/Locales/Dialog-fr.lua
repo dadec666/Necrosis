@@ -19,16 +19,16 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --]]
 
-
 ------------------------------------------------------------------------------------------------------
+
+-- luacheck: globals Necrosis
+local _G = _G
 
 Necrosis = Necrosis or _G.Necrosis or {}
 Necrosis.Unit = Necrosis.Unit or {}
 Necrosis.Translation = Necrosis.Translation or {}
-
-local _G = _G
 -- Necrosis LdC
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
+-- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 --
 -- Skins et voix Françaises : Eliah, Ner'zhul
@@ -45,262 +45,274 @@ local _G = _G
 ------------------------------------------------
 
 function Necrosis:Localization_Dialog_Fr()
-	self.Config = self.Config or {}
+    self.Config = self.Config or {}
 
-	function Necrosis:Localization()
-		self:Localization_Speech_Fr();
-	end
+    function Necrosis.Localization(addon)
+        addon:Localization_Speech_Fr()
+    end
 
-	self.HealthstoneCooldown = "Temps de recharge Pierre de soins"
-	
-	self.Localize = {
-		["Utilisation"] = "Utilisation",
-		["Echange"] = "Echange",
-	}
+    self.HealthstoneCooldown = "Temps de recharge Pierre de soins"
 
-	self.TooltipData = {
-		["Main"] = {
-			Label = "|c00FFFFFFNecrosis Plus|r",
-			Stone = {
-				[true] = "Oui";
-				[false] = "Non";
-			},
-			Hellspawn = {
-				[true] = "On";
-				[false] = "Off";
-			},
-			["Soulshard"] = "Fragment(s) d'\195\162me : ",
-			["InfernalStone"] = "Pierre(s) infernale(s) : ",
-			["DemoniacStone"] = "Pierre(s) d\195\169moniaque(s) : ",
-			["Soulstone"] = "\nPierre d'\195\162me : ",
-			["Healthstone"] = "Pierre de soins : ",
-			["Spellstone"] = "Pierre de sort : ",
-			["Firestone"] = "Pierre de feu : ",
-			["CurrentDemon"] = "D\195\169mon : ",
-			["EnslavedDemon"] = "D\195\169mon : Asservi",
-			["NoCurrentDemon"] = "D\195\169mon : Aucun",
-		},
-		["Soulstone"] = {
-			Text = {"Clic droit pour cr\195\169er","Clic gauche pour utiliser","Utilis\195\169e\nClic droit pour recr\195\169er","En attente"},
-			Ritual = "|c00FFFFFFShift+Clic pour le rituel d'invocation|r"
-		},
-		["Healthstone"] = {
-			Text = {"Clic droit pour cr\195\169er","Clic gauche pour utiliser"},
-			Text2 = "Clic du milieu ou Ctrl+clic gauche pour \195\169changer",
-			Ritual = "|c00FFFFFFShift+Clic pour le rituel des \195\162mes|r"
-		},
-		["Spellstone"] = {
-			Text = {"Clic droit pour cr\195\169er","En inventaire\nClic gauche pour utiliser","Utilis\195\169e", "Utilis\195\169e\nClic pour cr\195\169er"}
-		},
-		["Firestone"] = {
-			Text = {"Clic droit pour cr\195\169er","En inventaire\nClic gauche pour utiliser","Utilis\195\169e", "Utilis\195\169e\nClic pour cr\195\169er"}
-		},
-		["SpellTimer"] = {
-			Label = "|c00FFFFFFDur\195\169e des sorts|r",
-			Text = "Sorts actifs sur la cible",
-			Right = "Clic droit pour pierre de foyer vers "
-		},
-		["ShadowTrance"] = {
-			Label = "|c00FFFFFFTranse de l'ombre|r"
-		},
-		["Backlash"] = {
-			Label = "|c00FFFFFFContrecoup|r"
-		},
-		["Banish"] = {
-			Text = "Clic droit pour Rang 1"
-		},
-		["Imp"] = {
-			Label = "|c00FFFFFFDiablotin|r"
-		},
-		["Voidwalker"] = {
-			Label = "|c00FFFFFFMarcheur \195\169th\195\169r\195\169|r"
-		},
-		["Succubus"] = {
-			Label = "|c00FFFFFFSuccube|r"
-		},
-		["Felhunter"] = {
-			Label = "|c00FFFFFFChasseur corrompu|r"
-		},
-		["Felguard"] = {
-			Label = "|c00FFFFFFGangregarde|r"
-		},
-		["Infernal"] = {
-			Label = "|c00FFFFFFInfernal|r"
-		},
-		["Doomguard"] = {
-			Label = "|c00FFFFFFGarde funeste|r"
-		},
-		["Mount"] = {
-			Label = "|c00FFFFFFMonture|r",
-			Text = "Clic droit pour Rang 1"
-		},
-		["BuffMenu"] = {
-			Label = "|c00FFFFFFMenu des sorts|r",
-			Text = "Clic droit pour laisser ouvert",
-			Text2 = "Mode automatique : Fermeture \195\160 la fin du combat",
-		},
-		["PetMenu"] = {
-			Label = "|c00FFFFFFMenu des d\195\169mons|r",
-			Text = "Clic droit pour laisser ouvert",
-			Text2 = "Mode automatique : Fermeture \195\160 la fin du combat",
-		},
-		["CurseMenu"] = {
-			Label = "|c00FFFFFFMenu des mal\195\169dictions|r",
-			Text = "Clic droit pour laisser ouvert",
-			Text2 = "Mode automatique : Fermeture \195\160 la fin du combat",
-		},
-		["DominationCooldown"] = "Clic droit pour invocation rapide",
-	}
+    self.Localize = {
+        ["Utilisation"] = "Utilisation",
+        ["Echange"] = "Echange",
+    }
 
-	self.Sound = {
-		["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-Fr.mp3",
-		["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-Fr.mp3",
-		["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-Fr.mp3",
-		["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-Fr.mp3",
-		["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-Fr.mp3",
-	}
+    self.TooltipData = {
+        ["Main"] = {
+            Label = "|c00FFFFFFNecrosis Plus|r",
+            Stone = {
+                [true] = "Oui",
+                [false] = "Non",
+            },
+            Hellspawn = {
+                [true] = "On",
+                [false] = "Off",
+            },
+            ["Soulshard"] = "Fragment(s) d'\195\162me : ",
+            ["InfernalStone"] = "Pierre(s) infernale(s) : ",
+            ["DemoniacStone"] = "Pierre(s) d\195\169moniaque(s) : ",
+            ["Soulstone"] = "\nPierre d'\195\162me : ",
+            ["Healthstone"] = "Pierre de soins : ",
+            ["Spellstone"] = "Pierre de sort : ",
+            ["Firestone"] = "Pierre de feu : ",
+            ["CurrentDemon"] = "D\195\169mon : ",
+            ["EnslavedDemon"] = "D\195\169mon : Asservi",
+            ["NoCurrentDemon"] = "D\195\169mon : Aucun",
+        },
+        ["Soulstone"] = {
+            Text = {
+                "Clic droit pour cr\195\169er",
+                "Clic gauche pour utiliser",
+                "Utilis\195\169e\nClic droit pour recr\195\169er",
+                "En attente",
+            },
+            Ritual = "|c00FFFFFFShift+Clic pour le rituel d'invocation|r",
+        },
+        ["Healthstone"] = {
+            Text = { "Clic droit pour cr\195\169er", "Clic gauche pour utiliser" },
+            Text2 = "Clic du milieu ou Ctrl+clic gauche pour \195\169changer",
+            Ritual = "|c00FFFFFFShift+Clic pour le rituel des \195\162mes|r",
+        },
+        ["Spellstone"] = {
+            Text = {
+                "Clic droit pour cr\195\169er",
+                "En inventaire\nClic gauche pour utiliser",
+                "Utilis\195\169e",
+                "Utilis\195\169e\nClic pour cr\195\169er",
+            },
+        },
+        ["Firestone"] = {
+            Text = {
+                "Clic droit pour cr\195\169er",
+                "En inventaire\nClic gauche pour utiliser",
+                "Utilis\195\169e",
+                "Utilis\195\169e\nClic pour cr\195\169er",
+            },
+        },
+        ["SpellTimer"] = {
+            Label = "|c00FFFFFFDur\195\169e des sorts|r",
+            Text = "Sorts actifs sur la cible",
+            Right = "Clic droit pour pierre de foyer vers ",
+        },
+        ["ShadowTrance"] = {
+            Label = "|c00FFFFFFTranse de l'ombre|r",
+        },
+        ["Backlash"] = {
+            Label = "|c00FFFFFFContrecoup|r",
+        },
+        ["Banish"] = {
+            Text = "Clic droit pour Rang 1",
+        },
+        ["Imp"] = {
+            Label = "|c00FFFFFFDiablotin|r",
+        },
+        ["Voidwalker"] = {
+            Label = "|c00FFFFFFMarcheur \195\169th\195\169r\195\169|r",
+        },
+        ["Succubus"] = {
+            Label = "|c00FFFFFFSuccube|r",
+        },
+        ["Felhunter"] = {
+            Label = "|c00FFFFFFChasseur corrompu|r",
+        },
+        ["Felguard"] = {
+            Label = "|c00FFFFFFGangregarde|r",
+        },
+        ["Infernal"] = {
+            Label = "|c00FFFFFFInfernal|r",
+        },
+        ["Doomguard"] = {
+            Label = "|c00FFFFFFGarde funeste|r",
+        },
+        ["Mount"] = {
+            Label = "|c00FFFFFFMonture|r",
+            Text = "Clic droit pour Rang 1",
+        },
+        ["BuffMenu"] = {
+            Label = "|c00FFFFFFMenu des sorts|r",
+            Text = "Clic droit pour laisser ouvert",
+            Text2 = "Mode automatique : Fermeture \195\160 la fin du combat",
+        },
+        ["PetMenu"] = {
+            Label = "|c00FFFFFFMenu des d\195\169mons|r",
+            Text = "Clic droit pour laisser ouvert",
+            Text2 = "Mode automatique : Fermeture \195\160 la fin du combat",
+        },
+        ["CurseMenu"] = {
+            Label = "|c00FFFFFFMenu des mal\195\169dictions|r",
+            Text = "Clic droit pour laisser ouvert",
+            Text2 = "Mode automatique : Fermeture \195\160 la fin du combat",
+        },
+        ["DominationCooldown"] = "Clic droit pour invocation rapide",
+    }
 
-	self.ProcText = {
-		["ShadowTrance"] = "<white>T<lightPurple1>r<lightPurple2>a<purple>n<darkPurple1>s<darkPurple2>e d<darkPurple1>e l<purple>'<lightPurple2>o<lightPurple1>m<white>b<lightPurple1>r<lightPurple2>e";
-		["Backlash"] = "<white>C<lightPurple1>o<lightPurple2>n<purple>t<darkPurple1>r<darkPurple2>e<darkPurple1>c<purple>o<lightPurple2>u<lightPurple1>p"
-	}
+    self.Sound = {
+        ["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-Fr.mp3",
+        ["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-Fr.mp3",
+        ["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-Fr.mp3",
+        ["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-Fr.mp3",
+        ["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-Fr.mp3",
+    }
 
+    self.ProcText = {
+        ["ShadowTrance"] = "<white>T<lightPurple1>r<lightPurple2>a<purple>n<darkPurple1>s<darkPurple2>e d<darkPurple1>e l<purple>'<lightPurple2>o<lightPurple1>m<white>b<lightPurple1>r<lightPurple2>e",
+        ["Backlash"] = "<white>C<lightPurple1>o<lightPurple2>n<purple>t<darkPurple1>r<darkPurple2>e<darkPurple1>c<purple>o<lightPurple2>u<lightPurple1>p",
+    }
 
-	self.ChatMessage = {
-		["Bag"] = {
-			["FullPrefix"] = "Votre ",
-			["FullSuffix"] = " est plein !",
-			["FullDestroySuffix"] = " est plein ; Les prochains fragments seront d\195\169truits !",
-		},
-		["Interface"] = {
-			["Welcome"] = "<white>/necrosis (/necrosisplus) pour les options !",
-			["TooltipOn"] = "Bulles d'aide activ\195\169es" ,
-			["TooltipOff"] = "Bulles d'aide d\195\169sactiv\195\169es",
-			["MessageOn"] = "Messages Pierre d'\195\162me et Invocation de joueur activ\195\169s",
-			["MessageOff"] = "Messages Pierre d'\195\162me et Invocation de joueur d\195\169sactiv\195\169s",
-			["DefaultConfig"] = "<lightYellow>Configuration par d\195\169faut charg\195\169e.",
-			["UserConfig"] = "<lightYellow>Configuration charg\195\169e"
-		},
-		["Help"] = {
-			"/necrosis <lightOrange>recall<white> -- <lightBlue>Centre Necrosis Plus et tous les boutons au milieu de l'\195\169cran",
-			"/necrosis <lightOrange>reset<white> -- <lightBlue>R\195\169initialise totalement Necrosis Plus",
-		},
-		["Information"] = {
-			["FearProtect"] = "La cible est prot\195\169g\195\169e contre la peur !!!!",
-			["EnslaveBreak"] = "Votre D\195\169mon a bris\195\169 ses cha\195\174nes...",
-			["SoulstoneEnd"] = "<lightYellow>Votre Pierre d'\195\162me vient de s'\195\169teindre."
-		}
-	}
+    self.ChatMessage = {
+        ["Bag"] = {
+            ["FullPrefix"] = "Votre ",
+            ["FullSuffix"] = " est plein !",
+            ["FullDestroySuffix"] = " est plein ; Les prochains fragments seront d\195\169truits !",
+        },
+        ["Interface"] = {
+            ["Welcome"] = "<white>/necrosis (/necrosisplus) pour les options !",
+            ["TooltipOn"] = "Bulles d'aide activ\195\169es",
+            ["TooltipOff"] = "Bulles d'aide d\195\169sactiv\195\169es",
+            ["MessageOn"] = "Messages Pierre d'\195\162me et Invocation de joueur activ\195\169s",
+            ["MessageOff"] = "Messages Pierre d'\195\162me et Invocation de joueur d\195\169sactiv\195\169s",
+            ["DefaultConfig"] = "<lightYellow>Configuration par d\195\169faut charg\195\169e.",
+            ["UserConfig"] = "<lightYellow>Configuration charg\195\169e",
+        },
+        ["Help"] = {
+            "/necrosis <lightOrange>recall<white> -- <lightBlue>Centre Necrosis Plus et tous les boutons au milieu de l'\195\169cran",
+            "/necrosis <lightOrange>reset<white> -- <lightBlue>R\195\169initialise totalement Necrosis Plus",
+        },
+        ["Information"] = {
+            ["FearProtect"] = "La cible est prot\195\169g\195\169e contre la peur !!!!",
+            ["EnslaveBreak"] = "Votre D\195\169mon a bris\195\169 ses cha\195\174nes...",
+            ["SoulstoneEnd"] = "<lightYellow>Votre Pierre d'\195\162me vient de s'\195\169teindre.",
+        },
+    }
 
+    -- Menus de configuration
+    self.Config.Panel = {
+        "Configuration des messages",
+        "Configuration de la sph\195\168re",
+        "Configuration des boutons",
+        "Configuration des menus",
+        "Configuration des timers",
+        "Divers",
+    }
 
-	-- Menus de configuration
-	self.Config.Panel = {
-		"Configuration des messages",
-		"Configuration de la sph\195\168re",
-		"Configuration des boutons",
-		"Configuration des menus",
-		"Configuration des timers",
-		"Divers"
-	}
+    self.Config.Messages = {
+        ["Position"] = "<- Position des messages systeme Necrosis Plus ->",
+        ["Afficher les bulles d'aide"] = "Afficher les bulles d'aide",
+        ["Afficher les messages dans la zone systeme"] = "Afficher les messages de Necrosis Plus dans la zone syst\195\168me",
+        ["Activer les messages aleatoires de TP et de Rez"] = "Activer les messages al\195\169atoires de TP et de Rez",
+        ["Utiliser des messages courts"] = "Utiliser des messages courts",
+        ["Activer egalement les messages pour les Demons"] = "Activer \195\169galement les messages pour les D\195\169mons",
+        ["Activer egalement les messages pour les Montures"] = "Activer \195\169galement les messages pour les Montures",
+        ["Activer egalement les messages pour le Rituel des ames"] = "Activer \195\169galement les messages pour le Rituel des \195\162mes",
+        ["Activer les sons"] = "Activer les sons",
+        ["Alerter quand la cible est insensible a la peur"] = "Alerter quand la cible est insensible \195\160 la peur",
+        ["Alerter quand la cible peut etre banie ou asservie"] = "Alerter quand la cible peut \195\170tre banie ou asservie",
+        ["M'alerter quand j'entre en Transe"] = "M'alerter quand j'entre en Transe",
+    }
 
-	self.Config.Messages = {
-		["Position"] = "<- Position des messages systeme Necrosis Plus ->",
-		["Afficher les bulles d'aide"] = "Afficher les bulles d'aide",
-		["Afficher les messages dans la zone systeme"] = "Afficher les messages de Necrosis Plus dans la zone syst\195\168me",
-		["Activer les messages aleatoires de TP et de Rez"] = "Activer les messages al\195\169atoires de TP et de Rez",
-		["Utiliser des messages courts"] = "Utiliser des messages courts",
-		["Activer egalement les messages pour les Demons"] = "Activer \195\169galement les messages pour les D\195\169mons",
-		["Activer egalement les messages pour les Montures"] = "Activer \195\169galement les messages pour les Montures",
-		["Activer egalement les messages pour le Rituel des ames"] = "Activer \195\169galement les messages pour le Rituel des \195\162mes",
-		["Activer les sons"] = "Activer les sons",
-		["Alerter quand la cible est insensible a la peur"] = "Alerter quand la cible est insensible \195\160 la peur",
-		["Alerter quand la cible peut etre banie ou asservie"] = "Alerter quand la cible peut \195\170tre banie ou asservie",
-		["M'alerter quand j'entre en Transe"] = "M'alerter quand j'entre en Transe"
-	}
+    self.Config.Sphere = {
+        ["Taille de la sphere"] = "Taille de la sph\195\168re",
+        ["Skin de la pierre Necrosis"] = "Skin de la sph\195\168re",
+        ["Evenement montre par la sphere"] = "Ev\195\168nement montr\195\169 par la sph\195\168re",
+        ["Sort caste par la sphere"] = "Sort cast\195\169 par la sph\195\168re",
+        ["Afficher le compteur numerique"] = "Afficher le compteur num\195\169rique",
+        ["Type de compteur numerique"] = "Type de compteur num\195\169rique",
+    }
+    self.Config.Sphere.Colour = {
+        "Rose",
+        "Bleu",
+        "Orange",
+        "Turquoise",
+        "Violet",
+        "666",
+        "X",
+    }
+    self.Config.Sphere.Count = {
+        "Fragments d'\195\162me",
+        "Pierres d'invocations",
+        "Timer de Rez",
+        "Mana",
+        "Sant\195\169",
+    }
 
-	self.Config.Sphere = {
-		["Taille de la sphere"] = "Taille de la sph\195\168re",
-		["Skin de la pierre Necrosis"] = "Skin de la sph\195\168re",
-		["Evenement montre par la sphere"] = "Ev\195\168nement montr\195\169 par la sph\195\168re",
-		["Sort caste par la sphere"] = "Sort cast\195\169 par la sph\195\168re",
-		["Afficher le compteur numerique"] = "Afficher le compteur num\195\169rique",
-		["Type de compteur numerique"] = "Type de compteur num\195\169rique"
-	}
-	self.Config.Sphere.Colour = {
-		"Rose",
-		"Bleu",
-		"Orange",
-		"Turquoise",
-		"Violet",
-		"666",
-		"X"
-	}
-	self.Config.Sphere.Count = {
-		"Fragments d'\195\162me",
-		"Pierres d'invocations",
-		"Timer de Rez",
-		"Mana",
-		"Sant\195\169"
-	}
+    self.Config.Buttons = {
+        ["Rotation des boutons"] = "Rotation des boutons",
+        ["Fixer les boutons autour de la sphere"] = "Fixer les boutons autour de la sph\195\168re",
+        ["Utiliser mes propres montures"] = "Utiliser mes propres montures",
+        ["Choix des boutons a afficher"] = "Choix des boutons \195\160 afficher",
+        ["Monture - Clic gauche"] = "Clic gauche",
+        ["Monture - Clic droit"] = "Clic droit",
+    }
+    self.Config.Buttons.Name = {
+        "Afficher le bouton des Pierres de feu",
+        "Afficher le bouton des Pierres de sort",
+        "Afficher le bouton des Pierres de soin",
+        "Afficher le bouton des Pierres d'\195\162me",
+        "Afficher le bouton des sorts",
+        "Afficher le bouton de la Monture",
+        "Afficher le bouton d'invocation des D\195\169mons",
+        "Afficher le bouton des Mal\195\169dictions",
+        "Afficher le bouton de M\195\169tamorphe",
+    }
 
-	self.Config.Buttons = {
-		["Rotation des boutons"] = "Rotation des boutons",
-		["Fixer les boutons autour de la sphere"] = "Fixer les boutons autour de la sph\195\168re",
-		["Utiliser mes propres montures"] = "Utiliser mes propres montures",
-		["Choix des boutons a afficher"] = "Choix des boutons \195\160 afficher",
-		["Monture - Clic gauche"] = "Clic gauche",
-		["Monture - Clic droit"] = "Clic droit",
-	}
-	self.Config.Buttons.Name = {
-		"Afficher le bouton des Pierres de feu",
-		"Afficher le bouton des Pierres de sort",
-		"Afficher le bouton des Pierres de soin",
-		"Afficher le bouton des Pierres d'\195\162me",
-		"Afficher le bouton des sorts",
-		"Afficher le bouton de la Monture",
-		"Afficher le bouton d'invocation des D\195\169mons",
-		"Afficher le bouton des Mal\195\169dictions",
-		"Afficher le bouton de M\195\169tamorphe",
-	}
+    self.Config.Menus = {
+        ["Options Generales"] = "Options G\195\169n\195\169rales",
+        ["Menu des Buffs"] = "Menu des sorts",
+        ["Menu des Demons"] = "Menu des D\195\169mons",
+        ["Menu des Maledictions"] = "Menu des Mal\195\169dictions",
+        ["Afficher les menus en permanence"] = "Afficher les menus en permanence",
+        ["Afficher automatiquement les menus en combat"] = "Afficher automatiquement les menus en combat",
+        ["Fermer le menu apres un clic sur un de ses elements"] = "Fermer le menu apr\195\168s un clic sur un de ses \195\169l\195\169ments",
+        ["Orientation du menu"] = "Orientation du menu",
+        ["Changer la symetrie verticale des boutons"] = "Changer la sym\195\169trie verticale des boutons",
+        ["Taille du bouton Banir"] = "Taille du bouton Bannir",
+    }
+    self.Config.Menus.Orientation = {
+        "Horizontal",
+        "Vers le haut",
+        "Vers le bas",
+    }
 
-	self.Config.Menus = {
-		["Options Generales"] = "Options G\195\169n\195\169rales",
-		["Menu des Buffs"] = "Menu des sorts",
-		["Menu des Demons"] = "Menu des D\195\169mons",
-		["Menu des Maledictions"] = "Menu des Mal\195\169dictions",
-		["Afficher les menus en permanence"] = "Afficher les menus en permanence",
-		["Afficher automatiquement les menus en combat"] = "Afficher automatiquement les menus en combat",
-		["Fermer le menu apres un clic sur un de ses elements"] = "Fermer le menu apr\195\168s un clic sur un de ses \195\169l\195\169ments",
-		["Orientation du menu"] = "Orientation du menu",
-		["Changer la symetrie verticale des boutons"] = "Changer la sym\195\169trie verticale des boutons",
-		["Taille du bouton Banir"] = "Taille du bouton Bannir",
-	}
-	self.Config.Menus.Orientation = {
-		"Horizontal",
-		"Vers le haut",
-		"Vers le bas"
-	}
+    self.Config.Timers = {
+        ["Type de timers"] = "Type de timers",
+        ["Afficher le bouton des timers"] = "Afficher le bouton des timers",
+        ["Afficher les timers sur la gauche du bouton"] = "Afficher les timers sur la gauche du bouton",
+        ["Afficher les timers de bas en haut"] = "Afficher les timers de bas en haut",
+    }
+    self.Config.Timers.Type = {
+        "Aucun",
+        "Graphiques",
+        "Textuels",
+    }
 
-	self.Config.Timers = {
-		["Type de timers"] = "Type de timers",
-		["Afficher le bouton des timers"] = "Afficher le bouton des timers",
-		["Afficher les timers sur la gauche du bouton"] = "Afficher les timers sur la gauche du bouton",
-		["Afficher les timers de bas en haut"] = "Afficher les timers de bas en haut"
-	}
-	self.Config.Timers.Type = {
-		"Aucun",
-		"Graphiques",
-		"Textuels"
-	}
-
-	self.Config.Misc = {
-		["Deplace les fragments"] = "D\195\169place les fragments dans le sac specifi\195\169",
-		["Detruit les fragments si le sac plein"] = "D\195\169truit les fragments si le sac plein",
-		["Choix du sac contenant les fragments"] = "Choix du sac contenant les fragments",
-		["Nombre maximum de fragments a conserver"] = "Nombre maximum de fragments \195\160 conserver",
-		["Verrouiller Necrosis sur l'interface"] = "Verrouiller Necrosis Plus sur l'interface",
-		["Afficher les boutons caches"] = "Afficher les boutons cach\195\169s pour les d\195\169placer",
-		["Taille des boutons caches"] = "Taille des boutons cach\195\169s"
-	}
-
+    self.Config.Misc = {
+        ["Deplace les fragments"] = "D\195\169place les fragments dans le sac specifi\195\169",
+        ["Detruit les fragments si le sac plein"] = "D\195\169truit les fragments si le sac plein",
+        ["Choix du sac contenant les fragments"] = "Choix du sac contenant les fragments",
+        ["Nombre maximum de fragments a conserver"] = "Nombre maximum de fragments \195\160 conserver",
+        ["Verrouiller Necrosis sur l'interface"] = "Verrouiller Necrosis Plus sur l'interface",
+        ["Afficher les boutons caches"] = "Afficher les boutons cach\195\169s pour les d\195\169placer",
+        ["Taille des boutons caches"] = "Taille des boutons cach\195\169s",
+    }
 end

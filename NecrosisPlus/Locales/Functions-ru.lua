@@ -19,16 +19,16 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --]]
 
-
 ------------------------------------------------------------------------------------------------------
+
+-- luacheck: globals Necrosis
+local _G = _G
 
 Necrosis = Necrosis or _G.Necrosis or {}
 Necrosis.Unit = Necrosis.Unit or {}
 Necrosis.Translation = Necrosis.Translation or {}
-
-local _G = _G
 -- Necrosis LdC
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
+-- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 --
 -- Skins et voix Françaises : Eliah, Ner'zhul
@@ -44,72 +44,78 @@ local _G = _G
 -- RUSSIAN VERSION FUNCTIONS --
 ------------------------------------------------
 
-if ( GetLocale() == "ruRU" ) then
+if GetLocale() == "ruRU" then
+    -- Types d'unité des PnJ utilisés par Necrosis
+    Necrosis.Unit = {
+        ["Undead"] = "Нежить",
+        ["Demon"] = "Демон",
+        ["Elemental"] = "Дух стихии",
+    }
 
--- Types d'unité des PnJ utilisés par Necrosis
-Necrosis.Unit = {
-	["Undead"] = "Нежить",
-	["Demon"] = "Демон",
-	["Elemental"] = "Дух стихии"
-}
+    -- Traduction du nom des procs utilisés par Necrosis
+    Necrosis.Translation.Proc = {
+        ["Backlash"] = "Ответный удар",
+        ["ShadowTrance"] = "Теневой транс",
+    }
 
--- Traduction du nom des procs utilisés par Necrosis
-Necrosis.Translation.Proc = {
-	["Backlash"] = "Ответный удар",
-	["ShadowTrance"] = "Теневой транс"
-}
+    -- Traduction des noms des démons invocables
+    Necrosis.Translation.DemonName = {
+        [1] = "Бес",
+        [2] = "Демон Бездны",
+        [3] = "Суккуба",
+        [4] = "Охотник Скверны",
+        [5] = "Страж Скверны",
+        [6] = "Инферно",
+        [7] = "Привратник Скверны",
+    }
 
--- Traduction des noms des démons invocables
-Necrosis.Translation.DemonName = {
-	[1] = "Бес",
-	[2] = "Демон Бездны",
-	[3] = "Суккуба",
-	[4] = "Охотник Скверны",
-	[5] = "Страж Скверны",
-	[6] = "Инферно",
-	[7] = "Привратник Скверны"
-}
+    -- Traduction du nom des objets utilisés par Necrosis
+    Necrosis.Translation.Item = {
+        ["Soulshard"] = "Осколок души",
+        ["Soulstone"] = "[Кк]амень души", --[Кк]
+        ["Healthstone"] = "[Кк]амень здоровья", --[Кк]
+        ["Spellstone"] = "[Кк]амень чар", --[Кк]
+        ["Firestone"] = "[Кк]амень огня", --[Кк]
+        ["InfernalStone"] = "Камень инфернала",
+        ["DemoniacStone"] = "Демоническая статуэтка",
+        ["Hearthstone"] = "Камень возвращения",
+        ["SoulPouch"] = {
+            "Мешок душ",
+            "Сума душ",
+            "Коробка душ",
+            "Сумка из ткани Скверны",
+            "Черная сумка теней",
+            "Сумка Бездны",
+            "Черная сумка теней",
+            "Сумка из сердцевинной ткани Скверны",
+        },
+    }
 
--- Traduction du nom des objets utilisés par Necrosis
-Necrosis.Translation.Item = {
-	["Soulshard"] = "Осколок души",
-	["Soulstone"] = "[Кк]амень души", --[Кк]
-	["Healthstone"] = "[Кк]амень здоровья", --[Кк]
-	["Spellstone"] = "[Кк]амень чар", --[Кк]
-	["Firestone"] = "[Кк]амень огня", --[Кк]
-	["InfernalStone"] = "Камень инфернала",
-	["DemoniacStone"] = "Демоническая статуэтка",
-	["Hearthstone"] = "Камень возвращения",
-	["SoulPouch"] = {"Мешок душ", "Сума душ", "Коробка душ", "Сумка из ткани Скверны", "Черная сумка теней", "Сумка Бездны", "Черная сумка теней", "Сумка из сердцевинной ткани Скверны"}
-}
+    -- Traductions diverses
+    Necrosis.Translation.Misc = {
+        ["Cooldown"] = "Восстановление",
+        ["Rank"] = "Уровень",
+        ["Create"] = "Создание",
+    }
 
--- Traductions diverses
-Necrosis.Translation.Misc = {
-	["Cooldown"] = "Восстановление",
-	["Rank"] = "Уровень",
-	["Create"] = "Создание"
-}
-
--- Gestion de la détection des cibles protégées contre la peur
-Necrosis.AntiFear = {
-	-- Buffs giving temporary immunity to fear effects
-	["Buff"] = {
-		"Защита от страха",		-- Dwarf priest racial trait
-		"Воля отрекшихся",		-- Forsaken racial trait
-		"Бесстрашие",			-- Trinket (Fearless)
-		"Ярость берсерка",		-- Warrior Fury talent
-		"Безрассудство",		-- Warrior Fury talent
-		"Жажда смерти",			-- Warrior Fury talent
-		"Звериный гнев",		-- Hunter Beast Mastery talent
-		"Ледяная преграда",		-- Mage Ice talent
-		"Божественная защита",	-- Paladin Holy buff
-		"Божественный щит",		-- Paladin Holy buff
-		"Тотем трепета",		-- Shaman totem
-		"Abolish Magic"			-- Majordomo (NPC) spell
-	},
-	-- Debuffs and curses giving temporary immunity to fear effects
-	["Debuff"] = {
-	}
-}
-
+    -- Gestion de la détection des cibles protégées contre la peur
+    Necrosis.AntiFear = {
+        -- Buffs giving temporary immunity to fear effects
+        ["Buff"] = {
+            "Защита от страха", -- Dwarf priest racial trait
+            "Воля отрекшихся", -- Forsaken racial trait
+            "Бесстрашие", -- Trinket (Fearless)
+            "Ярость берсерка", -- Warrior Fury talent
+            "Безрассудство", -- Warrior Fury talent
+            "Жажда смерти", -- Warrior Fury talent
+            "Звериный гнев", -- Hunter Beast Mastery talent
+            "Ледяная преграда", -- Mage Ice talent
+            "Божественная защита", -- Paladin Holy buff
+            "Божественный щит", -- Paladin Holy buff
+            "Тотем трепета", -- Shaman totem
+            "Abolish Magic", -- Majordomo (NPC) spell
+        },
+        -- Debuffs and curses giving temporary immunity to fear effects
+        ["Debuff"] = {},
+    }
 end

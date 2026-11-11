@@ -19,16 +19,16 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --]]
 
-
 ------------------------------------------------------------------------------------------------------
+
+-- luacheck: globals Necrosis
+local _G = _G
 
 Necrosis = Necrosis or _G.Necrosis or {}
 Necrosis.Unit = Necrosis.Unit or {}
 Necrosis.Translation = Necrosis.Translation or {}
-
-local _G = _G
 -- Necrosis LdC
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
+-- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 --
 -- Skins et voix Françaises : Eliah, Ner'zhul
@@ -44,72 +44,77 @@ local _G = _G
 -- GERMAN  VERSION FUNCTIONS --
 ------------------------------------------------
 
-if ( GetLocale() == "deDE" ) then
+if GetLocale() == "deDE" then
+    -- Types d'unité des PnJ utilisés par Necrosis
+    Necrosis.Unit = {
+        ["Undead"] = "Untoter",
+        ["Demon"] = "D\195\164mon",
+        ["Elemental"] = "Elementar",
+    }
 
--- Types d'unité des PnJ utilisés par Necrosis
-Necrosis.Unit = {
-	["Undead"] = "Untoter",
-	["Demon"] = "D\195\164mon",
-	["Elemental"] = "Elementar",
-}
+    -- Traduction du nom des procs utilisés par Necrosis
+    Necrosis.Translation.Proc = {
+        ["Backlash"] = "Heimzahlen",
+        ["ShadowTrance"] = "Schattentrance",
+    }
 
--- Traduction du nom des procs utilisés par Necrosis
-Necrosis.Translation.Proc = {
-	["Backlash"] = "Heimzahlen",
-	["ShadowTrance"] = "Schattentrance"
-}
+    -- Traduction des noms des démons invocables
+    Necrosis.Translation.DemonName = {
+        [1] = "Wichtel",
+        [2] = "Leerwandler",
+        [3] = "Sukkubus",
+        [4] = "Teufelsj\195\164ger",
+        [5] = "Teufelswache",
+        [6] = "H\195\182llenbestie",
+        [7] = "Verdammniswache",
+    }
 
--- Traduction des noms des démons invocables
-Necrosis.Translation.DemonName = {
-	[1] = "Wichtel",
-	[2] = "Leerwandler",
-	[3] = "Sukkubus",
-	[4] = "Teufelsj\195\164ger",
-	[5] = "Teufelswache",
-	[6] = "H\195\182llenbestie",
-	[7] = "Verdammniswache"
-}
+    -- Traduction du nom des objets utilisés par Necrosis
+    Necrosis.Translation.Item = {
+        ["Soulshard"] = "Seelensplitter",
+        ["Soulstone"] = "Seelenstein",
+        ["Healthstone"] = "Gesundheitsstein",
+        ["Spellstone"] = "Zauberstein",
+        ["Firestone"] = "Feuerstein",
+        ["InfernalStone"] = "H\195\182llenstein",
+        ["DemoniacStone"] = "D\195\164monenstatuette",
+        ["Hearthstone"] = "Ruhestein",
+        ["SoulPouch"] = {
+            "Kleiner Seelenbeutel",
+            "Seelenkasten",
+            "Seelenbeutel",
+            "Teufelsstofftasche",
+            "Abgr\195\188ndige Tasche",
+            "Kernteufelsstofftasche",
+            "Schwarzschattentasche",
+        },
+    }
 
--- Traduction du nom des objets utilisés par Necrosis
-Necrosis.Translation.Item = {
-	["Soulshard"] = "Seelensplitter",
-	["Soulstone"] = "Seelenstein",
-	["Healthstone"] = "Gesundheitsstein",
-	["Spellstone"] = "Zauberstein",
-	["Firestone"] = "Feuerstein",
-	["InfernalStone"] = "H\195\182llenstein",
-	["DemoniacStone"] = "D\195\164monenstatuette",
-	["Hearthstone"] = "Ruhestein",
-	["SoulPouch"] = {"Kleiner Seelenbeutel", "Seelenkasten", "Seelenbeutel", "Teufelsstofftasche", "Abgr\195\188ndige Tasche", "Kernteufelsstofftasche", "Schwarzschattentasche"}
-}
+    -- Traductions diverses
+    Necrosis.Translation.Misc = {
+        ["Cooldown"] = "Cooldown",
+        ["Rank"] = "Rang",
+        ["Create"] = "herstellen",
+    }
 
--- Traductions diverses
-Necrosis.Translation.Misc = {
-	["Cooldown"] = "Cooldown",
-	["Rank"] = "Rang",
-	["Create"] = "herstellen"
-}
-
--- Gestion de la détection des cibles protégées contre la peur
-Necrosis.AntiFear = {
-	-- Buffs donnant une immunité temporaire au Fear
-	["Buff"] = {
-		"Furchtzauberschutz",			-- Dwarf priest racial trait
-		"Wille der Verlassenen",		-- Forsaken racial trait
-		"Furchtlos",					-- Trinket
-		"Berserkerwut",					-- Warrior Fury talent
-		"Tollk\195\188hnheit",			-- Warrior Fury talent
-		"Todeswunsch",					-- Warrior Fury talent
-		"Zorn des Wildtieres",			-- Hunter Beast Mastery talent (pet only)
-		"Eisblock",						-- Mage Ice talent
-		"G\195\182ttlicher Schutz",		-- Paladin Holy buff
-		"Gottesschild",					-- Paladin Holy buff
-		"Totem des Erdsto\195\159es",	-- Shaman totem
-		"Abolish Magic"					-- Majordomo (NPC) spell
-	},
-	-- Debuffs donnant une immunité temporaire au Fear
-	["Debuff"] = {
-	}
-}
-
+    -- Gestion de la détection des cibles protégées contre la peur
+    Necrosis.AntiFear = {
+        -- Buffs donnant une immunité temporaire au Fear
+        ["Buff"] = {
+            "Furchtzauberschutz", -- Dwarf priest racial trait
+            "Wille der Verlassenen", -- Forsaken racial trait
+            "Furchtlos", -- Trinket
+            "Berserkerwut", -- Warrior Fury talent
+            "Tollk\195\188hnheit", -- Warrior Fury talent
+            "Todeswunsch", -- Warrior Fury talent
+            "Zorn des Wildtieres", -- Hunter Beast Mastery talent (pet only)
+            "Eisblock", -- Mage Ice talent
+            "G\195\182ttlicher Schutz", -- Paladin Holy buff
+            "Gottesschild", -- Paladin Holy buff
+            "Totem des Erdsto\195\159es", -- Shaman totem
+            "Abolish Magic", -- Majordomo (NPC) spell
+        },
+        -- Debuffs donnant une immunité temporaire au Fear
+        ["Debuff"] = {},
+    }
 end

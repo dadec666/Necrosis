@@ -19,10 +19,9 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --]]
 
-
 ------------------------------------------------------------------------------------------------------
 -- Necrosis LdC
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
+-- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 --
 -- Skins et voix Françaises : Eliah, Ner'zhul
@@ -35,7 +34,8 @@
 ------------------------------------------------------------------------------------------------------
 
 -- On définit G comme étant le tableau contenant toutes les frames existantes.
-local _G = _G or getfenv(0)
+-- luacheck: globals Necrosis NecrosisConfig NecrosisTimerColor NecrosisShardCount NecrosisButton NecrosisListSpells
+local _G = _G
 Necrosis = Necrosis or _G.Necrosis or {}
 _G.Necrosis = Necrosis
 
@@ -45,119 +45,120 @@ _G.Necrosis = Necrosis
 
 -- Displays the resurrection timer in the sphere || Permet l'affichage du timer de rez dans la Sphere
 function Necrosis:RezTimerUpdate(SpellTimer, LastUpdate)
-	local Time, TimeMax, Minutes, Secondes
-	for index, valeur in ipairs(SpellTimer) do
-		if valeur.Name == Necrosis.Spell[11].Name then
-			Time = valeur.Time
-			TimeMax = valeur.TimeMax
-			break
-		end
-	end
-	if not Time then
-		NecrosisShardCount:SetText("???")
-		NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\Shard")
-		return LastUpdate
-	end
+    local Time, TimeMax, Minutes, Secondes
+    for _, valeur in ipairs(SpellTimer) do
+        if valeur.Name == Necrosis.Spell[11].Name then
+            Time = valeur.Time
+            TimeMax = valeur.TimeMax
+            break
+        end
+    end
+    if not Time then
+        NecrosisShardCount:SetText("???")
+        NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\Shard")
+        return LastUpdate
+    end
 
-	Secondes = TimeMax - floor(GetTime())
-	Minutes = floor(Secondes/60)
-	Secondes = Secondes % 60
+    Secondes = TimeMax - floor(GetTime())
+    Minutes = floor(Secondes / 60)
+    Secondes = Secondes % 60
 
-	-- Le timer numérique
-	if NecrosisConfig.CountType == 3 then
-		if (Minutes > 0) then
-			NecrosisShardCount:SetText(Minutes.." m")
-		else
-			NecrosisShardCount:SetText(Secondes)
-		end
-	end
-	-- Le timer graphique
-	if NecrosisConfig.Circle == 2 then
-		if (Minutes >= 16) then
-			if not (LastUpdate == "Turquoise\\Shard"..(Minutes - 15)) then
-				LastUpdate = "Turquoise\\Shard"..(Minutes - 15)
-				NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..LastUpdate)
-			end
-		elseif (Minutes >= 1 or Secondes >= 33) then
-			if not (LastUpdate == "Orange\\Shard"..(Minutes + 1)) then
-				LastUpdate = "Orange\\Shard"..(Minutes + 1)
-				NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..LastUpdate)
-			end
-		elseif not (LastUpdate == "Rose\\Shard"..Secondes) then
-			LastUpdate = "Rose\\Shard"..Secondes
-			NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\"..LastUpdate)
-		end
-	end
+    -- Le timer numérique
+    if NecrosisConfig.CountType == 3 then
+        if Minutes > 0 then
+            NecrosisShardCount:SetText(Minutes .. " m")
+        else
+            NecrosisShardCount:SetText(Secondes)
+        end
+    end
+    -- Le timer graphique
+    if NecrosisConfig.Circle == 2 then
+        if Minutes >= 16 then
+            if LastUpdate ~= "Turquoise\\Shard" .. (Minutes - 15) then
+                LastUpdate = "Turquoise\\Shard" .. (Minutes - 15)
+                NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\" .. LastUpdate)
+            end
+        elseif Minutes >= 1 or Secondes >= 33 then
+            if LastUpdate ~= "Orange\\Shard" .. (Minutes + 1) then
+                LastUpdate = "Orange\\Shard" .. (Minutes + 1)
+                NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\" .. LastUpdate)
+            end
+        elseif LastUpdate ~= "Rose\\Shard" .. Secondes then
+            LastUpdate = "Rose\\Shard" .. Secondes
+            NecrosisButton:SetNormalTexture("Interface\\AddOns\\NecrosisPlus\\UI\\" .. LastUpdate)
+        end
+    end
 
-	return LastUpdate
+    return LastUpdate
 end
 
 -- Allows the viewing of recorded timers || Permet l'affichage des timers textuels
 -- and other textual timers || Allows the posting of text timers
 function Necrosis:TextTimerUpdate(SpellTimer, SpellGroup)
-	if not SpellTimer[1] then
-		NecrosisListSpells:SetText("")
-		return
-	end
+    if not SpellTimer[1] then
+        NecrosisListSpells:SetText("")
+        return
+    end
 
-	local Now = floor(GetTime())
-	local minutes = 0
-	local seconds = 0
-	local display = ""
+    local Now = floor(GetTime())
+    local minutes
+    local seconds
+    local display = ""
 
-	local LastGroup = 0
+    local LastGroup = 0
 
-	for index in ipairs(SpellTimer) do
-		-- Changement de la couleur suivant le temps restant
-		local percent = (floor(SpellTimer[index].TimeMax - Now) / SpellTimer[index].Time)*100
-		local color = NecrosisTimerColor(percent)
+    for index in ipairs(SpellTimer) do
+        -- Changement de la couleur suivant le temps restant
+        local percent = (floor(SpellTimer[index].TimeMax - Now) / SpellTimer[index].Time) * 100
+        local color = NecrosisTimerColor(percent)
 
-		-- Affichage de l'entête si on change de groupe
-		if not (SpellTimer[index].Group == LastGroup) and SpellTimer[index].Group > 3 then
-			if SpellTimer[index].Group and SpellGroup[SpellTimer[index].Group] then
-				if SpellGroup[SpellTimer[index].Group].Name then
-					display = display.."<purple>-------------------------------\n"
-					display = display..SpellGroup[SpellTimer[index].Group].Name
-					display = display.." - "
-					display = display..SpellGroup[SpellTimer[index].Group].SubName
-					display = display.."\n-------------------------------<close>\n<white>"
-				end
-			end
-			LastGroup = SpellTimer[index].Group
-		end
+        -- Affichage de l'entête si on change de groupe
+        if SpellTimer[index].Group ~= LastGroup and SpellTimer[index].Group > 3 then
+            if SpellTimer[index].Group and SpellGroup[SpellTimer[index].Group] then
+                if SpellGroup[SpellTimer[index].Group].Name then
+                    display = display .. "<purple>-------------------------------\n"
+                    display = display .. SpellGroup[SpellTimer[index].Group].Name
+                    display = display .. " - "
+                    display = display .. SpellGroup[SpellTimer[index].Group].SubName
+                    display = display .. "\n-------------------------------<close>\n<white>"
+                end
+            end
+            LastGroup = SpellTimer[index].Group
+        end
 
-		-- Affichage du temps restant
-		seconds = SpellTimer[index].TimeMax - Now
-		minutes = floor(seconds/60);
-		seconds = seconds % 60
-		if (minutes > 0) then
-			if (minutes > 9) then
-				display = display..minutes..":"
-			else
-				display = display.."0"..minutes..":"
-			end
-		else
-			display = display.."0:"
-		end
-		if (seconds > 9) then
-			display = display..seconds
-		else
-			display = display.."0"..seconds
-		end
-		display = display.." - <close>"..color..SpellTimer[index].Name.."<close>"
-		
-		if (SpellTimer[index].Target == nil) then
-			SpellTimer[index].Target = "";
-		end
-		
-		if (SpellTimer[index].Type == 1) or (SpellTimer[index].Name == Necrosis.Spell[16].Name)
-			and not (SpellTimer[index].Target == "")
-			then
-				display = display.."<white> - "..SpellTimer[index].Target.."<close>\n";
-		else
-			display = display.."\n";
-		end
-	end
-	display = self:MsgAddColor(display)
-	NecrosisListSpells:SetText(display)
+        -- Affichage du temps restant
+        seconds = SpellTimer[index].TimeMax - Now
+        minutes = floor(seconds / 60)
+        seconds = seconds % 60
+        if minutes > 0 then
+            if minutes > 9 then
+                display = display .. minutes .. ":"
+            else
+                display = display .. "0" .. minutes .. ":"
+            end
+        else
+            display = display .. "0:"
+        end
+        if seconds > 9 then
+            display = display .. seconds
+        else
+            display = display .. "0" .. seconds
+        end
+        display = display .. " - <close>" .. color .. SpellTimer[index].Name .. "<close>"
+
+        if SpellTimer[index].Target == nil then
+            SpellTimer[index].Target = ""
+        end
+
+        if
+            (SpellTimer[index].Type == 1)
+            or (SpellTimer[index].Name == Necrosis.Spell[16].Name) and SpellTimer[index].Target ~= ""
+        then
+            display = display .. "<white> - " .. SpellTimer[index].Target .. "<close>\n"
+        else
+            display = display .. "\n"
+        end
+    end
+    display = self:MsgAddColor(display)
+    NecrosisListSpells:SetText(display)
 end

@@ -1,0 +1,36 @@
+{
+    "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
+    "runtime": {
+        "version": "Lua 5.1",
+        "path": [
+            "?.lua",
+            "?/init.lua"
+        ]
+    },
+    "diagnostics": {
+        "globals": [
+            "CreateFrame",
+            "DEFAULT_CHAT_FRAME",
+            "UIParent",
+            "SlashCmdList",
+            "SLASH_MYADDON1",
+            "SLASH_MYADDON2",
+            "hooksecurefunc",
+            "GetTime",
+            "UnitHealth",
+            "UnitPower",
+            "UnitGUID",
+            "UnitName",
+            "InCombatLockdown",
+            "GameTooltip",
+            "InterfaceOptions_AddCategory"
+        ]
+    },
+    "workspace": {
+        "library": [
+            "${workspaceFolder}/libs",
+            "~/.gemini/wow-3.3.5a-stubs"
+        ],
+        "checkThirdParty": false
+    }
+}

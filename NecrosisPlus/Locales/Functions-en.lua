@@ -19,16 +19,16 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --]]
 
-
 ------------------------------------------------------------------------------------------------------
+
+-- luacheck: globals Necrosis
+local _G = _G
 
 Necrosis = Necrosis or _G.Necrosis or {}
 Necrosis.Unit = Necrosis.Unit or {}
 Necrosis.Translation = Necrosis.Translation or {}
-
-local _G = _G
 -- Necrosis LdC
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
+-- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 --
 -- Skins et voix Françaises : Eliah, Ner'zhul
@@ -44,72 +44,77 @@ local _G = _G
 -- ENGLISH  VERSION FUNCTIONS --
 ------------------------------------------------
 
-if ( GetLocale() == "enUS" ) or ( GetLocale() == "enGB" ) then
+if (GetLocale() == "enUS") or (GetLocale() == "enGB") then
+    -- Types d'unité des PnJ utilisés par Necrosis
+    Necrosis.Unit = {
+        ["Undead"] = "Undead",
+        ["Demon"] = "Demon",
+        ["Elemental"] = "Elemental",
+    }
 
--- Types d'unité des PnJ utilisés par Necrosis
-Necrosis.Unit = {
-	["Undead"] = "Undead",
-	["Demon"] = "Demon",
-	["Elemental"] = "Elemental"
-}
+    -- Traduction du nom des procs utilisés par Necrosis
+    Necrosis.Translation.Proc = {
+        ["Backlash"] = "Backlash",
+        ["ShadowTrance"] = "Shadow Trance",
+    }
 
--- Traduction du nom des procs utilisés par Necrosis
-Necrosis.Translation.Proc = {
-	["Backlash"] = "Backlash",
-	["ShadowTrance"] = "Shadow Trance"
-}
+    -- Traduction des noms des démons invocables
+    Necrosis.Translation.DemonName = {
+        [1] = "Imp",
+        [2] = "Voidwalker",
+        [3] = "Succubus",
+        [4] = "Felhunter",
+        [5] = "Felguard",
+        [6] = "Inferno",
+        [7] = "Doomguard",
+    }
 
--- Traduction des noms des démons invocables
-Necrosis.Translation.DemonName = {
-	[1] = "Imp",
-	[2] = "Voidwalker",
-	[3] = "Succubus",
-	[4] = "Felhunter",
-	[5] = "Felguard",
-	[6] = "Inferno",
-	[7] = "Doomguard"
-}
+    -- Traduction du nom des objets utilisés par Necrosis
+    Necrosis.Translation.Item = {
+        ["Soulshard"] = "Soul Shard",
+        ["Soulstone"] = "Soulstone",
+        ["Healthstone"] = "Healthstone",
+        ["Spellstone"] = "Spellstone",
+        ["Firestone"] = "Firestone",
+        ["InfernalStone"] = "Infernal Stone",
+        ["DemoniacStone"] = "Demonic Figurine",
+        ["Hearthstone"] = "Hearthstone",
+        ["SoulPouch"] = {
+            "Soul Pouch",
+            "Small Soul Pouch",
+            "Box of Souls",
+            "Felcloth Bag",
+            "Ebon Shadowbag",
+            "Core Felcloth Bag",
+            "Abyssal Bag",
+        },
+    }
 
--- Traduction du nom des objets utilisés par Necrosis
-Necrosis.Translation.Item = {
-	["Soulshard"] = "Soul Shard",
-	["Soulstone"] = "Soulstone",
-	["Healthstone"] = "Healthstone",
-	["Spellstone"] = "Spellstone",
-	["Firestone"] = "Firestone",
-	["InfernalStone"] = "Infernal Stone",
-	["DemoniacStone"] = "Demonic Figurine",
-	["Hearthstone"] = "Hearthstone",
-	["SoulPouch"] = {"Soul Pouch", "Small Soul Pouch", "Box of Souls", "Felcloth Bag", "Ebon Shadowbag", "Core Felcloth Bag", "Abyssal Bag"}
-}
+    -- Traductions diverses
+    Necrosis.Translation.Misc = {
+        ["Cooldown"] = "Cooldown",
+        ["Rank"] = "Rank",
+        ["Create"] = "Create",
+    }
 
--- Traductions diverses
-Necrosis.Translation.Misc = {
-	["Cooldown"] = "Cooldown",
-	["Rank"] = "Rank",
-	["Create"] = "Create"
-}
-
--- Gestion de la détection des cibles protégées contre la peur
-Necrosis.AntiFear = {
-	-- Buffs giving temporary immunity to fear effects
-	["Buff"] = {
-		"Fear Ward",			-- Dwarf priest racial trait
-		"Will of the Forsaken",	-- Forsaken racial trait
-		"Fearless",				-- Trinket
-		"Berserker Rage",		-- Warrior Fury talent
-		"Recklessness",			-- Warrior Fury talent
-		"Death Wish",			-- Warrior Fury talent
-		"Bestial Wrath",		-- Hunter Beast Mastery talent
-		"Ice Block",			-- Mage Ice talent
-		"Divine Protection",	-- Paladin Holy buff
-		"Divine Shield",		-- Paladin Holy buff
-		"Tremor Totem",			-- Shaman totem
-		"Abolish Magic"			-- Majordomo (NPC) spell
-	},
-	-- Debuffs and curses giving temporary immunity to fear effects
-	["Debuff"] = {
-	}
-}
-
+    -- Gestion de la détection des cibles protégées contre la peur
+    Necrosis.AntiFear = {
+        -- Buffs giving temporary immunity to fear effects
+        ["Buff"] = {
+            "Fear Ward", -- Dwarf priest racial trait
+            "Will of the Forsaken", -- Forsaken racial trait
+            "Fearless", -- Trinket
+            "Berserker Rage", -- Warrior Fury talent
+            "Recklessness", -- Warrior Fury talent
+            "Death Wish", -- Warrior Fury talent
+            "Bestial Wrath", -- Hunter Beast Mastery talent
+            "Ice Block", -- Mage Ice talent
+            "Divine Protection", -- Paladin Holy buff
+            "Divine Shield", -- Paladin Holy buff
+            "Tremor Totem", -- Shaman totem
+            "Abolish Magic", -- Majordomo (NPC) spell
+        },
+        -- Debuffs and curses giving temporary immunity to fear effects
+        ["Debuff"] = {},
+    }
 end

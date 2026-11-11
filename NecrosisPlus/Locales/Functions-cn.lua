@@ -19,8 +19,10 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --]]
 
-
 ------------------------------------------------------------------------------------------------------
+
+-- luacheck: globals Necrosis
+local _G = _G
 
 Necrosis = Necrosis or _G.Necrosis or {}
 Necrosis.Unit = Necrosis.Unit or {}
@@ -28,7 +30,7 @@ Necrosis.Translation = Necrosis.Translation or {}
 
 local _G = _G
 -- Necrosis LdC
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
+-- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 --
 -- Skins et voix Françaises : Eliah, Ner'zhul
@@ -46,72 +48,69 @@ local _G = _G
 --  艾娜羅沙@奧妮克希亞/TW
 ------------------------------------------------
 
-if ( GetLocale() == "zhCN" ) then
+if GetLocale() == "zhCN" then
+    -- Types d'unité des PnJ utilisés par Necrosis
+    Necrosis.Unit = {
+        ["Undead"] = "亡灵",
+        ["Demon"] = "恶魔",
+        ["Elemental"] = "元素",
+    }
 
--- Types d'unité des PnJ utilisés par Necrosis
-Necrosis.Unit = {
-	["Undead"] = "亡灵",
-	["Demon"] = "恶魔",
-	["Elemental"] = "元素"
-}
+    -- Traduction du nom des procs utilisés par Necrosis
+    Necrosis.Translation.Proc = {
+        ["Backlash"] = "反冲",
+        ["ShadowTrance"] = "暗影冥思",
+    }
 
--- Traduction du nom des procs utilisés par Necrosis
-Necrosis.Translation.Proc = {
-	["Backlash"] = "反冲",
-	["ShadowTrance"] = "暗影冥思"
-}
+    -- Traduction des noms des démons invocables
+    Necrosis.Translation.DemonName = {
+        [1] = "小鬼",
+        [2] = "虚空行者",
+        [3] = "魅魔",
+        [4] = "地狱猎犬",
+        [5] = "地狱火",
+        [6] = "末日守卫",
+        [7] = "厄运守卫",
+    }
 
--- Traduction des noms des démons invocables
-Necrosis.Translation.DemonName = {
-	[1] = "小鬼",
-	[2] = "虚空行者",
-	[3] = "魅魔",
-	[4] = "地狱猎犬",
-	[5] = "地狱火",
-	[6] = "末日守卫",
-	[7] = "厄运守卫"
-}
+    -- Traduction du nom des objets utilisés par Necrosis
+    Necrosis.Translation.Item = {
+        ["Soulshard"] = "灵魂碎片",
+        ["Soulstone"] = "灵魂石",
+        ["Healthstone"] = "治疗石",
+        ["Spellstone"] = "法术石",
+        ["Firestone"] = "火焰石",
+        ["InfernalStone"] = "地狱火石",
+        ["DemoniacStone"] = "恶魔雕像",
+        ["Hearthstone"] = "炉石",
+        ["SoulPouch"] = { "灵魂袋", "恶魔布包", "熔火恶魔布包" },
+    }
 
--- Traduction du nom des objets utilisés par Necrosis
-Necrosis.Translation.Item = {
-	["Soulshard"] = "灵魂碎片",
-	["Soulstone"] = "灵魂石",
-	["Healthstone"] = "治疗石",
-	["Spellstone"] = "法术石",
-	["Firestone"] = "火焰石",
-	["InfernalStone"] = "地狱火石",
-	["DemoniacStone"] = "恶魔雕像",
-	["Hearthstone"] = "炉石",
-	["SoulPouch"] = {"灵魂袋", "恶魔布包", "熔火恶魔布包"}
-}
+    -- Traductions diverses
+    Necrosis.Translation.Misc = {
+        ["Cooldown"] = "冷却时间",
+        ["Rank"] = "等级",
+        ["Create"] = "",
+    }
 
--- Traductions diverses
-Necrosis.Translation.Misc = {
-	["Cooldown"] = "冷却时间",
-	["Rank"] = "等级",
-	["Create"] = ""
-}
-
--- Gestion de la détection des cibles protégées contre la peur
-Necrosis.AntiFear = {
-	-- Buffs giving temporary immunity to fear effects
-	["Buff"] = {
-		"恐惧防护结界",	-- Dwarf priest racial trait
-		"亡灵意志",	-- Forsaken racial trait
-		"反恐惧",	-- Trinket
-		"狂怒",		-- Warrior Fury talent
-		"鲁莽",		-- Warrior Fury talent
-		"死亡之愿",	-- Warrior Fury talent
-		"狂野怒火",	-- Hunter Beast Mastery talent (pet only)
-		"寒冰屏障",	-- Mage Ice talent
-		"圣佑术",	-- Paladin Holy buff
-		"圣盾术",	-- Paladin Holy buff
-		"战栗图腾",	-- Shaman totem
-		"废除魔法"	-- Majordomo (NPC) spell
-	},
-	-- Debuffs and curses giving temporary immunity to fear effects
-	["Debuff"] = {
-	}
-}
-
+    -- Gestion de la détection des cibles protégées contre la peur
+    Necrosis.AntiFear = {
+        -- Buffs giving temporary immunity to fear effects
+        ["Buff"] = {
+            "恐惧防护结界", -- Dwarf priest racial trait
+            "亡灵意志", -- Forsaken racial trait
+            "反恐惧", -- Trinket
+            "狂怒", -- Warrior Fury talent
+            "鲁莽", -- Warrior Fury talent
+            "死亡之愿", -- Warrior Fury talent
+            "狂野怒火", -- Hunter Beast Mastery talent (pet only)
+            "寒冰屏障", -- Mage Ice talent
+            "圣佑术", -- Paladin Holy buff
+            "圣盾术", -- Paladin Holy buff
+            "战栗图腾", -- Shaman totem
+            "废除魔法", -- Majordomo (NPC) spell
+        },
+        -- Debuffs and curses giving temporary immunity to fear effects
+        ["Debuff"] = {},
+    }
 end

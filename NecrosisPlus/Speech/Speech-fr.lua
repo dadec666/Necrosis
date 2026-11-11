@@ -38,20 +38,16 @@
 
 --]]
 
-
-
-
-
 ------------------------------------------------------------------------------------------------------
+
+-- luacheck: globals Necrosis
+local _G = _G
 
 Necrosis = Necrosis or _G.Necrosis or {}
 Necrosis.Speech = Necrosis.Speech or {}
-
-
-local _G = _G
 -- Necrosis LdC
 
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
+-- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
 
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 
@@ -73,369 +69,294 @@ local _G = _G
 
 ------------------------------------------------------------------------------------------------------
 
-
-
 function Necrosis:Localization_Speech_Fr()
+    self.Speech.TP = {
 
+        [1] = {
 
+            "<after>Taxi des Arcanes ! Cliquez sur le portail svp !",
+        },
 
-	self.Speech.TP = {
+        [2] = {
 
-		[1] = {
+            "<after>Bienvenue, sur le vol de ~Succube Air Lines~ \195\160 destination de <player>...",
 
-			"<after>Taxi des Arcanes ! Cliquez sur le portail svp !",
+            "<after>Les h\195\180tesses et leur fouet sont \195\160 votre disposition durant le trajet",
+        },
 
-		},
+        [3] = {
 
-		[2] = {
+            "<after>Si vous ne voulez pas qu'une cr\195\169ature tentaculaire, glaireuse et asthmatique sorte de ce portail, cliquez dessus au plus vite !",
+        },
 
-			"<after>Bienvenue, sur le vol de ~Succube Air Lines~ \195\160 destination de <player>...",
+        [4] = {
 
-			"<after>Les h\195\180tesses et leur fouet sont \195\160 votre disposition durant le trajet",
+            "<after>Si vous cliquez sur le portail, on commencera \195\160 jouer plus vite...",
+        },
 
-		},
+        [5] = {
 
-		[3] = {
+            "Tel un lapin dans un chapeau de mage, nous allons faire appara\195\174tre devant vos yeux \195\169bahis...",
 
-			"<after>Si vous ne voulez pas qu'une cr\195\169ature tentaculaire, glaireuse et asthmatique sorte de ce portail, cliquez dessus au plus vite !",
+            "<after>Et hop.",
+        },
 
-		},
+        [6] = {
 
-		[4] = {
+            "PAR ASTAROTH ET DASMODES, JE T'INVOQUE, O TOUT PUISSANT DEMON DES SEPTS ENFERS, PARANGON VELU DES INFRA MONDES DEMONIAQUES, PAR LA PUISSANCE DU SCEAU ANCESTR... euh ?!? Je crois qu'il y a un probl\195\168me l\195\160...",
 
-			"<after>Si vous cliquez sur le portail, on commencera \195\160 jouer plus vite...",
+            "<after>Ah ben non...",
+        },
+    }
 
-		},
+    self.Speech.Rez = {
 
-		[5] = {
+        [1] = {
 
-			"Tel un lapin dans un chapeau de mage, nous allons faire appara\195\174tre devant vos yeux \195\169bahis...",
+            "<after>Si ca vous tente un suicide collectif, <target> s'en fout, la pierre d'\195\162me lui permettra de se relever",
+        },
 
-			"<after>Et hop.",
+        [2] = {
 
-		},
+            "<after><target> peut partir siroter un caf\195\169, et pourra se relever du wipe qui s'en suivra gr\195\162ce \195\160 sa pierre d'\195\162me",
+        },
 
-		[6] = {
+        [3] = {
 
-			"PAR ASTAROTH ET DASMODES, JE T'INVOQUE, O TOUT PUISSANT DEMON DES SEPTS ENFERS, PARANGON VELU DES INFRA MONDES DEMONIAQUES, PAR LA PUISSANCE DU SCEAU ANCESTR... euh ?!? Je crois qu'il y a un probl\195\168me l\195\160...",
+            "<after>Pierre pos\195\169e sur <target>, vous pouvez recommencer \195\160 faire n'importe quoi sans risque",
+        },
 
-			"<after>Ah ben non...",
+        [4] = {
 
-		},
+            "<after>Gr\195\162ce \195\160 sa pierre d'\195\162me, <target> est pass\195\169 en mode Easy wipe",
+        },
 
-	}
+        [5] = {
 
+            "<after><target> peut d\195\169sormais revenir d'entre les morts, histoire d'organiser le prochain wipe",
+        },
 
+        [6] = {
 
-	self.Speech.Rez = {
+            "<after>Les hindous croient \195\160 l'immortalit\195\169, <target> aussi depuis que je lui ai pos\195\169 une pierre d'\195\162me",
+        },
 
-		[1] = {
+        [7] = {
 
-			"<after>Si ca vous tente un suicide collectif, <target> s'en fout, la pierre d'\195\162me lui permettra de se relever",
+            "Ne bougeons plus !",
 
-		},
+            "<after><target> est d\195\169sormais \195\169quip\195\169 de son kit de survie temporaire.",
+        },
 
-		[2] = {
+        [8] = {
 
-			"<after><target> peut partir siroter un caf\195\169, et pourra se relever du wipe qui s'en suivra gr\195\162ce \195\160 sa pierre d'\195\162me",
+            "<after>Tel le ph\195\169nix, <target> pourra revenir d'entre les flammes de l'enfer (Faut dire aussi qu'il a beaucoup de rf...)",
+        },
 
-		},
+        [9] = {
 
-		[3] = {
+            "<after>Gr\195\162ce \195\160 sa pierre d'\195\162me, <target> peut de nouveau faire n'importe quoi.",
+        },
 
-			"<after>Pierre pos\195\169e sur <target>, vous pouvez recommencer \195\160 faire n'importe quoi sans risque",
+        [10] = {
 
-		},
+            "<after>Sur <target> poser une belle pierre d'\195\162me,",
 
-		[4] = {
+            "<after>Voil\195\160 qui peut ma foi \195\169viter bien des drames !",
+        },
+    }
 
-			"<after>Gr\195\162ce \195\160 sa pierre d'\195\162me, <target> est pass\195\169 en mode Easy wipe",
+    self.Speech.RoS = {
 
-		},
+        [1] = {
 
-		[5] = {
+            "Utilisons donc les \195\162mes de nos ennemis, pour nous redonner la vie !",
+        },
 
-			"<after><target> peut d\195\169sormais revenir d'entre les morts, histoire d'organiser le prochain wipe",
+        [2] = {
 
-		},
+            "Votre \195\162me, mon \195\162me, leur \195\162me... Quelle importance ? Allez, piochez-en juste une !",
+        },
+    }
 
-		[6] = {
+    self.Speech.ShortMessage = {
 
-			"<after>Les hindous croient \195\160 l'immortalit\195\169, <target> aussi depuis que je lui ai pos\195\169 une pierre d'\195\162me",
+        { { "<after>--> <target> est prot\195\169g\195\169 par une pierre d'\195\162me <--" } },
 
-		},
+        { { "<after><TP> Invocation en cours, cliquez sur le portail svp <TP>" } },
 
-		[7] = {
+        { { "Rassembler un rituel des \195\162mes" } },
+    }
 
-			"Ne bougeons plus !",
+    self.Speech.Demon = {
 
-			"<after><target> est d\195\169sormais \195\169quip\195\169 de son kit de survie temporaire.",
+        -- Diablotin
 
-		},
+        [1] = {
 
-		[8] = {
+            [1] = {
 
-			"<after>Tel le ph\195\169nix, <target> pourra revenir d'entre les flammes de l'enfer (Faut dire aussi qu'il a beaucoup de rf...)",
+                "Bon, s\195\162le petite peste de Diablotin, tu arr\195\170tes de bouder et tu viens m'aider ! ET C'EST UN ORDRE !",
+            },
 
-		},
+            [2] = {
 
-		[9] = {
+                "<pet> ! AU PIED ! TOUT DE SUITE !",
+            },
 
-			"<after>Gr\195\162ce \195\160 sa pierre d'\195\162me, <target> peut de nouveau faire n'importe quoi.",
+            [3] = {
 
-		},
+                "Attendez, je sors mon briquet !",
+            },
+        },
 
-		[10] = {
+        -- Marcheur éthéré
 
-			"<after>Sur <target> poser une belle pierre d'\195\162me,",
+        [2] = {
 
-			"<after>Voil\195\160 qui peut ma foi \195\169viter bien des drames !",
+            [1] = {
 
-		},
+                "Oups, je vais sans doute avoir besoin d'un idiot pour prendre les coups \195\160 ma place...",
 
-	}
+                "<pet>, viens m'aider !",
+            },
 
-	
+            [2] = {
 
-	self.Speech.RoS = {
+                "GRAOUbouhhhhh GROUAHOUhououhhaahpfffROUAH !",
 
-		[1] = {
+                "GRAOUbouhhhhh GROUAHOUhououhhaahpfffROUAH !",
 
-			"Utilisons donc les \195\162mes de nos ennemis, pour nous redonner la vie !",
+                "(Non je ne suis pas dingue, j'imite le bruit du marcheur en rut !)",
+            },
+        },
 
-		},
+        -- Succube
 
-		[2] = {
+        [3] = {
 
-			"Votre \195\162me, mon \195\162me, leur \195\162me... Quelle importance ? Allez, piochez-en juste une !",
+            [1] = {
 
-		},
+                "<pet> ma grande, viens m'aider ch\195\169rie !",
+            },
 
-	}
+            [2] = {
 
+                "Ch\195\169rie, l\195\162che ton rimmel et am\195\168ne ton fouet, y a du taf l\195\160 !",
+            },
 
+            [3] = {
 
-	self.Speech.ShortMessage = {
+                "<pet> ? Viens ici ma louloutte !",
+            },
+        },
 
-		{{"<after>--> <target> est prot\195\169g\195\169 par une pierre d'\195\162me <--"}},
+        -- Chasseur corrompu
 
-		{{"<after><TP> Invocation en cours, cliquez sur le portail svp <TP>"}},
+        [4] = {
 
-		{{"Rassembler un rituel des \195\162mes"}}
+            [1] = {
 
-	}
+                "<pet> ! <pet> ! Aller viens mon brave, viens ! <pet> !",
+            },
 
+            [2] = {
 
+                "Rhoo, et qui c'est qui va se bouffer le mage hein ? C'est <pet> !",
 
-	self.Speech.Demon = {
+                "<after>Regardez, il bave d\195\169j\195\160 :)",
+            },
 
-		-- Diablotin
+            [3] = {
 
-		[1] = {
+                "Une minute, je sors le caniche et j'arrive !",
+            },
+        },
 
-			[1] = {
+        -- Gangregarde
 
-				"Bon, s\195\162le petite peste de Diablotin, tu arr\195\170tes de bouder et tu viens m'aider ! ET C'EST UN ORDRE !",
+        [5] = {
 
-			},
+            [1] = {
 
-			[2] = {
+                "<emote> concentre toute sa puissance dans ses connaissances d\195\169monologiques...",
 
-				"<pet> ! AU PIED ! TOUT DE SUITE !",
+                "En \195\169change de cette \195\162me, viens \195\160 moi, Gangregarde !",
 
-			},
+                "<after>Ob\195\169is moi maintenant, <pet> !",
 
-			[3] = {
+                "<after><emote>fouille dans son sac, puis lance un cristal \195\160 <pet>",
 
-				"Attendez, je sors mon briquet !",
+                "<sacrifice>Retourne dans les limbes et donne moi de ta puissance, D\195\169mon !",
+            },
+        },
 
-			},
+        -- Phrase pour la première invocation de pet (quand Necrosis ne connait pas encore leur nom)
 
-		},
+        [6] = {
 
-		-- Marcheur éthéré
+            [1] = {
 
-		[2] = {
+                "La p\195\170che au d\195\169mon ? Rien de plus facile !",
 
-			[1] = {
+                "Bon, je ferme les yeux, j'agite les doigts comme \195\167a...",
 
-				"Oups, je vais sans doute avoir besoin d'un idiot pour prendre les coups \195\160 ma place...",
+                "<after>Et hop ! Oh, les jolies couleurs !",
+            },
 
-				"<pet>, viens m'aider !",
+            [2] = {
 
-			},
+                "Toute fa\195\167on je vous d\195\169teste tous ! J'ai pas besoin de vous, j'ai des amis.... Puissants !",
 
-			[2] = {
+                "VENEZ A MOI, CREATURES DE L'ENFER !",
+            },
 
-				"GRAOUbouhhhhh GROUAHOUhououhhaahpfffROUAH !",
+            [3] = {
 
-				"GRAOUbouhhhhh GROUAHOUhououhhaahpfffROUAH !",
+                "Eh, le d\195\169mon, viens voir, il y a un truc \195\160 cogner l\195\160 !",
+            },
 
-				"(Non je ne suis pas dingue, j'imite le bruit du marcheur en rut !)",
+            [4] = {
 
-			},
+                "En farfouillant dans le monde abyssal, on trouve de ces trucs...",
 
-		},
+                "<after>Regardez, ceci par exemple !",
+            },
+        },
 
-		-- Succube
+        -- Phrase pour la monture
 
-		[3] = {
+        [7] = {
 
-			[1] = {
+            [1] = {
 
-				"<pet> ma grande, viens m'aider ch\195\169rie !",
+                "Mmmphhhh, je suis en retard ! Invoquons vite un cheval qui rox !",
+            },
 
-			},
+            [2] = {
 
-			[2] = {
+                "J'invoque une monture de l'enfer !",
+            },
 
-				"Ch\195\169rie, l\195\162che ton rimmel et am\195\168ne ton fouet, y a du taf l\195\160 !",
+            [3] = {
 
-			},
+                "<emote>ricane comme un damn\195\169 !",
 
-			[3] = {
+                "<after><yell>TREMBLEZ, MORTELS, J'ARRIVE A LA VITESSE DU CAUCHEMAR !!!!",
+            },
 
-				"<pet> ? Viens ici ma louloutte !",
+            [4] = {
 
-			},
+                "Et hop, un cheval tout feu tout flamme !",
+            },
 
-		},
+            [5] = {
 
-		-- Chasseur corrompu
-
-		[4] = {
-
-			[1] = {
-
-				"<pet> ! <pet> ! Aller viens mon brave, viens ! <pet> !",
-
-			},
-
-			[2] = {
-
-				"Rhoo, et qui c'est qui va se bouffer le mage hein ? C'est <pet> !",
-
-				"<after>Regardez, il bave d\195\169j\195\160 :)",
-
-			},
-
-			[3] = {
-
-				"Une minute, je sors le caniche et j'arrive !",
-
-			},
-
-		},
-
-		-- Gangregarde
-
-		[5] = {
-
-			[1] = {
-
-				"<emote> concentre toute sa puissance dans ses connaissances d\195\169monologiques...",
-
-				"En \195\169change de cette \195\162me, viens \195\160 moi, Gangregarde !",
-
-				"<after>Ob\195\169is moi maintenant, <pet> !",
-
-				"<after><emote>fouille dans son sac, puis lance un cristal \195\160 <pet>",
-
-				"<sacrifice>Retourne dans les limbes et donne moi de ta puissance, D\195\169mon !"
-
-			},
-
-		},
-
-		-- Phrase pour la première invocation de pet (quand Necrosis ne connait pas encore leur nom)
-
-		[6] = {
-
-			[1] = {
-
-				"La p\195\170che au d\195\169mon ? Rien de plus facile !",
-
-				"Bon, je ferme les yeux, j'agite les doigts comme \195\167a...",
-
-				"<after>Et hop ! Oh, les jolies couleurs !",
-
-			},
-
-			[2] = {
-
-				"Toute fa\195\167on je vous d\195\169teste tous ! J'ai pas besoin de vous, j'ai des amis.... Puissants !",
-
-				"VENEZ A MOI, CREATURES DE L'ENFER !",
-
-			},
-
-			[3] = {
-
-				"Eh, le d\195\169mon, viens voir, il y a un truc \195\160 cogner l\195\160 !",
-
-			},
-
-			[4] = {
-
-				"En farfouillant dans le monde abyssal, on trouve de ces trucs...",
-
-				"<after>Regardez, ceci par exemple !",
-
-			},
-
-
-
-		},
-
-		-- Phrase pour la monture
-
-		[7] = {
-
-			[1] = {
-
-				"Mmmphhhh, je suis en retard ! Invoquons vite un cheval qui rox !",
-
-			},
-
-			[2] = {
-
-				"J'invoque une monture de l'enfer !",
-
-			},
-
-			[3] = {
-
-				"<emote>ricane comme un damn\195\169 !",
-
-				"<after><yell>TREMBLEZ, MORTELS, J'ARRIVE A LA VITESSE DU CAUCHEMAR !!!!",
-
-			},
-
-			[4] = {
-
-				"Et hop, un cheval tout feu tout flamme !",
-
-			},
-
-			[5] = {
-
-				"Vous savez, depuis que j'ai mis une selle ignifug\195\169e, je n'ai plus de probl\195\168me de culotte !"
-
-			},
-
-		},
-
-
-
-	}
-
-
-
+                "Vous savez, depuis que j'ai mis une selle ignifug\195\169e, je n'ai plus de probl\195\168me de culotte !",
+            },
+        },
+    }
 end
-
-
-
-
 
 -- Pour les caractères spéciaux :
 
@@ -454,6 +375,3 @@ end
 -- _ = \195\156 ---- î = \195\159
 
 -- ç = \195\167 ---- î = \195\174
-
-
-

@@ -19,16 +19,16 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --]]
 
-
 ------------------------------------------------------------------------------------------------------
+
+-- luacheck: globals Necrosis
+local _G = _G
 
 Necrosis = Necrosis or _G.Necrosis or {}
 Necrosis.Unit = Necrosis.Unit or {}
 Necrosis.Translation = Necrosis.Translation or {}
-
-local _G = _G
 -- Necrosis LdC
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
+-- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 --
 -- Skins et voix Françaises : Eliah, Ner'zhul
@@ -45,262 +45,259 @@ local _G = _G
 ------------------------------------------------
 
 function Necrosis:Localization_Dialog_En()
-	self.Config = self.Config or {}
+    self.Config = self.Config or {}
 
-	function Necrosis:Localization()
-		self:Localization_Speech_En()
-	end
+    function Necrosis.Localization(addon)
+        addon:Localization_Speech_En()
+    end
 
-	self.HealthstoneCooldown = "Healthstone Cooldown"
-	
-	self.Localize = {
-		["Utilisation"] = "Use",
-		["Echange"] = "Trade",
-	}
+    self.HealthstoneCooldown = "Healthstone Cooldown"
 
-	self.TooltipData = {
-		["Main"] = {
-			Label = "|c00FFFFFFNecrosis Plus|r",
-			Stone = {
-				[true] = "Yes",
-				[false] = "No",
-			},
-			Hellspawn = {
-				[true] = "On",
-				[false] = "Off",
-			},
-			["Soulshard"] = "Soul Shard(s): ",
-			["InfernalStone"] = "Infernal Stone(s): ",
-			["DemoniacStone"] = "Demonic Figurine(s): ",
-			["Soulstone"] = "\nSoulstone: ",
-			["Healthstone"] = "Healthstone: ",
-			["Spellstone"] = "Spellstone: ",
-			["Firestone"] = "Firestone: ",
-			["CurrentDemon"] = "Demon: ",
-			["EnslavedDemon"] = "Demon: Enslaved",
-			["NoCurrentDemon"] = "Demon: None",
-		},
-		["Soulstone"] = {
-			Text = {"Right click to create","Left click to use","Used\nRight click to recreate","Waiting"},
-			Ritual = "|c00FFFFFFShift+Click to cast the Ritual of Summoning|r"
-		},
-		["Healthstone"] = {
-			Text = {"Right click to create","Left click to use"},
-			Text2 = "Middle click or Ctrl+left click to trade",
-			Ritual = "|c00FFFFFFShift+Click to cast the Ritual of Souls|r"
-		},
-		["Spellstone"] = {
-			Text = {"Right click to create","In Inventory\nLeft click to use","Used", "Used\nClick to create"}
-		},
-		["Firestone"] = {
-			Text = {"Right click to create","In Inventory\nLeft click to use","Used", "Used\nClick to create"}
-		},
-		["SpellTimer"] = {
-			Label = "|c00FFFFFFSpell Durations|r",
-			Text = "Active Spells on the target",
-			Right = "Right click for Hearthstone to "
-		},
-		["ShadowTrance"] = {
-			Label = "|c00FFFFFFShadow Trance|r"
-		},
-		["Backlash"] = {
-			Label = "|c00FFFFFFBacklash|r"
-		},
-		["Banish"] = {
-			Text = "Right click to cast Rank 1"
-		},
-		["Imp"] = {
-			Label = "|c00FFFFFFImp|r"
-		},
-		["Voidwalker"] = {
-			Label = "|c00FFFFFFVoidwalker|r"
-		},
-		["Succubus"] = {
-			Label = "|c00FFFFFFSuccubus|r"
-		},
-		["Felhunter"] = {
-			Label = "|c00FFFFFFFelhunter|r"
-		},
-		["Felguard"] = {
-			Label = "|c00FFFFFFFelguard|r"
-		},
-		["Infernal"] = {
-			Label = "|c00FFFFFFInferno|r"
-		},
-		["Doomguard"] = {
-			Label = "|c00FFFFFFDoomguard|r"
-		},
-		["Mount"] = {
-			Label = "|c00FFFFFFMounts|r",
-			Text = "Left click to summon Dreadsteed\nRight click to summon Felsteed"
-		},
-		["BuffMenu"] = {
-			Label = "|c00FFFFFFSpell Menu|r",
-			Text = "Right click to keep the menu open",
-			Text2 = "Automatic Mode : Closing when leave combat",
-		},
-		["PetMenu"] = {
-			Label = "|c00FFFFFFDemon Menu|r",
-			Text = "Right click to keep the menu open",
-			Text2 = "Automatic Mode : Closing when leave combat",
-		},
-		["CurseMenu"] = {
-			Label = "|c00FFFFFFCurse Menu|r",
-			Text = "Right click to keep the menu open",
-			Text2 = "Automatic Mode : Closing when leave combat",
-		},
-		["DominationCooldown"] = "Right click for fast summon",
-	}
+    self.Localize = {
+        ["Utilisation"] = "Use",
+        ["Echange"] = "Trade",
+    }
 
-	self.Sound = {
-		["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-En.mp3",
-		["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-En.mp3",
-		["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-En.mp3",
-		["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-En.mp3",
-		["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-Fr.mp3",
-	}
+    self.TooltipData = {
+        ["Main"] = {
+            Label = "|c00FFFFFFNecrosis Plus|r",
+            Stone = {
+                [true] = "Yes",
+                [false] = "No",
+            },
+            Hellspawn = {
+                [true] = "On",
+                [false] = "Off",
+            },
+            ["Soulshard"] = "Soul Shard(s): ",
+            ["InfernalStone"] = "Infernal Stone(s): ",
+            ["DemoniacStone"] = "Demonic Figurine(s): ",
+            ["Soulstone"] = "\nSoulstone: ",
+            ["Healthstone"] = "Healthstone: ",
+            ["Spellstone"] = "Spellstone: ",
+            ["Firestone"] = "Firestone: ",
+            ["CurrentDemon"] = "Demon: ",
+            ["EnslavedDemon"] = "Demon: Enslaved",
+            ["NoCurrentDemon"] = "Demon: None",
+        },
+        ["Soulstone"] = {
+            Text = { "Right click to create", "Left click to use", "Used\nRight click to recreate", "Waiting" },
+            Ritual = "|c00FFFFFFShift+Click to cast the Ritual of Summoning|r",
+        },
+        ["Healthstone"] = {
+            Text = { "Right click to create", "Left click to use" },
+            Text2 = "Middle click or Ctrl+left click to trade",
+            Ritual = "|c00FFFFFFShift+Click to cast the Ritual of Souls|r",
+        },
+        ["Spellstone"] = {
+            Text = { "Right click to create", "In Inventory\nLeft click to use", "Used", "Used\nClick to create" },
+        },
+        ["Firestone"] = {
+            Text = { "Right click to create", "In Inventory\nLeft click to use", "Used", "Used\nClick to create" },
+        },
+        ["SpellTimer"] = {
+            Label = "|c00FFFFFFSpell Durations|r",
+            Text = "Active Spells on the target",
+            Right = "Right click for Hearthstone to ",
+        },
+        ["ShadowTrance"] = {
+            Label = "|c00FFFFFFShadow Trance|r",
+        },
+        ["Backlash"] = {
+            Label = "|c00FFFFFFBacklash|r",
+        },
+        ["Banish"] = {
+            Text = "Right click to cast Rank 1",
+        },
+        ["Imp"] = {
+            Label = "|c00FFFFFFImp|r",
+        },
+        ["Voidwalker"] = {
+            Label = "|c00FFFFFFVoidwalker|r",
+        },
+        ["Succubus"] = {
+            Label = "|c00FFFFFFSuccubus|r",
+        },
+        ["Felhunter"] = {
+            Label = "|c00FFFFFFFelhunter|r",
+        },
+        ["Felguard"] = {
+            Label = "|c00FFFFFFFelguard|r",
+        },
+        ["Infernal"] = {
+            Label = "|c00FFFFFFInferno|r",
+        },
+        ["Doomguard"] = {
+            Label = "|c00FFFFFFDoomguard|r",
+        },
+        ["Mount"] = {
+            Label = "|c00FFFFFFMounts|r",
+            Text = "Left click to summon Dreadsteed\nRight click to summon Felsteed",
+        },
+        ["BuffMenu"] = {
+            Label = "|c00FFFFFFSpell Menu|r",
+            Text = "Right click to keep the menu open",
+            Text2 = "Automatic Mode : Closing when leave combat",
+        },
+        ["PetMenu"] = {
+            Label = "|c00FFFFFFDemon Menu|r",
+            Text = "Right click to keep the menu open",
+            Text2 = "Automatic Mode : Closing when leave combat",
+        },
+        ["CurseMenu"] = {
+            Label = "|c00FFFFFFCurse Menu|r",
+            Text = "Right click to keep the menu open",
+            Text2 = "Automatic Mode : Closing when leave combat",
+        },
+        ["DominationCooldown"] = "Right click for fast summon",
+    }
 
-	self.ProcText = {
-		["ShadowTrance"] = "<white>S<lightPurple1>h<lightPurple2>a<purple>d<darkPurple1>o<darkPurple2>w T<darkPurple1>r<purple>a<lightPurple2>n<lightPurple1>c<white>e",
-		["Backlash"] = "<white>B<lightPurple1>a<lightPurple2>c<purple>k<darkPurple1>l<darkPurple2>a<darkPurple1>s<purple>h"
-	}
+    self.Sound = {
+        ["Fear"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Fear-En.mp3",
+        ["SoulstoneEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\SoulstoneEnd-En.mp3",
+        ["EnslaveEnd"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\EnslaveDemonEnd-En.mp3",
+        ["ShadowTrance"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\ShadowTrance-En.mp3",
+        ["Backlash"] = "Interface\\AddOns\\NecrosisPlus\\Sounds\\Backlash-Fr.mp3",
+    }
 
+    self.ProcText = {
+        ["ShadowTrance"] = "<white>S<lightPurple1>h<lightPurple2>a<purple>d<darkPurple1>o<darkPurple2>w T<darkPurple1>r<purple>a<lightPurple2>n<lightPurple1>c<white>e",
+        ["Backlash"] = "<white>B<lightPurple1>a<lightPurple2>c<purple>k<darkPurple1>l<darkPurple2>a<darkPurple1>s<purple>h",
+    }
 
-	self.ChatMessage = {
-		["Bag"] = {
-			["FullPrefix"] = "Your ",
-			["FullSuffix"] = " is full!",
-			["FullDestroySuffix"] = " is full; New shards will be destroyed!",
-		},
-		["Interface"] = {
-			["Welcome"] = "<white>/necrosis (/necrosisplus) to show the setting menu!",
-			["TooltipOn"] = "Tooltips turned on" ,
-			["TooltipOff"] = "Tooltips turned off",
-			["MessageOn"] = "Chat messaging turned on",
-			["MessageOff"] = "Chat messaging turned off",
-			["DefaultConfig"] = "<lightYellow>Default configuration loaded.",
-			["UserConfig"] = "<lightYellow>Configuration loaded."
-		},
-		["Help"] = {
-			"/necrosis <lightOrange>recall<white> -- <lightBlue>Center Necrosis Plus and all buttons in the middle of the screen",
-			"/necrosis <lightOrange>reset<white> -- <lightBlue>Reset Necrosis Plus entirely",
-		},
-		["Information"] = {
-			["FearProtect"] = "Your target has got fear protection!",
-			["EnslaveBreak"] = "Your demon broke his chains...",
-			["SoulstoneEnd"] = "<lightYellow>Your Soulstone has faded."
-		}
-	}
+    self.ChatMessage = {
+        ["Bag"] = {
+            ["FullPrefix"] = "Your ",
+            ["FullSuffix"] = " is full!",
+            ["FullDestroySuffix"] = " is full; New shards will be destroyed!",
+        },
+        ["Interface"] = {
+            ["Welcome"] = "<white>/necrosis (/necrosisplus) to show the setting menu!",
+            ["TooltipOn"] = "Tooltips turned on",
+            ["TooltipOff"] = "Tooltips turned off",
+            ["MessageOn"] = "Chat messaging turned on",
+            ["MessageOff"] = "Chat messaging turned off",
+            ["DefaultConfig"] = "<lightYellow>Default configuration loaded.",
+            ["UserConfig"] = "<lightYellow>Configuration loaded.",
+        },
+        ["Help"] = {
+            "/necrosis <lightOrange>recall<white> -- <lightBlue>Center Necrosis Plus and all buttons in the middle of the screen",
+            "/necrosis <lightOrange>reset<white> -- <lightBlue>Reset Necrosis Plus entirely",
+        },
+        ["Information"] = {
+            ["FearProtect"] = "Your target has got fear protection!",
+            ["EnslaveBreak"] = "Your demon broke his chains...",
+            ["SoulstoneEnd"] = "<lightYellow>Your Soulstone has faded.",
+        },
+    }
 
+    -- Gestion XML - Menu de configuration
+    self.Config.Panel = {
+        "Message Settings",
+        "Sphere Settings",
+        "Button Settings",
+        "Menu Settings",
+        "Timer Settings",
+        "Miscellaneous",
+    }
 
-	-- Gestion XML - Menu de configuration
-	self.Config.Panel = {
-		"Message Settings",
-		"Sphere Settings",
-		"Button Settings",
-		"Menu Settings",
-		"Timer Settings",
-		"Miscellaneous"
-	}
+    self.Config.Messages = {
+        ["Position"] = "<- Necrosis Plus system messages will appear here ->",
+        ["Afficher les bulles d'aide"] = "Show tooltips",
+        ["Afficher les messages dans la zone systeme"] = "Show Necrosis Plus messages in the system frame",
+        ["Activer les messages aleatoires de TP et de Rez"] = "Activate random speeches",
+        ["Utiliser des messages courts"] = "Use short messages",
+        ["Activer egalement les messages pour les Demons"] = "Activate random speeches for demons too",
+        ["Activer egalement les messages pour les Montures"] = "Activate random speeches for steeds too",
+        ["Activer egalement les messages pour le Rituel des ames"] = "Activate random speeches for Ritual of Souls",
+        ["Activer les sons"] = "Activate sounds",
+        ["Alerter quand la cible est insensible a la peur"] = "Warn when the target cannot be feared",
+        ["Alerter quand la cible peut etre banie ou asservie"] = "Warn when the target is banishable or enslavable",
+        ["M'alerter quand j'entre en Transe"] = "Warn me when I enter a Trance State",
+    }
 
-	self.Config.Messages = {
-		["Position"] = "<- Necrosis Plus system messages will appear here ->",
-		["Afficher les bulles d'aide"] = "Show tooltips",
-		["Afficher les messages dans la zone systeme"] = "Show Necrosis Plus messages in the system frame",
-		["Activer les messages aleatoires de TP et de Rez"] = "Activate random speeches",
-		["Utiliser des messages courts"] = "Use short messages",
-		["Activer egalement les messages pour les Demons"] = "Activate random speeches for demons too",
-		["Activer egalement les messages pour les Montures"] = "Activate random speeches for steeds too",
-		["Activer egalement les messages pour le Rituel des ames"] = "Activate random speeches for Ritual of Souls",
-		["Activer les sons"] = "Activate sounds",
-		["Alerter quand la cible est insensible a la peur"] = "Warn when the target cannot be feared",
-		["Alerter quand la cible peut etre banie ou asservie"] = "Warn when the target is banishable or enslavable",
-		["M'alerter quand j'entre en Transe"] = "Warn me when I enter a Trance State"
-	}
+    self.Config.Sphere = {
+        ["Taille de la sphere"] = "Size of the Necrosis Plus button",
+        ["Skin de la pierre Necrosis"] = "Skin of the Sphere",
+        ["Evenement montre par la sphere"] = "Event shown by the Sphere",
+        ["Sort caste par la sphere"] = "Spell casted by the Sphere",
+        ["Afficher le compteur numerique"] = "Show the digital counter",
+        ["Type de compteur numerique"] = "Stone type counted",
+    }
+    self.Config.Sphere.Colour = {
+        "Pink",
+        "Blue",
+        "Orange",
+        "Turquoise",
+        "Purple",
+        "666",
+        "X",
+    }
+    self.Config.Sphere.Count = {
+        "Soulshards",
+        "Demon summoning stones",
+        "Resurrection Timer",
+        "Mana",
+        "Health",
+    }
 
-	self.Config.Sphere = {
-		["Taille de la sphere"] = "Size of the Necrosis Plus button",
-		["Skin de la pierre Necrosis"] = "Skin of the Sphere",
-		["Evenement montre par la sphere"] = "Event shown by the Sphere",
-		["Sort caste par la sphere"] = "Spell casted by the Sphere",
-		["Afficher le compteur numerique"] = "Show the digital counter",
-		["Type de compteur numerique"] = "Stone type counted"
-	}
-	self.Config.Sphere.Colour = {
-		"Pink",
-		"Blue",
-		"Orange",
-		"Turquoise",
-		"Purple",
-		"666",
-		"X"
-	}
-	self.Config.Sphere.Count = {
-		"Soulshards",
-		"Demon summoning stones",
-		"Resurrection Timer",
-		"Mana",
-		"Health"
-	}
+    self.Config.Buttons = {
+        ["Rotation des boutons"] = "Buttons rotation",
+        ["Fixer les boutons autour de la sphere"] = "Stick buttons around the Sphere",
+        ["Utiliser mes propres montures"] = "Use my own mounts",
+        ["Choix des boutons a afficher"] = "Selection of buttons to be shown",
+        ["Monture - Clic gauche"] = "Left click",
+        ["Monture - Clic droit"] = "Right click",
+    }
+    self.Config.Buttons.Name = {
+        "Show Firestone button",
+        "Show Spellstone button",
+        "Show Healthstone button",
+        "Show Soulstone button",
+        "Show Spell menu button",
+        "Show Steed button",
+        "Show Demon menu button",
+        "Show Curse menu button",
+        "Show Metamorphosis menu button",
+    }
 
-	self.Config.Buttons = {
-		["Rotation des boutons"] = "Buttons rotation",
-		["Fixer les boutons autour de la sphere"] = "Stick buttons around the Sphere",
-		["Utiliser mes propres montures"] = "Use my own mounts",
-		["Choix des boutons a afficher"] = "Selection of buttons to be shown",
-		["Monture - Clic gauche"] = "Left click",
-		["Monture - Clic droit"] = "Right click",
-	}
-	self.Config.Buttons.Name = {
-		"Show Firestone button",
-		"Show Spellstone button",
-		"Show Healthstone button",
-		"Show Soulstone button",
-		"Show Spell menu button",
-		"Show Steed button",
-		"Show Demon menu button",
-		"Show Curse menu button",
-		"Show Metamorphosis menu button",
-	}
+    self.Config.Menus = {
+        ["Options Generales"] = "General Options",
+        ["Menu des Buffs"] = "Spell Menu",
+        ["Menu des Demons"] = "Demons Menu",
+        ["Menu des Maledictions"] = "Curses Menu",
+        ["Afficher les menus en permanence"] = "Always show menus",
+        ["Afficher automatiquement les menus en combat"] = "Automatically display menus while in combat",
+        ["Fermer le menu apres un clic sur un de ses elements"] = "Close a menu whenever you click on one of its items",
+        ["Orientation du menu"] = "Menu orientation",
+        ["Changer la symetrie verticale des boutons"] = "Change the vertical symmetry of buttons",
+        ["Taille du bouton Banir"] = "Size of the Banish button",
+    }
+    self.Config.Menus.Orientation = {
+        "Horizontal",
+        "Upwards",
+        "Downwards",
+    }
 
-	self.Config.Menus = {
-		["Options Generales"] = "General Options",
-		["Menu des Buffs"] = "Spell Menu",
-		["Menu des Demons"] = "Demons Menu",
-		["Menu des Maledictions"] = "Curses Menu",
-		["Afficher les menus en permanence"] = "Always show menus",
-		["Afficher automatiquement les menus en combat"] = "Automatically display menus while in combat",
-		["Fermer le menu apres un clic sur un de ses elements"] = "Close a menu whenever you click on one of its items",
-		["Orientation du menu"] = "Menu orientation",
-		["Changer la symetrie verticale des boutons"] = "Change the vertical symmetry of buttons",
-		["Taille du bouton Banir"] = "Size of the Banish button",
-	}
-	self.Config.Menus.Orientation = {
-		"Horizontal",
-		"Upwards",
-		"Downwards"
-	}
+    self.Config.Timers = {
+        ["Type de timers"] = "Timer type",
+        ["Afficher le bouton des timers"] = "Show the Spell Timer Button",
+        ["Afficher les timers sur la gauche du bouton"] = "Show timers on the left side of the button",
+        ["Afficher les timers de bas en haut"] = "Timers grow upwards",
+    }
+    self.Config.Timers.Type = {
+        "No Timer",
+        "Graphical",
+        "Textual",
+    }
 
-	self.Config.Timers = {
-		["Type de timers"] = "Timer type",
-		["Afficher le bouton des timers"] = "Show the Spell Timer Button",
-		["Afficher les timers sur la gauche du bouton"] = "Show timers on the left side of the button",
-		["Afficher les timers de bas en haut"] = "Timers grow upwards",
-	}
-	self.Config.Timers.Type = {
-		"No Timer",
-		"Graphical",
-		"Textual"
-	}
-
-	self.Config.Misc = {
-		["Deplace les fragments"] = "Put shards in the selected bag.",
-		["Detruit les fragments si le sac plein"] = "Destroy all new shards if the bag is full.",
-		["Choix du sac contenant les fragments"] = "Selection of Soul Shard Container",
-		["Nombre maximum de fragments a conserver"] = "Maximum number of shards to keep",
-		["Verrouiller Necrosis sur l'interface"] = "Lock Necrosis Plus",
-		["Afficher les boutons caches"] = "Let me see hidden buttons to drag them",
-		["Taille des boutons caches"] = "Size of hidden buttons"
-	}
-
+    self.Config.Misc = {
+        ["Deplace les fragments"] = "Put shards in the selected bag.",
+        ["Detruit les fragments si le sac plein"] = "Destroy all new shards if the bag is full.",
+        ["Choix du sac contenant les fragments"] = "Selection of Soul Shard Container",
+        ["Nombre maximum de fragments a conserver"] = "Maximum number of shards to keep",
+        ["Verrouiller Necrosis sur l'interface"] = "Lock Necrosis Plus",
+        ["Afficher les boutons caches"] = "Let me see hidden buttons to drag them",
+        ["Taille des boutons caches"] = "Size of hidden buttons",
+    }
 end

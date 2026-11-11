@@ -38,21 +38,17 @@
 
 --]]
 
-
-
-
-
 ------------------------------------------------------------------------------------------------------
+
+-- luacheck: globals Necrosis
+local _G = _G
 
 Necrosis = Necrosis or _G.Necrosis or {}
 Necrosis.Unit = Necrosis.Unit or {}
 Necrosis.Translation = Necrosis.Translation or {}
-
-
-local _G = _G
 -- Necrosis LdC
 
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
+-- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
 
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 
@@ -74,149 +70,127 @@ local _G = _G
 
 ------------------------------------------------------------------------------------------------------
 
-
-
 ------------------------------------------------
 
 -- SPANISH  VERSION FUNCTIONS --
 
 ------------------------------------------------
 
+if (GetLocale() == "esES") or (GetLocale() == "esMX") then
+    Necrosis.Unit = {
 
+        ["Undead"] = "No-muerto",
 
-if ( GetLocale() == "esES" ) or ( GetLocale() == "esMX" ) then
+        ["Demon"] = "Demonio",
 
+        ["Elemental"] = "Elemental",
+    }
 
+    -- Traduction du nom des procs utilisés par Necrosis
 
-Necrosis.Unit = {
+    Necrosis.Translation.Proc = {
 
-	["Undead"] = "No-muerto",
+        ["Backlash"] = "Contragolpe",
 
-	["Demon"] = "Demonio",
+        ["ShadowTrance"] = "Trance de las Sombras",
+    }
 
-	["Elemental"] = "Elemental",
+    -- Traduction des noms des démons invocables
 
-}
+    Necrosis.Translation.DemonName = {
 
+        [1] = "Diablillo",
 
+        [2] = "Abisario",
 
--- Traduction du nom des procs utilisés par Necrosis
+        [3] = "S\195\186cubo",
 
-Necrosis.Translation.Proc = {
+        [4] = "Man\195\161fago",
 
-	["Backlash"] = "Contragolpe",
+        [5] = "Guardia maldito",
 
-	["ShadowTrance"] = "Trance de las Sombras"
+        [6] = "Inferno",
 
-}
+        [7] = "Guardia apocal\195\173ptico",
+    }
 
+    -- Traduction du nom des objets utilisés par Necrosis
 
+    Necrosis.Translation.Item = {
 
--- Traduction des noms des démons invocables
+        ["Soulshard"] = "Fragmento de Alma",
 
-Necrosis.Translation.DemonName = {
+        ["Soulstone"] = "Piedra de alma",
 
-	[1] = "Diablillo",
+        ["Healthstone"] = "Piedra de salud",
 
-	[2] = "Abisario",
+        ["Spellstone"] = "Piedra de hechizo",
 
-	[3] = "S\195\186cubo",
+        ["Firestone"] = "Piedra de fuego",
 
-	[4] = "Man\195\161fago",
+        ["InfernalStone"] = "Piedra infernal",
 
-	[5] = "Guardia maldito",
+        ["DemoniacStone"] = "Figura demon\195\173aca",
 
-	[6] = "Inferno",
+        ["Hearthstone"] = "Piedra de hogar",
 
-	[7] = "Guardia apocal\195\173ptico"
+        ["SoulPouch"] = {
+            "Faltriquera de almas",
+            "Faltriquera de almas",
+            "Caja de almas",
+            "Bolsa de tela vil",
+            "Bolsa de tela vil del N\195\186cleo",
+            "Bolsa abisal",
+            "Bolsa de las Sombras de \195\169bano",
+        },
+    }
 
-}
+    -- Traductions diverses
 
+    Necrosis.Translation.Misc = {
 
+        ["Cooldown"] = "Tiempo de reutilizaci\195\179n restante",
 
--- Traduction du nom des objets utilisés par Necrosis
+        ["Rank"] = "Rango",
 
-Necrosis.Translation.Item = {
+        ["Create"] = "Crear",
+    }
 
-	["Soulshard"] = "Fragmento de Alma",
+    -- Gestion de la détection des cibles protégées contre la peur
 
-	["Soulstone"] = "Piedra de alma",
+    Necrosis.AntiFear = {
 
-	["Healthstone"] = "Piedra de salud",
+        -- Bufos que dan inmunidad temporal a los efectos de miedo
 
-	["Spellstone"] = "Piedra de hechizo",
+        ["Buff"] = {
 
-	["Firestone"] = "Piedra de fuego",
+            "Custodia de miedo", -- Dwarf priest racial trait
 
-	["InfernalStone"] = "Piedra infernal",
+            "Voluntad de los Renegados.", -- Forsaken racial trait
 
-	["DemoniacStone"] = "Figura demon\195\173aca",
+            "Audacia", -- Trinket
 
-	["Hearthstone"] = "Piedra de hogar",
+            "Ira rabiosa", -- Warrior Fury talent
 
-	["SoulPouch"] = {"Faltriquera de almas", "Faltriquera de almas", "Caja de almas", "Bolsa de tela vil", "Bolsa de tela vil del N\195\186cleo", "Bolsa abisal", "Bolsa de las Sombras de \195\169bano"}
+            "Temeridad", -- Warrior Fury talent
 
-}
+            "Deseo de la muerte", -- Warrior Fury talent
 
+            "C\195\179lera de las bestias", -- Hunter Beast Mastery talent (pet only)
 
+            "Bloqueo de hielo", -- Mage Ice talent
 
--- Traductions diverses
+            "Protecci\195\179n divina", -- Paladin Holy buff
 
-Necrosis.Translation.Misc = {
+            "Escudo divino", -- Paladin Holy buff
 
-	["Cooldown"] = "Tiempo de reutilizaci\195\179n restante",
+            "T\195\179tem de tremor", -- Shaman totem
 
-	["Rank"] = "Rango",
+            "Suprimir magia", -- Majordomo (NPC) spell
+        },
 
-	["Create"] = "Crear"
+        -- Debufos y maldiciones que dan inmunidad temporal a los efectos de miedo
 
-}
-
-
-
--- Gestion de la détection des cibles protégées contre la peur
-
-Necrosis.AntiFear = {
-
-	-- Bufos que dan inmunidad temporal a los efectos de miedo
-
-	["Buff"] = {
-
-		"Custodia de miedo",			-- Dwarf priest racial trait
-
-		"Voluntad de los Renegados.",	-- Forsaken racial trait
-
-		"Audacia",						-- Trinket
-
-		"Ira rabiosa",					-- Warrior Fury talent
-
-		"Temeridad",					-- Warrior Fury talent
-
-		"Deseo de la muerte",			-- Warrior Fury talent
-
-		"C\195\179lera de las bestias",	-- Hunter Beast Mastery talent (pet only)
-
-		"Bloqueo de hielo",				-- Mage Ice talent
-
-		"Protecci\195\179n divina",		-- Paladin Holy buff
-
-		"Escudo divino",				-- Paladin Holy buff
-
-		"T\195\179tem de tremor",		-- Shaman totem
-
-		"Suprimir magia"				-- Majordomo (NPC) spell
-
-	},
-
-	-- Debufos y maldiciones que dan inmunidad temporal a los efectos de miedo
-
-	["Debuff"] = {
-
-	}
-
-}
-
-
-
+        ["Debuff"] = {},
+    }
 end
-

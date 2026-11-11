@@ -21,7 +21,7 @@
 
 ------------------------------------------------------------------------------------------------------
 -- Necrosis LdC
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic) 
+-- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
 -- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
 --
 -- Skins et voix Francaises : Eliah, Ner'zhul
@@ -33,11 +33,15 @@
 -- Version $LastChangedDate: 2010-08-04 12:04:27 +1000 (Wed, 04 Aug 2010) $
 ------------------------------------------------------------------------------------------------------
 
-local _G = _G or getfenv(0)
+-- luacheck: globals Necrosis
+
+local _G = _G
 Necrosis = Necrosis or _G.Necrosis or {}
 _G.Necrosis = Necrosis
 
-local version = (GetAddOnMetadata and (GetAddOnMetadata("NecrosisPlus", "Version") or GetAddOnMetadata("Necrosis", "Version"))) or "3.0"
+local version = (
+    GetAddOnMetadata and (GetAddOnMetadata("NecrosisPlus", "Version") or GetAddOnMetadata("Necrosis", "Version"))
+) or "3.0"
 
 Necrosis.Data = Necrosis.Data or {}
 Necrosis.Data.Version = version
