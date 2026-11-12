@@ -36,6 +36,12 @@
 -- On définit G comme étant le tableau contenant toutes les frames existantes.
 -- luacheck: globals Necrosis NecrosisConfig NecrosisTimerColor NecrosisShardCount NecrosisButton NecrosisListSpells
 local _G = _G
+local GetTime = GetTime
+local floor = math.floor
+local format = string.format
+local tconcat = table.concat
+local twipe = table.wipe or wipe
+local textTimerParts = {}
 Necrosis = Necrosis or _G.Necrosis or {}
 _G.Necrosis = Necrosis
 
@@ -107,71 +113,59 @@ function Necrosis:TextTimerUpdate(SpellTimer, SpellGroup)
     end
 
     local Now = floor(GetTime())
-    local minutes
-    local seconds
-    local display = ""
-
     local LastGroup = 0
+    local n = 0
+    twipe(textTimerParts)
 
-    for index in ipairs(SpellTimer) do
-        -- Changement de la couleur suivant le temps restant
-        local duration = (SpellTimer[index].Time and SpellTimer[index].Time > 0) and SpellTimer[index].Time or 1
-        local percent = (floor(SpellTimer[index].TimeMax - Now) / duration) * 100
+    for index = 1, #SpellTimer do
+        local timer = SpellTimer[index]
+        local duration = (timer.Time and timer.Time > 0) and timer.Time or 1
+        local percent = (floor(timer.TimeMax - Now) / duration) * 100
         if percent < 0 then
             percent = 0
         end
         local color = NecrosisTimerColor(percent)
 
         -- Affichage de l'entête si on change de groupe
-        if SpellTimer[index].Group and SpellTimer[index].Group ~= LastGroup and SpellTimer[index].Group > 3 then
-            if SpellGroup[SpellTimer[index].Group] then
-                if SpellGroup[SpellTimer[index].Group].Name then
-                    display = display .. "<purple>-------------------------------\n"
-                    display = display .. SpellGroup[SpellTimer[index].Group].Name
-                    display = display .. " - "
-                    display = display .. SpellGroup[SpellTimer[index].Group].SubName
-                    display = display .. "\n-------------------------------<close>\n<white>"
-                end
+        if timer.Group and timer.Group ~= LastGroup and timer.Group > 3 then
+            local grp = SpellGroup[timer.Group]
+            if grp and grp.Name then
+                n = n + 1
+                textTimerParts[n] = format(
+                    "<purple>-------------------------------\n%s - %s\n-------------------------------<close>\n<white>",
+                    grp.Name,
+                    grp.SubName or ""
+                )
             end
-            LastGroup = SpellTimer[index].Group
+            LastGroup = timer.Group
         end
 
         -- Affichage du temps restant
-        seconds = SpellTimer[index].TimeMax - Now
+        local seconds = timer.TimeMax - Now
         if seconds < 0 then
             seconds = 0
         end
-        minutes = floor(seconds / 60)
+        local minutes = floor(seconds / 60)
         seconds = seconds % 60
         if minutes > 0 then
-            if minutes > 9 then
-                display = display .. minutes .. ":"
-            else
-                display = display .. "0" .. minutes .. ":"
-            end
+            n = n + 1
+            textTimerParts[n] = format("%02d:%02d - <close>%s%s<close>", minutes, seconds, color, timer.Name)
         else
-            display = display .. "0:"
-        end
-        if seconds > 9 then
-            display = display .. seconds
-        else
-            display = display .. "0" .. seconds
-        end
-        display = display .. " - <close>" .. color .. SpellTimer[index].Name .. "<close>"
-
-        if SpellTimer[index].Target == nil then
-            SpellTimer[index].Target = ""
+            n = n + 1
+            textTimerParts[n] = format("0:%02d - <close>%s%s<close>", seconds, color, timer.Name)
         end
 
-        if
-            (SpellTimer[index].Type == 1)
-            or (SpellTimer[index].Name == Necrosis.Spell[16].Name) and SpellTimer[index].Target ~= ""
-        then
-            display = display .. "<white> - " .. SpellTimer[index].Target .. "<close>\n"
+        if timer.Target == nil then
+            timer.Target = ""
+        end
+
+        n = n + 1
+        if (timer.Type == 1 or timer.Name == Necrosis.Spell[16].Name) and timer.Target ~= "" then
+            textTimerParts[n] = "<white> - " .. timer.Target .. "<close>\n"
         else
-            display = display .. "\n"
+            textTimerParts[n] = "\n"
         end
     end
-    display = self:MsgAddColor(display)
+    local display = self:MsgAddColor(tconcat(textTimerParts))
     NecrosisListSpells:SetText(display)
 end

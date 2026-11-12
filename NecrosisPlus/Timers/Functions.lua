@@ -112,6 +112,9 @@ function Necrosis:InsertTimerParTable(IndexTable, Target, LevelTarget, Timer)
         end
     end
 
+    if Necrosis.UpdateOnUpdateState then
+        Necrosis:UpdateOnUpdateState()
+    end
     return Timer
 end
 
@@ -179,6 +182,9 @@ function Necrosis:InsertTimerStone(Stone, start, duration, Timer)
         NecrosisUpdateTimer(Timer.SpellTimer, Timer.SpellGroup)
     end
 
+    if Necrosis.UpdateOnUpdateState then
+        Necrosis:UpdateOnUpdateState()
+    end
     return Timer
 end
 
@@ -232,6 +238,9 @@ function NecrosisTimerX(nom, duree, truc, Target, LevelTarget, Timer)
         NecrosisUpdateTimer(Timer.SpellTimer, Timer.SpellGroup)
     end
 
+    if Necrosis.UpdateOnUpdateState then
+        Necrosis:UpdateOnUpdateState()
+    end
     return Timer
 end
 
@@ -270,6 +279,9 @@ function Necrosis:RetraitTimerParIndex(index, Timer)
     -- update the display || On met à jour l'affichage
     NecrosisUpdateTimer(Timer.SpellTimer, Timer.SpellGroup)
 
+    if Necrosis.UpdateOnUpdateState then
+        Necrosis:UpdateOnUpdateState()
+    end
     return Timer
 end
 
@@ -280,6 +292,9 @@ function Necrosis:RetraitTimerParNom(name, Timer)
             Timer = self:RetraitTimerParIndex(index, Timer)
             break
         end
+    end
+    if Necrosis.UpdateOnUpdateState then
+        Necrosis:UpdateOnUpdateState()
     end
     return Timer
 end
@@ -315,6 +330,9 @@ function Necrosis:RetraitTimerCombat(Timer)
         end
     end
 
+    if Necrosis.UpdateOnUpdateState then
+        Necrosis:UpdateOnUpdateState()
+    end
     return Timer
 end
 

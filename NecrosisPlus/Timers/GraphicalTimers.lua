@@ -118,10 +118,12 @@ end
 function Necrosis:AddFrame(FrameName)
     if _G[FrameName] then
         local f = _G[FrameName]
+        f._lastSec = nil
+        f._lastTarget = nil
         f:ClearAllPoints()
         f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
         f:Show()
-        return _G[FrameName .. "Text"], _G[FrameName .. "Bar"]
+        return f._text or _G[FrameName .. "Text"], f._bar or _G[FrameName .. "Bar"]
     end
 
     -- Création de la frame principale du timer
@@ -146,7 +148,8 @@ function Necrosis:AddFrame(FrameName)
 
     -- Définition de ses textes
     -- Extérieur
-    local FontString = frame:CreateFontString(FrameName .. "OutText", "OVERLAY", "TextStatusBarText")
+    local outFontString = frame:CreateFontString(FrameName .. "OutText", "OVERLAY", "TextStatusBarText")
+    local FontString = outFontString
 
     FontString:SetWidth(150)
     FontString:SetHeight(10)
@@ -199,6 +202,14 @@ function Necrosis:AddFrame(FrameName)
     texture:SetPoint("CENTER", StatusBar, "LEFT", 0, 0)
     texture:Show()
 
+    -- Cache child references to avoid per-frame _G string concatenation
+    frame._bar = StatusBar
+    frame._spark = texture
+    frame._outText = outFontString
+    frame._text = FontString
+    frame._lastSec = nil
+    frame._lastTarget = nil
+
     return FontString, StatusBar
 end
 
@@ -226,12 +237,13 @@ function NecrosisUpdateTimer(tableau, Changement)
 
     for index = 1, #tableau, 1 do
         -- Ca arrive quand on passe des timers textes aux timers graphiques
-        if tableau[index].Gtimer then
+        local gtimer = tableau[index].Gtimer
+        if gtimer then
             -- selection of frames timer that vary with time || Sélection des frames du timer qui varient en fonction du temps
-            local Frame = _G["NecrosisTimerFrame" .. tableau[index].Gtimer]
-            local StatusBar = _G["NecrosisTimerFrame" .. tableau[index].Gtimer .. "Bar"]
-            local Spark = _G["NecrosisTimerFrame" .. tableau[index].Gtimer .. "Spark"]
-            local Text = _G["NecrosisTimerFrame" .. tableau[index].Gtimer .. "OutText"]
+            local Frame = _G["NecrosisTimerFrame" .. gtimer]
+            local StatusBar = Frame and (Frame._bar or _G["NecrosisTimerFrame" .. gtimer .. "Bar"])
+            local Spark = Frame and (Frame._spark or _G["NecrosisTimerFrame" .. gtimer .. "Spark"])
+            local Text = Frame and (Frame._outText or _G["NecrosisTimerFrame" .. gtimer .. "OutText"])
 
             if Frame and StatusBar and Spark and Text then
                 -- move frames to ensure they dont overlap || Déplacement des Frames si besoin pour qu'elles ne se chevauchent pas
@@ -278,33 +290,34 @@ function NecrosisUpdateTimer(tableau, Changement)
                 Spark:ClearAllPoints()
                 Spark:SetPoint("CENTER", StatusBar, "LEFT", sparkPosition, 0)
 
-                -- update the clock value on the timer || Affichage du chrono extérieur
-                local remSec = tableau[index].TimeMax - floor(GetTime())
+                -- Only reformat and update timer text when the integer second or target changes
+                local remSec = tableau[index].TimeMax - floor(Now)
                 if remSec < 0 then
                     remSec = 0
                 end
-                local minutes = floor(remSec / 60)
-                local secondes = fmod(remSec, 60)
-
-                local affichage = format("%02d:%02d", minutes, secondes)
-
-                if
-                    (
-                        tableau[index].Type == 1
-                        or tableau[index].Type == 3
-                        or tableau[index].Name == Necrosis.Spell[16].Name
-                    )
+                local showTarget = (
+                    tableau[index].Type == 1
+                    or tableau[index].Type == 3
+                    or tableau[index].Name == Necrosis.Spell[16].Name
+                )
                     and tableau[index].Target
                     and tableau[index].Target ~= ""
-                then
-                    if NecrosisConfig.SpellTimerPos == 1 then
-                        affichage = affichage .. " - " .. tableau[index].Target
-                    else
-                        affichage = tableau[index].Target .. " - " .. affichage
+                local targetKey = showTarget and tableau[index].Target or ""
+                if Frame._lastSec ~= remSec or Frame._lastTarget ~= targetKey then
+                    Frame._lastSec = remSec
+                    Frame._lastTarget = targetKey
+                    local minutes = floor(remSec / 60)
+                    local secondes = fmod(remSec, 60)
+                    local affichage = format("%02d:%02d", minutes, secondes)
+                    if showTarget then
+                        if NecrosisConfig.SpellTimerPos == 1 then
+                            affichage = affichage .. " - " .. targetKey
+                        else
+                            affichage = targetKey .. " - " .. affichage
+                        end
                     end
+                    Text:SetText(affichage)
                 end
-
-                Text:SetText(affichage)
             end
         end
     end

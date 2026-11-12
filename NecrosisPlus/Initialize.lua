@@ -220,12 +220,12 @@ end
 
 function Necrosis.SlashHandler(arg1)
     arg1 = arg1 or ""
-    if arg1:lower():find("recall") then
+    if arg1:lower():find("recall", 1, true) then
         Necrosis:Recall()
-    elseif arg1:lower():find("reset") and not InCombatLockdown() then
+    elseif arg1:lower():find("reset", 1, true) and not InCombatLockdown() then
         NecrosisConfig = {}
         ReloadUI()
-    elseif arg1:lower():find("glasofruix") then
+    elseif arg1:lower():find("glasofruix", 1, true) then
         NecrosisConfig.Smooth = not NecrosisConfig.Smooth
         Necrosis:Msg("SpellTimer smoothing  : <lightBlue>Toggled")
     else
