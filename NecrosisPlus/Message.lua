@@ -173,11 +173,11 @@ function Necrosis:Speech_It(Spell, Speeches, metatable)
             end
             Speeches.LastSpeech.Steed = tempnum
             for i in ipairs(self.Speech.Demon[7][tempnum]) do
-                if self.Speech.Demon[7][tempnum][i]:find("<after>") then
+                if self.Speech.Demon[7][tempnum][i]:find("<after>", 1, true) then
                     Speeches.SpellSucceed.Steed:insert(self.Speech.Demon[7][tempnum][i])
-                elseif self.Speech.Demon[7][tempnum][i]:find("<emote>") then
+                elseif self.Speech.Demon[7][tempnum][i]:find("<emote>", 1, true) then
                     self:Msg(self:MsgReplace(self.Speech.Demon[7][tempnum][i]), "EMOTE")
-                elseif self.Speech.Demon[7][tempnum][i]:find("<yell>") then
+                elseif self.Speech.Demon[7][tempnum][i]:find("<yell>", 1, true) then
                     self:Msg(self:MsgReplace(self.Speech.Demon[7][tempnum][i]), "YELL")
                 else
                     self:Msg(self:MsgReplace(self.Speech.Demon[7][tempnum][i]), "SAY")
@@ -194,11 +194,11 @@ function Necrosis:Speech_It(Spell, Speeches, metatable)
             end
             Speeches.LastSpeech.RoS = tempnum
             for i in ipairs(self.Speech.RoS[tempnum]) do
-                if self.Speech.RoS[tempnum][i]:find("<after>") then
+                if self.Speech.RoS[tempnum][i]:find("<after>", 1, true) then
                     Speeches.SpellSucceed.RoS:insert(self.Speech.RoS[tempnum][i])
-                elseif self.Speech.RoS[tempnum][i]:find("<emote>") then
+                elseif self.Speech.RoS[tempnum][i]:find("<emote>", 1, true) then
                     self:Msg(self:MsgReplace(self.Speech.RoS[tempnum][i]), "EMOTE")
-                elseif self.Speech.RoS[tempnum][i]:find("<yell>") then
+                elseif self.Speech.RoS[tempnum][i]:find("<yell>", 1, true) then
                     self:Msg(self:MsgReplace(self.Speech.RoS[tempnum][i]), "YELL")
                 else
                     self:Msg(self:MsgReplace(self.Speech.RoS[tempnum][i]), "WORLD")
@@ -219,11 +219,11 @@ function Necrosis:Speech_It(Spell, Speeches, metatable)
             end
             Speeches.LastSpeech.Rez = tempnum
             for i in ipairs(self.Speech.Rez[tempnum]) do
-                if self.Speech.Rez[tempnum][i]:find("<after>") then
+                if self.Speech.Rez[tempnum][i]:find("<after>", 1, true) then
                     Speeches.SpellSucceed.Rez:insert(self.Speech.Rez[tempnum][i])
-                elseif self.Speech.Rez[tempnum][i]:find("<emote>") then
+                elseif self.Speech.Rez[tempnum][i]:find("<emote>", 1, true) then
                     self:Msg(self:MsgReplace(self.Speech.Rez[tempnum][i], Spell.TargetName), "EMOTE")
-                elseif self.Speech.Rez[tempnum][i]:find("<yell>") then
+                elseif self.Speech.Rez[tempnum][i]:find("<yell>", 1, true) then
                     self:Msg(self:MsgReplace(self.Speech.Rez[tempnum][i], Spell.TargetName), "YELL")
                 else
                     self:Msg(self:MsgReplace(self.Speech.Rez[tempnum][i], Spell.TargetName), "WORLD")
@@ -240,11 +240,11 @@ function Necrosis:Speech_It(Spell, Speeches, metatable)
             end
             Speeches.LastSpeech.TP = tempnum
             for i in ipairs(self.Speech.TP[tempnum]) do
-                if self.Speech.TP[tempnum][i]:find("<after>") then
+                if self.Speech.TP[tempnum][i]:find("<after>", 1, true) then
                     Speeches.SpellSucceed.TP:insert(self.Speech.TP[tempnum][i])
-                elseif self.Speech.TP[tempnum][i]:find("<emote>") then
+                elseif self.Speech.TP[tempnum][i]:find("<emote>", 1, true) then
                     self:Msg(self:MsgReplace(self.Speech.TP[tempnum][i], Spell.TargetName), "EMOTE")
-                elseif self.Speech.TP[tempnum][i]:find("<yell>") then
+                elseif self.Speech.TP[tempnum][i]:find("<yell>", 1, true) then
                     self:Msg(self:MsgReplace(self.Speech.TP[tempnum][i], Spell.TargetName), "YELL")
                 else
                     self:Msg(self:MsgReplace(self.Speech.TP[tempnum][i], Spell.TargetName), "WORLD")
@@ -266,13 +266,13 @@ function Necrosis:Speech_It(Spell, Speeches, metatable)
                         end
                         Speeches.LastSpeech.Pet = tempnum
                         for i in ipairs(self.Speech.Demon[6][tempnum]) do
-                            if self.Speech.Demon[6][tempnum][i]:find("<after>") then
+                            if self.Speech.Demon[6][tempnum][i]:find("<after>", 1, true) then
                                 Speeches.SpellSucceed.Pet:insert(self.Speech.Demon[6][tempnum][i])
-                            elseif self.Speech.Demon[6][tempnum][i]:find("<sacrifice>") then
+                            elseif self.Speech.Demon[6][tempnum][i]:find("<sacrifice>", 1, true) then
                                 Speeches.SpellSucceed.Sacrifice:insert(self.Speech.Demon[6][tempnum][i])
-                            elseif self.Speech.Demon[6][tempnum][i]:find("<emote>") then
+                            elseif self.Speech.Demon[6][tempnum][i]:find("<emote>", 1, true) then
                                 self:Msg(self:MsgReplace(self.Speech.Demon[6][tempnum][i]), "EMOTE")
-                            elseif self.Speech.Demon[6][tempnum][i]:find("<yell>") then
+                            elseif self.Speech.Demon[6][tempnum][i]:find("<yell>", 1, true) then
                                 self:Msg(self:MsgReplace(self.Speech.Demon[6][tempnum][i]), "YELL")
                             else
                                 self:Msg(self:MsgReplace(self.Speech.Demon[6][tempnum][i]), "SAY")
@@ -285,13 +285,13 @@ function Necrosis:Speech_It(Spell, Speeches, metatable)
                         end
                         Speeches.LastSpeech.Pet = tempnum
                         for i in ipairs(self.Speech.Demon[Speeches.DemonName][tempnum]) do
-                            if self.Speech.Demon[Speeches.DemonName][tempnum][i]:find("<after>") then
+                            if self.Speech.Demon[Speeches.DemonName][tempnum][i]:find("<after>", 1, true) then
                                 Speeches.SpellSucceed.Pet:insert(self.Speech.Demon[Speeches.DemonName][tempnum][i])
-                            elseif self.Speech.Demon[Speeches.DemonName][tempnum][i]:find("<sacrifice>") then
+                            elseif self.Speech.Demon[Speeches.DemonName][tempnum][i]:find("<sacrifice>", 1, true) then
                                 Speeches.SpellSucceed.Sacrifice:insert(
                                     self.Speech.Demon[Speeches.DemonName][tempnum][i]
                                 )
-                            elseif self.Speech.Demon[Speeches.DemonName][tempnum][i]:find("<emote>") then
+                            elseif self.Speech.Demon[Speeches.DemonName][tempnum][i]:find("<emote>", 1, true) then
                                 self:Msg(
                                     self:MsgReplace(
                                         self.Speech.Demon[Speeches.DemonName][tempnum][i],
@@ -300,7 +300,7 @@ function Necrosis:Speech_It(Spell, Speeches, metatable)
                                     ),
                                     "EMOTE"
                                 )
-                            elseif self.Speech.Demon[Speeches.DemonName][tempnum][i]:find("<yell>") then
+                            elseif self.Speech.Demon[Speeches.DemonName][tempnum][i]:find("<yell>", 1, true) then
                                 self:Msg(
                                     self:MsgReplace(
                                         self.Speech.Demon[Speeches.DemonName][tempnum][i],
@@ -336,9 +336,9 @@ function Necrosis:Speech_Then(Spell, DemonName, Speech)
     if Spell.Name == Necrosis.Spell[1].Name or Spell.Name == Necrosis.Spell[2].Name then
         if Speech.Steed then
             for i in ipairs(Speech.Steed) do
-                if Speech.Steed[i]:find("<emote>") then
+                if Speech.Steed[i]:find("<emote>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.Steed[i]), "EMOTE")
-                elseif Speech.Steed[i]:find("<yell>") then
+                elseif Speech.Steed[i]:find("<yell>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.Steed[i]), "YELL")
                 else
                     self:Msg(self:MsgReplace(Speech.Steed[i]), "WORLD")
@@ -353,9 +353,9 @@ function Necrosis:Speech_Then(Spell, DemonName, Speech)
     elseif Spell.Name == Necrosis.Spell[50].Name then
         if Speech.RoS then
             for i in ipairs(Speech.RoS) do
-                if Speech.RoS[i]:find("<emote>") then
+                if Speech.RoS[i]:find("<emote>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.RoS[i]), "EMOTE")
-                elseif Speech.RoS[i]:find("<yell>") then
+                elseif Speech.RoS[i]:find("<yell>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.RoS[i]), "YELL")
                 else
                     self:Msg(self:MsgReplace(Speech.RoS[i]), "WORLD")
@@ -367,9 +367,9 @@ function Necrosis:Speech_Then(Spell, DemonName, Speech)
     elseif Spell.Name == Necrosis.Spell[11].Name then
         if Speech.Rez then
             for i in ipairs(Speech.Rez) do
-                if Speech.Rez[i]:find("<emote>") then
+                if Speech.Rez[i]:find("<emote>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.Rez[i], Spell.TargetName), "EMOTE")
-                elseif Speech.Rez[i]:find("<yell>") then
+                elseif Speech.Rez[i]:find("<yell>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.Rez[i], Spell.TargetName), "YELL")
                 else
                     self:Msg(self:MsgReplace(Speech.Rez[i], Spell.TargetName), "WORLD")
@@ -381,9 +381,9 @@ function Necrosis:Speech_Then(Spell, DemonName, Speech)
     elseif Spell.Name == Necrosis.Spell[37].Name then
         if Speech.TP then
             for i in ipairs(Speech.TP) do
-                if Speech.TP[i]:find("<emote>") then
+                if Speech.TP[i]:find("<emote>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.TP[i], Spell.TargetName), "EMOTE")
-                elseif Speech.TP[i]:find("<yell>") then
+                elseif Speech.TP[i]:find("<yell>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.TP[i], Spell.TargetName), "YELL")
                 else
                     self:Msg(self:MsgReplace(Speech.TP[i], Spell.TargetName), "WORLD")
@@ -395,9 +395,9 @@ function Necrosis:Speech_Then(Spell, DemonName, Speech)
     elseif Spell.Name == Necrosis.Spell[44].Name then
         if Speech.Sacrifice then
             for i in ipairs(Speech.Sacrifice) do
-                if Speech.Sacrifice[i]:find("<emote>") then
+                if Speech.Sacrifice[i]:find("<emote>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.Sacrifice[i], nil, DemonName), "EMOTE")
-                elseif Speech.Sacrifice[i]:find("<yell>") then
+                elseif Speech.Sacrifice[i]:find("<yell>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.Sacrifice[i], nil, DemonName), "YELL")
                 else
                     self:Msg(self:MsgReplace(Speech.Sacrifice[i], nil, DemonName), "SAY")
@@ -415,9 +415,9 @@ function Necrosis:Speech_Then(Spell, DemonName, Speech)
     then
         if Speech.Pet then
             for i in ipairs(Speech.Pet) do
-                if Speech.Pet[i]:find("<emote>") then
+                if Speech.Pet[i]:find("<emote>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.Pet[i], nil, DemonName), "EMOTE")
-                elseif Speech.Pet[i]:find("<yell>") then
+                elseif Speech.Pet[i]:find("<yell>", 1, true) then
                     self:Msg(self:MsgReplace(Speech.Pet[i], nil, DemonName), "YELL")
                 else
                     self:Msg(self:MsgReplace(Speech.Pet[i], nil, DemonName), "SAY")

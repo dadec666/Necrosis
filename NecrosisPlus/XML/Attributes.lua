@@ -234,7 +234,7 @@ function Necrosis:BuffSpellAttribute()
         NecrosisBuffMenu10:SetAttribute("unit*", "target") -- associate left & right clicks with target
         NecrosisBuffMenu10:SetAttribute("ctrl-unit*", "focus") -- associate CTRL+left or right clicks with focus
 
-        if rank:find("2") then -- the warlock has Banish(rank 2)
+        if rank:find("2", 1, true) then -- the warlock has Banish(rank 2)
             local rank1 = rank:gsub("2", "1")
             local Rank1 = self.Spell[9].Name .. "(" .. rank1 .. ")"
 
