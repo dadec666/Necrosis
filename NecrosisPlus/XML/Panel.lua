@@ -37,8 +37,20 @@
 
 -- On définit G comme étant le tableau contenant toutes les frames existantes.
 local _G = _G
+local tinsert = table.insert
+local InCombatLockdown = InCombatLockdown
 Necrosis = Necrosis or _G.Necrosis or {}
 _G.Necrosis = Necrosis
+
+local PANEL_FRAME_NAMES = {
+    "NecrosisMessagesConfig",
+    "NecrosisSphereConfig",
+    "NecrosisButtonsConfig",
+    "NecrosisMenusConfig",
+    "NecrosisTimersConfig",
+    "NecrosisMiscConfig",
+}
+local helpShownOnce = false
 
 ------------------------------------------------------------------------------------------------------
 -- CRÉATION ET INVOCATION DU PANNEAU DE CONFIGURATION
@@ -46,8 +58,14 @@ _G.Necrosis = Necrosis
 
 -- Ouverture du cadre des menus des options
 function Necrosis:OpenConfigPanel()
-    -- On affiche les messages d'aide
-    if self.ChatMessage.Help[1] then
+    if InCombatLockdown() then
+        self:Msg((self.ChatMessage and self.ChatMessage.Error and self.ChatMessage.Error.InCombat) or "Cannot open settings in combat.", "USER")
+        return
+    end
+
+    -- Show help lines only once per session instead of spamming chat on every toggle
+    if not helpShownOnce and self.ChatMessage and self.ChatMessage.Help and self.ChatMessage.Help[1] then
+        helpShownOnce = true
         for i = 1, #self.ChatMessage.Help, 1 do
             self:Msg(self.ChatMessage.Help[i], "USER")
         end
@@ -61,10 +79,12 @@ function Necrosis:OpenConfigPanel()
         -- Définition de ses attributs
         frame:SetFrameStrata("DIALOG")
         frame:SetMovable(true)
+        frame:SetClampedToScreen(true)
         frame:EnableMouse(true)
         frame:SetToplevel(true)
         frame:SetWidth(450)
         frame:SetHeight(512)
+        tinsert(UISpecialFrames, "NecrosisGeneralFrame")
         frame:Show()
         frame:ClearAllPoints()
         if NecrosisConfig.FramePosition.NecrosisGeneralFrame then
@@ -148,10 +168,10 @@ function Necrosis:OpenConfigPanel()
         FontString:ClearAllPoints()
         FontString:SetPoint("TOP", 0, -48)
 
-        -- Titre de section au bas de la page
+        -- Titre de section au bas de la page (widened for localized RU/DE/FR titles)
         FontString = frame:CreateFontString("NecrosisGeneralPageText", nil, "GameFontNormal")
         FontString:SetTextColor(1, 0.8, 0)
-        FontString:SetWidth(102)
+        FontString:SetWidth(260)
         FontString:SetHeight(0)
         FontString:Show()
         FontString:ClearAllPoints()
@@ -264,17 +284,10 @@ function Necrosis:SetPanel(PanelID)
     end
     NecrosisGeneralPageText:SetText(self.Config.Panel[PanelID])
 
-    local panels = {
-        NecrosisMessagesConfig,
-        NecrosisSphereConfig,
-        NecrosisButtonsConfig,
-        NecrosisMenusConfig,
-        NecrosisTimersConfig,
-        NecrosisMiscConfig,
-    }
-    for i = 1, #panels do
-        if panels[i] and i ~= PanelID then
-            panels[i]:Hide()
+    for i = 1, #PANEL_FRAME_NAMES do
+        local p = _G[PANEL_FRAME_NAMES[i]]
+        if p and i ~= PanelID then
+            p:Hide()
         end
     end
 

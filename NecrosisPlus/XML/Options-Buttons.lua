@@ -395,9 +395,16 @@ function Necrosis:SetButtonsConfig()
             GameTooltip:Hide()
         end)
         frame:SetScript("OnValueChanged", function(slider)
-            NecrosisConfig.NecrosisAngle = slider:GetValue()
-            GameTooltip:SetText(slider:GetValue())
-            Necrosis:ButtonSetup()
+            local val = slider:GetValue()
+            if val ~= NecrosisConfig.NecrosisAngle then
+                NecrosisConfig.NecrosisAngle = val
+                if GameTooltip:IsOwned(slider) then
+                    GameTooltip:SetText(val)
+                end
+                if not InCombatLockdown() then
+                    Necrosis:ButtonSetup()
+                end
+            end
         end)
 
         NecrosisRotationLow:SetText("0")

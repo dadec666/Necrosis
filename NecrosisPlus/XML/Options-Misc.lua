@@ -122,12 +122,18 @@ function Necrosis:SetMiscConfig()
             GameTooltip:Hide()
         end)
         frame:SetScript("OnMouseUp", function(slider)
-            GameTooltip:SetText(5 - slider:GetValue())
+            if GameTooltip:IsOwned(slider) then
+                GameTooltip:SetText(5 - slider:GetValue())
+            end
             NecrosisConfig.SoulshardContainer = 4 - slider:GetValue()
-            Necrosis:SoulshardSwitch("MOVE")
+            if not InCombatLockdown() then
+                Necrosis:SoulshardSwitch("MOVE")
+            end
         end)
         frame:SetScript("OnValueChanged", function(slider)
-            GameTooltip:SetText(5 - slider:GetValue())
+            if GameTooltip:IsOwned(slider) then
+                GameTooltip:SetText(5 - slider:GetValue())
+            end
         end)
 
         NecrosisShardBagLow:SetText("5")
@@ -171,14 +177,20 @@ function Necrosis:SetMiscConfig()
             GameTooltip:Hide()
         end)
         frame:SetScript("OnValueChanged", function(slider)
-            GameTooltip:SetText(slider:GetValue())
+            if GameTooltip:IsOwned(slider) then
+                GameTooltip:SetText(slider:GetValue())
+            end
         end)
         frame:SetScript("OnMouseUp", function(slider)
-            GameTooltip:SetText(slider:GetValue())
+            if GameTooltip:IsOwned(slider) then
+                GameTooltip:SetText(slider:GetValue())
+            end
             NecrosisConfig.DestroyCount = slider:GetValue()
             NecrosisDestroyShard:SetChecked(true)
             NecrosisConfig.DestroyShard = true
-            Necrosis:BagExplore()
+            if not InCombatLockdown() then
+                Necrosis:BagExplore()
+            end
         end)
 
         NecrosisDestroyCountLow:SetText("1")

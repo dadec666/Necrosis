@@ -84,6 +84,7 @@ function Necrosis:CreateWarlockUI()
     -- Define its attributes || Définition de ses attributs
     frame:SetFrameStrata("MEDIUM")
     frame:SetMovable(true)
+    frame:SetClampedToScreen(true)
     frame:EnableMouse(true)
     frame:SetWidth(34)
     frame:SetHeight(34)
@@ -138,6 +139,7 @@ function Necrosis:CreateWarlockUI()
     -- Define its attributes || Définition de ses attributs
     frame:SetFrameLevel(1)
     frame:SetMovable(true)
+    frame:SetClampedToScreen(true)
     frame:EnableMouse(true)
     frame:SetWidth(58)
     frame:SetHeight(58)
@@ -565,6 +567,7 @@ function Necrosis:CreateWarlockPopup()
 
     -- Define its attributes || Définition de ses attributs
     frame:SetMovable(true)
+    frame:SetClampedToScreen(true)
     frame:EnableMouse(true)
     frame:SetFrameStrata("HIGH")
     frame:SetWidth(40)
@@ -609,6 +612,7 @@ function Necrosis:CreateWarlockPopup()
 
     -- Definte its attributes || Définition de ses attributs
     frame:SetMovable(true)
+    frame:SetClampedToScreen(true)
     frame:EnableMouse(true)
     frame:SetFrameStrata("HIGH")
     frame:SetWidth(40)
@@ -652,6 +656,7 @@ function Necrosis:CreateWarlockPopup()
 
     -- Define its attributes || Définition de ses attributs
     frame:SetMovable(true)
+    frame:SetClampedToScreen(true)
     frame:EnableMouse(true)
     frame:SetFrameStrata("HIGH")
     frame:SetWidth(40)
@@ -661,6 +666,15 @@ function Necrosis:CreateWarlockPopup()
     frame:Hide()
 
     -- Edit the scripts associated with the button || Edition des scripts associés au bouton
+    frame:SetScript("OnEnter", function(btn)
+        if NecrosisConfig.NecrosisToolTip then
+            GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
+            GameTooltip:SetText((Necrosis.Unit and (Necrosis.Unit.Demon .. " / " .. Necrosis.Unit.Elemental)) or "Demon / Elemental")
+        end
+    end)
+    frame:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
     frame:SetScript("OnMouseUp", function(btn)
         Necrosis:OnDragStop(btn)
     end)
@@ -693,6 +707,7 @@ function Necrosis:CreateWarlockPopup()
 
     -- Define its attributes || Définition de ses attributs
     frame:SetMovable(true)
+    frame:SetClampedToScreen(true)
     frame:EnableMouse(true)
     frame:SetFrameStrata("HIGH")
     frame:SetWidth(40)
@@ -702,6 +717,15 @@ function Necrosis:CreateWarlockPopup()
     frame:Hide()
 
     -- Edit the scripts associated with the button || Edition des scripts associés au bouton
+    frame:SetScript("OnEnter", function(btn)
+        if NecrosisConfig.NecrosisToolTip then
+            GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
+            GameTooltip:SetText((Necrosis.ChatMessage and Necrosis.ChatMessage.Information and Necrosis.ChatMessage.Information.FearProtect) or "Fear Immune")
+        end
+    end)
+    frame:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
     frame:SetScript("OnMouseUp", function(btn)
         Necrosis:OnDragStop(btn)
     end)
