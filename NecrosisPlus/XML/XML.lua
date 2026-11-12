@@ -185,6 +185,10 @@ function Necrosis:CreateWarlockUI()
     end
 
     -- Define its attributes || Définition de ses attributs
+    local shardFont = FontString:GetFont()
+    if shardFont then
+        FontString:SetFont(shardFont, 13, "OUTLINE")
+    end
     FontString:SetText("00")
     FontString:SetPoint("CENTER")
     FontString:SetTextColor(1, 1, 1)

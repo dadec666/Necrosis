@@ -416,7 +416,7 @@ function Necrosis:SetButtonsConfig()
         frame:SetHeight(75)
         frame:Show()
         frame:ClearAllPoints()
-        frame:SetPoint("CENTER", NecrosisGeneralFrame, "CENTER", 0, -25)
+        frame:SetPoint("CENTER", NecrosisButtonsConfig2, "CENTER", 30, -15)
 
         frame:SetBackdrop({
             bgFile = "Interface/Tooltips/UI-Tooltip-Background",
