@@ -126,25 +126,33 @@ function Necrosis:AddFrame(FrameName)
         return f._text or _G[FrameName .. "Text"], f._bar or _G[FrameName .. "Bar"]
     end
 
-    -- Création de la frame principale du timer
+    -- Création de la frame principale du timer (modern flat 1px dark container)
     local frame = CreateFrame("Frame", FrameName, UIParent)
 
     -- Définition de ses attributs
-    frame:SetWidth(150)
-    frame:SetHeight(10)
+    frame:SetWidth(156)
+    frame:SetHeight(14)
+    frame:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        tile = false,
+        edgeSize = 1,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 },
+    })
+    frame:SetBackdropColor(0.06, 0.06, 0.08, 0.85)
+    frame:SetBackdropBorderColor(0, 0, 0, 0.95)
     frame:ClearAllPoints()
     frame:SetPoint("CENTER", UIParent, "CENTER", 3000, 3000)
     frame:Show()
 
-    --Définition de sa texture
+    --Définition de sa texture (kept for compatibility)
     local texture = frame:CreateTexture(FrameName .. "Texture", "BACKGROUND")
-
-    texture:SetWidth(150)
-    texture:SetHeight(10)
-    texture:SetTexture(0, 0, 0, 0.5)
+    texture:SetWidth(154)
+    texture:SetHeight(12)
+    texture:SetTexture(0.08, 0.08, 0.10, 0.35)
     texture:ClearAllPoints()
     texture:SetPoint(NecrosisConfig.SpellTimerJust, FrameName, NecrosisConfig.SpellTimerJust, 0, 0)
-    texture:Show()
+    texture:Hide()
 
     -- Définition de ses textes
     -- Extérieur
@@ -168,13 +176,16 @@ function Necrosis:AddFrame(FrameName)
     -- Définition de ses textes
     -- Intérieur
     FontString = frame:CreateFontString(FrameName .. "Text", "OVERLAY", "GameFontNormalSmall")
-
+    local fontPath, fontSize = FontString:GetFont()
+    if fontPath then
+        FontString:SetFont(fontPath, fontSize or 10, "OUTLINE")
+    end
     FontString:SetWidth(150)
-    FontString:SetHeight(10)
+    FontString:SetHeight(12)
     FontString:SetJustifyH("LEFT")
     FontString:SetJustifyV("MIDDLE")
     FontString:ClearAllPoints()
-    FontString:SetPoint("LEFT", FrameName, "LEFT", 0, 0)
+    FontString:SetPoint("LEFT", FrameName, "LEFT", 4, 0)
     FontString:Show()
 
     FontString:SetTextColor(1, 1, 1)
@@ -182,13 +193,13 @@ function Necrosis:AddFrame(FrameName)
     -- Définition de la barre colorée
     local StatusBar = CreateFrame("StatusBar", FrameName .. "Bar", frame)
 
-    StatusBar:SetWidth(150)
-    StatusBar:SetHeight(10)
-    StatusBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-    StatusBar:SetStatusBarColor(1, 1, 0)
-    StatusBar:SetFrameLevel(StatusBar:GetFrameLevel() - 1)
+    StatusBar:SetWidth(154)
+    StatusBar:SetHeight(12)
+    StatusBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
+    StatusBar:SetStatusBarColor(0.58, 0.51, 0.79)
+    StatusBar:SetFrameLevel(frame:GetFrameLevel())
     StatusBar:ClearAllPoints()
-    StatusBar:SetPoint(NecrosisConfig.SpellTimerJust, FrameName, NecrosisConfig.SpellTimerJust, 0, 0)
+    StatusBar:SetPoint("CENTER", FrameName, "CENTER", 0, 0)
     StatusBar:Show()
 
     -- Définition de l'étincelle en bout de barre
@@ -225,7 +236,7 @@ function NecrosisUpdateTimer(tableau, Changement)
     local pt, relTo, relPt, xOfs, yOfs = NecrosisTimerFrame0:GetPoint()
     local LastGroup = 0
 
-    local yPosition = -NecrosisConfig.SensListe * 12
+    local yPosition = -NecrosisConfig.SensListe * 16
 
     -- smooth timers (if selected) || *Lisse* l'écoulement des timers si option sélectionnée
     local Now

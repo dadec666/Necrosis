@@ -19,23 +19,8 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --]]
 
-------------------------------------------------------------------------------------------------------
--- Necrosis LdC
--- Par Lomig (Kael'Thas EU/FR) & Tarcalion (Nagrand US/Oceanic)
--- Contributions deLiadora et Nyx (Kael'Thas et Elune EU/FR)
---
--- Skins et voix Françaises : Eliah, Ner'zhul
---
--- Version Allemande par Geschan
--- Version Espagnole par DosS (Zul’jin)
--- Version Russe par Komsomolka
---
--- $LastChangedDate: 2008-10-26 20:09:15 +1100 (Sun, 26 Oct 2008) $
-------------------------------------------------------------------------------------------------------
-
 -- luacheck: globals Necrosis NecrosisConfig NecrosisGeneralFrame NecrosisGeneralPageText NecrosisMessagesConfig NecrosisSphereConfig NecrosisButtonsConfig NecrosisMenusConfig NecrosisTimersConfig NecrosisMiscConfig
 
--- On définit G comme étant le tableau contenant toutes les frames existantes.
 local _G = _G
 local tinsert = table.insert
 local InCombatLockdown = InCombatLockdown
@@ -50,20 +35,41 @@ local PANEL_FRAME_NAMES = {
     "NecrosisTimersConfig",
     "NecrosisMiscConfig",
 }
+
+local TAB_ICONS = {
+    "Interface\\Icons\\Ability_Creature_Cursed_03",
+    "Interface\\Icons\\INV_Misc_Gem_Amethyst_02",
+    "Interface\\Icons\\Trade_Engineering",
+    "Interface\\Icons\\INV_Wand_1H_Stratholme_D_02",
+    "Interface\\Icons\\Spell_Nature_TimeStop",
+    "Interface\\Icons\\Ability_Creature_Disease_05",
+}
+
+local BACKDROP_DARK = {
+    bgFile = "Interface\\Buttons\\WHITE8X8",
+    edgeFile = "Interface\\Buttons\\WHITE8X8",
+    tile = false,
+    edgeSize = 1,
+    insets = { left = 1, right = 1, top = 1, bottom = 1 },
+}
+
 local helpShownOnce = false
+local activePanelID = 1
 
 ------------------------------------------------------------------------------------------------------
--- CRÉATION ET INVOCATION DU PANNEAU DE CONFIGURATION
+-- MODERN CONFIG WINDOW
 ------------------------------------------------------------------------------------------------------
 
--- Ouverture du cadre des menus des options
 function Necrosis:OpenConfigPanel()
     if InCombatLockdown() then
-        self:Msg((self.ChatMessage and self.ChatMessage.Error and self.ChatMessage.Error.InCombat) or "Cannot open settings in combat.", "USER")
+        self:Msg(
+            (self.ChatMessage and self.ChatMessage.Error and self.ChatMessage.Error.InCombat)
+                or "Cannot open settings in combat.",
+            "USER"
+        )
         return
     end
 
-    -- Show help lines only once per session instead of spamming chat on every toggle
     if not helpShownOnce and self.ChatMessage and self.ChatMessage.Help and self.ChatMessage.Help[1] then
         helpShownOnce = true
         for i = 1, #self.ChatMessage.Help, 1 do
@@ -72,31 +78,26 @@ function Necrosis:OpenConfigPanel()
     end
 
     local frame = _G["NecrosisGeneralFrame"]
-    -- Si la fenêtre n'existe pas, on la crée
     if not frame then
         frame = CreateFrame("Frame", "NecrosisGeneralFrame", UIParent)
-
-        -- Définition de ses attributs
         frame:SetFrameStrata("DIALOG")
         frame:SetMovable(true)
         frame:SetClampedToScreen(true)
         frame:EnableMouse(true)
         frame:SetToplevel(true)
-        frame:SetWidth(450)
-        frame:SetHeight(512)
+        frame:SetWidth(610)
+        frame:SetHeight(500)
+        frame:SetBackdrop(BACKDROP_DARK)
+        frame:SetBackdropColor(0.07, 0.07, 0.09, 0.94)
+        frame:SetBackdropBorderColor(0.32, 0.27, 0.48, 1.0)
         tinsert(UISpecialFrames, "NecrosisGeneralFrame")
-        frame:Show()
+
         frame:ClearAllPoints()
-        if NecrosisConfig.FramePosition.NecrosisGeneralFrame then
-            frame:SetPoint(
-                NecrosisConfig.FramePosition["NecrosisGeneralFrame"][1],
-                NecrosisConfig.FramePosition["NecrosisGeneralFrame"][2],
-                NecrosisConfig.FramePosition["NecrosisGeneralFrame"][3],
-                NecrosisConfig.FramePosition["NecrosisGeneralFrame"][4],
-                NecrosisConfig.FramePosition["NecrosisGeneralFrame"][5]
-            )
+        if NecrosisConfig.FramePosition and NecrosisConfig.FramePosition.NecrosisGeneralFrame then
+            local pos = NecrosisConfig.FramePosition["NecrosisGeneralFrame"]
+            frame:SetPoint(pos[1], pos[2], pos[3], pos[4], pos[5])
         else
-            frame:SetPoint("TOPLEFT", 100, -100)
+            frame:SetPoint("CENTER", UIParent, "CENTER", 0, 20)
         end
 
         frame:RegisterForDrag("LeftButton")
@@ -110,179 +111,201 @@ function Necrosis:OpenConfigPanel()
             Necrosis:OnDragStop(NecrosisGeneralFrame)
         end)
 
-        -- Texture en haut à gauche : icone
-        local texture = frame:CreateTexture("NecrosisGeneralIcon", "BACKGROUND")
-        texture:SetWidth(75)
-        texture:SetHeight(61)
-        texture:SetTexture("Interface\\Spellbook\\Spellbook-Icon")
-        texture:Show()
-        texture:ClearAllPoints()
-        texture:SetPoint("TOPLEFT", 10, -6)
+        -- Header bar
+        local header = CreateFrame("Frame", "NecrosisConfigHeader", frame)
+        header:SetHeight(34)
+        header:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
+        header:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -1, -1)
+        header:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8" })
+        header:SetBackdropColor(0.11, 0.10, 0.15, 1.0)
 
-        -- Textures du cadre
-        texture = frame:CreateTexture(nil, "BORDER")
-        texture:SetWidth(322)
-        texture:SetHeight(256)
-        texture:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-General-TopLeft")
-        texture:Show()
-        texture:ClearAllPoints()
-        texture:SetPoint("TOPLEFT")
+        local accentLine = header:CreateTexture(nil, "ARTWORK")
+        accentLine:SetHeight(1)
+        accentLine:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 0, 0)
+        accentLine:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, 0)
+        accentLine:SetTexture(0.58, 0.51, 0.79, 0.85)
 
-        texture = frame:CreateTexture(nil, "BORDER")
-        texture:SetWidth(128)
-        texture:SetHeight(256)
-        texture:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-General-TopRight")
-        texture:Show()
-        texture:ClearAllPoints()
-        texture:SetPoint("TOPRIGHT")
+        local headerIcon = header:CreateTexture(nil, "ARTWORK")
+        headerIcon:SetWidth(20)
+        headerIcon:SetHeight(20)
+        headerIcon:SetPoint("LEFT", header, "LEFT", 10, 0)
+        headerIcon:SetTexture("Interface\\AddOns\\NecrosisPlus\\UI\\Shard")
 
-        texture = frame:CreateTexture(nil, "BORDER")
-        texture:SetWidth(322)
-        texture:SetHeight(256)
-        texture:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-General-BottomLeft")
-        texture:Show()
-        texture:ClearAllPoints()
-        texture:SetPoint("BOTTOMLEFT")
+        local titleText = header:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        titleText:SetPoint("LEFT", headerIcon, "RIGHT", 8, 0)
+        titleText:SetTextColor(0.86, 0.82, 0.98)
+        titleText:SetText(self.Data.Label or "Necrosis Plus")
 
-        texture = frame:CreateTexture(nil, "BORDER")
-        texture:SetWidth(128)
-        texture:SetHeight(256)
-        texture:SetTexture("Interface\\PaperDollInfoFrame\\UI-Character-General-BottomRight")
-        texture:Show()
-        texture:ClearAllPoints()
-        texture:SetPoint("BOTTOMRIGHT")
+        -- Active section title on the right side of header
+        local pageText = header:CreateFontString("NecrosisGeneralPageText", "OVERLAY", "GameFontNormalSmall")
+        pageText:SetPoint("RIGHT", header, "RIGHT", -38, 0)
+        pageText:SetJustifyH("RIGHT")
+        pageText:SetWidth(260)
+        pageText:SetTextColor(0.68, 0.65, 0.78)
 
-        -- Texte du titre
-        local FontString = frame:CreateFontString(nil, nil, "GameFontNormal")
-        FontString:SetTextColor(1, 0.8, 0)
-        FontString:SetText(self.Data.Label)
-        FontString:Show()
-        FontString:ClearAllPoints()
-        FontString:SetPoint("CENTER", 6, 233)
+        -- Modern flat close button
+        local closeBtn = CreateFrame("Button", "NecrosisGeneralCloseButton", header)
+        closeBtn:SetWidth(24)
+        closeBtn:SetHeight(24)
+        closeBtn:SetPoint("RIGHT", header, "RIGHT", -6, 0)
+        closeBtn:SetBackdrop(BACKDROP_DARK)
+        closeBtn:SetBackdropColor(0.16, 0.14, 0.22, 0.9)
+        closeBtn:SetBackdropBorderColor(0.35, 0.30, 0.48, 0.8)
 
-        -- Crédits
-        FontString = frame:CreateFontString(nil, nil, "GameFontNormal")
-        FontString:SetTextColor(1, 0.8, 0)
-        FontString:SetText("Developed by Lomig & Tarcalion")
-        FontString:Show()
-        FontString:ClearAllPoints()
-        FontString:SetPoint("TOP", 0, -48)
+        local closeLabel = closeBtn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        closeLabel:SetPoint("CENTER", 0, 1)
+        closeLabel:SetText("×")
+        closeLabel:SetTextColor(0.85, 0.85, 0.9)
 
-        -- Titre de section au bas de la page (widened for localized RU/DE/FR titles)
-        FontString = frame:CreateFontString("NecrosisGeneralPageText", nil, "GameFontNormal")
-        FontString:SetTextColor(1, 0.8, 0)
-        FontString:SetWidth(260)
-        FontString:SetHeight(0)
-        FontString:Show()
-        FontString:ClearAllPoints()
-        FontString:SetPoint("BOTTOM", 0, 96)
-
-        -- Bouton de fermeture de la fenêtre
-        frame = CreateFrame("Button", "NecrosisGeneralCloseButton", NecrosisGeneralFrame, "UIPanelCloseButton")
-        frame:ClearAllPoints()
-        frame:SetPoint("CENTER", "NecrosisGeneralFrame", "TOPRIGHT", -46, -24)
-
-        -- Premier onglet du panneau de configuration
-        frame = CreateFrame("CheckButton", "NecrosisGeneralTab1", NecrosisGeneralFrame)
-        frame:SetWidth(32)
-        frame:SetHeight(32)
-        frame:Show()
-        frame:ClearAllPoints()
-        frame:SetPoint("TOPLEFT", "NecrosisGeneralFrame", "TOPRIGHT", -32, -65)
-
-        frame:SetScript("OnEnter", function(tab)
-            GameTooltip:SetOwner(tab, "ANCHOR_RIGHT")
-            GameTooltip:SetText(self.Config.Panel[1])
+        closeBtn:SetScript("OnEnter", function(btn)
+            btn:SetBackdropColor(0.65, 0.18, 0.22, 0.95)
+            btn:SetBackdropBorderColor(0.85, 0.3, 0.35, 1)
+            closeLabel:SetTextColor(1, 1, 1)
         end)
-        frame:SetScript("OnLeave", function()
-            GameTooltip:Hide()
+        closeBtn:SetScript("OnLeave", function(btn)
+            btn:SetBackdropColor(0.16, 0.14, 0.22, 0.9)
+            btn:SetBackdropBorderColor(0.35, 0.30, 0.48, 0.8)
+            closeLabel:SetTextColor(0.85, 0.85, 0.9)
         end)
-        frame:SetScript("OnClick", function()
-            Necrosis:SetPanel(1)
+        closeBtn:SetScript("OnClick", function()
+            frame:Hide()
         end)
 
-        texture = frame:CreateTexture(nil, "BACKGROUND")
-        texture:SetWidth(64)
-        texture:SetHeight(64)
-        texture:SetTexture("Interface\\SpellBook\\SpellBook-SkillLineTab")
-        texture:Show()
-        texture:ClearAllPoints()
-        texture:SetPoint("TOPLEFT", -3, 11)
+        -- Left sidebar navigation
+        local sidebar = CreateFrame("Frame", "NecrosisConfigSidebar", frame)
+        sidebar:SetWidth(175)
+        sidebar:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
+        sidebar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 1, 22)
+        sidebar:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8" })
+        sidebar:SetBackdropColor(0.05, 0.05, 0.07, 0.98)
 
-        frame:SetNormalTexture("Interface\\Icons\\Ability_Creature_Cursed_03")
-        frame:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
-        frame:GetHighlightTexture():SetBlendMode("ADD")
-        frame:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
-        frame:GetCheckedTexture():SetBlendMode("ADD")
+        local sideDivider = sidebar:CreateTexture(nil, "ARTWORK")
+        sideDivider:SetWidth(1)
+        sideDivider:SetPoint("TOPRIGHT", sidebar, "TOPRIGHT", 0, 0)
+        sideDivider:SetPoint("BOTTOMRIGHT", sidebar, "BOTTOMRIGHT", 0, 0)
+        sideDivider:SetTexture(0.24, 0.21, 0.34, 0.9)
 
-        -- Autres onglets
-        local tex = {
-            "INV_Misc_Gem_Amethyst_02",
-            "Trade_Engineering",
-            "INV_Wand_1H_Stratholme_D_02",
-            "Spell_Nature_TimeStop",
-            "Ability_Creature_Disease_05",
-        }
-        for i in ipairs(tex) do
-            frame = CreateFrame("CheckButton", "NecrosisGeneralTab" .. (i + 1), NecrosisGeneralFrame)
-            frame:SetWidth(32)
-            frame:SetHeight(32)
-            frame:Show()
-            frame:ClearAllPoints()
-            frame:SetPoint("TOPLEFT", "NecrosisGeneralTab" .. i, "BOTTOMLEFT", 0, -17)
+        -- Right content container
+        local content = CreateFrame("Frame", "NecrosisConfigContent", frame)
+        content:SetPoint("TOPLEFT", sidebar, "TOPRIGHT", 8, -4)
+        content:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -8, 24)
 
-            frame:SetScript("OnEnter", function(tab)
-                GameTooltip:SetOwner(tab, "ANCHOR_RIGHT")
-                GameTooltip:SetText(self.Config.Panel[i + 1])
+        -- Footer hint bar
+        local footer = CreateFrame("Frame", "NecrosisConfigFooter", frame)
+        footer:SetHeight(22)
+        footer:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 1, 1)
+        footer:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
+        footer:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8" })
+        footer:SetBackdropColor(0.09, 0.09, 0.12, 1.0)
+
+        local footerText = footer:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+        footerText:SetPoint("LEFT", footer, "LEFT", 10, 0)
+        footerText:SetText("ESC — закрыть  •  Перетаскивание за окно")
+
+        local creditText = footer:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+        creditText:SetPoint("RIGHT", footer, "RIGHT", -10, 0)
+        creditText:SetText("Necrosis Plus 3.3.5a")
+
+        -- Sidebar tabs (preserving NecrosisGeneralTab1..6 global names)
+        for i = 1, 6 do
+            local tab = CreateFrame("CheckButton", "NecrosisGeneralTab" .. i, sidebar)
+            tab:SetHeight(36)
+            tab:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 6, -10 - (i - 1) * 40)
+            tab:SetPoint("TOPRIGHT", sidebar, "TOPRIGHT", -7, -10 - (i - 1) * 40)
+            tab:SetBackdrop(BACKDROP_DARK)
+            tab:SetBackdropColor(0.09, 0.09, 0.12, 0.6)
+            tab:SetBackdropBorderColor(0.18, 0.16, 0.26, 0.5)
+
+            local activeBar = tab:CreateTexture(nil, "OVERLAY")
+            activeBar:SetWidth(3)
+            activeBar:SetPoint("TOPLEFT", tab, "TOPLEFT", 0, 0)
+            activeBar:SetPoint("BOTTOMLEFT", tab, "BOTTOMLEFT", 0, 0)
+            activeBar:SetTexture(0.58, 0.51, 0.79, 1.0)
+            activeBar:Hide()
+            tab._activeBar = activeBar
+
+            local icon = tab:CreateTexture(nil, "ARTWORK")
+            icon:SetWidth(20)
+            icon:SetHeight(20)
+            icon:SetPoint("LEFT", tab, "LEFT", 8, 0)
+            icon:SetTexture(TAB_ICONS[i])
+            icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
+            local label = tab:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            label:SetPoint("LEFT", icon, "RIGHT", 8, 0)
+            label:SetPoint("RIGHT", tab, "RIGHT", -6, 0)
+            label:SetJustifyH("LEFT")
+            label:SetText((self.Config and self.Config.Panel and self.Config.Panel[i]) or ("Tab " .. i))
+            label:SetTextColor(0.80, 0.80, 0.86)
+            tab._label = label
+
+            tab:SetScript("OnEnter", function(btn)
+                if activePanelID ~= i then
+                    btn:SetBackdropColor(0.15, 0.14, 0.22, 0.9)
+                    btn._label:SetTextColor(1, 1, 1)
+                end
+                GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
+                GameTooltip:SetText((self.Config and self.Config.Panel and self.Config.Panel[i]) or "")
             end)
-            frame:SetScript("OnLeave", function()
+            tab:SetScript("OnLeave", function(btn)
+                if activePanelID ~= i then
+                    btn:SetBackdropColor(0.09, 0.09, 0.12, 0.6)
+                    btn._label:SetTextColor(0.80, 0.80, 0.86)
+                end
                 GameTooltip:Hide()
             end)
-            frame:SetScript("OnClick", function()
-                Necrosis:SetPanel(i + 1)
+            tab:SetScript("OnClick", function()
+                Necrosis:SetPanel(i)
             end)
-
-            texture = frame:CreateTexture(nil, "BACKGROUND")
-            texture:SetWidth(64)
-            texture:SetHeight(64)
-            texture:SetTexture("Interface\\SpellBook\\SpellBook-SkillLineTab")
-            texture:Show()
-            texture:ClearAllPoints()
-            texture:SetPoint("TOPLEFT", -3, 11)
-
-            frame:SetNormalTexture("Interface\\Icons\\" .. tex[i])
-            frame:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
-            frame:GetHighlightTexture():SetBlendMode("ADD")
-            frame:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
-            frame:GetCheckedTexture():SetBlendMode("ADD")
         end
 
+        frame:Show()
         self:SetPanel(1)
     else
         if frame:IsVisible() then
             frame:Hide()
         else
             frame:Show()
+            self:SetPanel(activePanelID)
         end
     end
 end
 
 ------------------------------------------------------------------------------------------------------
--- FONCTIONS LIÉES AU PANNEAU DE CONFIGURATION
+-- PANEL SWITCHING
 ------------------------------------------------------------------------------------------------------
 
--- Fonction permettant l'affichage des différentes pages du panneau de configuration
 function Necrosis:SetPanel(PanelID)
-    local TabName
+    activePanelID = PanelID
     for index = 1, 6, 1 do
-        TabName = _G["NecrosisGeneralTab" .. index]
-        if index == PanelID then
-            TabName:SetChecked(1)
-        else
-            TabName:SetChecked(nil)
+        local tab = _G["NecrosisGeneralTab" .. index]
+        if tab then
+            if index == PanelID then
+                tab:SetChecked(1)
+                tab:SetBackdropColor(0.20, 0.17, 0.30, 0.95)
+                tab:SetBackdropBorderColor(0.58, 0.51, 0.79, 0.9)
+                if tab._activeBar then
+                    tab._activeBar:Show()
+                end
+                if tab._label then
+                    tab._label:SetTextColor(1, 0.96, 1)
+                end
+            else
+                tab:SetChecked(nil)
+                tab:SetBackdropColor(0.09, 0.09, 0.12, 0.6)
+                tab:SetBackdropBorderColor(0.18, 0.16, 0.26, 0.5)
+                if tab._activeBar then
+                    tab._activeBar:Hide()
+                end
+                if tab._label then
+                    tab._label:SetTextColor(0.80, 0.80, 0.86)
+                end
+            end
         end
     end
-    NecrosisGeneralPageText:SetText(self.Config.Panel[PanelID])
+    if NecrosisGeneralPageText and self.Config and self.Config.Panel then
+        NecrosisGeneralPageText:SetText(self.Config.Panel[PanelID] or "")
+    end
 
     for i = 1, #PANEL_FRAME_NAMES do
         local p = _G[PANEL_FRAME_NAMES[i]]
@@ -303,5 +326,11 @@ function Necrosis:SetPanel(PanelID)
         self:SetTimersConfig()
     elseif PanelID == 6 then
         self:SetMiscConfig()
+    end
+
+    local activeFrame = _G[PANEL_FRAME_NAMES[PanelID]]
+    if activeFrame and _G["NecrosisConfigContent"] then
+        activeFrame:ClearAllPoints()
+        activeFrame:SetPoint("BOTTOMLEFT", NecrosisConfigContent, "BOTTOMLEFT", 18, -10)
     end
 end
