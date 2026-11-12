@@ -57,6 +57,247 @@ local helpShownOnce = false
 local activePanelID = 1
 
 ------------------------------------------------------------------------------------------------------
+-- TAINT-FREE MODERN DROPDOWN & CONTROL STYLING
+------------------------------------------------------------------------------------------------------
+
+local dropdownListFrame
+local dropdownListButtons = {}
+local dropdownTarget
+local dropdownItemCount = 0
+local dropdownInfoScratch = {}
+
+local function EnsureDropdownList()
+    if dropdownListFrame then
+        return dropdownListFrame
+    end
+    local list = CreateFrame("Frame", "NecrosisModernDropdownList", UIParent)
+    list:SetFrameStrata("FULLSCREEN_DIALOG")
+    list:SetClampedToScreen(true)
+    list:EnableMouse(true)
+    list:SetBackdrop(BACKDROP_DARK)
+    list:SetBackdropColor(0.08, 0.08, 0.11, 0.98)
+    list:SetBackdropBorderColor(0.45, 0.38, 0.65, 1.0)
+    list:Hide()
+    list:SetScript("OnHide", function()
+        dropdownTarget = nil
+    end)
+    dropdownListFrame = list
+    return list
+end
+
+function Necrosis.DropDown_CreateInfo()
+    dropdownInfoScratch.text = nil
+    dropdownInfoScratch.checked = nil
+    dropdownInfoScratch.func = nil
+    return dropdownInfoScratch
+end
+
+function Necrosis.DropDown_AddButton(info)
+    if not dropdownTarget or not info then
+        return
+    end
+    local list = EnsureDropdownList()
+    dropdownItemCount = dropdownItemCount + 1
+    local idx = dropdownItemCount
+    local btn = dropdownListButtons[idx]
+    if not btn then
+        btn = CreateFrame("Button", nil, list)
+        btn:SetHeight(20)
+        btn:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8" })
+        btn:SetBackdropColor(0, 0, 0, 0)
+
+        local txt = btn:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        txt:SetPoint("LEFT", btn, "LEFT", 16, 0)
+        txt:SetPoint("RIGHT", btn, "RIGHT", -6, 0)
+        txt:SetJustifyH("LEFT")
+        btn._text = txt
+
+        local dot = btn:CreateTexture(nil, "OVERLAY")
+        dot:SetWidth(6)
+        dot:SetHeight(6)
+        dot:SetPoint("LEFT", btn, "LEFT", 6, 0)
+        dot:SetTexture(0.68, 0.58, 0.94, 1.0)
+        dot:Hide()
+        btn._dot = dot
+
+        btn:SetScript("OnEnter", function(self)
+            self:SetBackdropColor(0.24, 0.20, 0.36, 0.95)
+        end)
+        btn:SetScript("OnLeave", function(self)
+            self:SetBackdropColor(0, 0, 0, 0)
+        end)
+        btn:SetScript("OnClick", function(self)
+            local target = dropdownTarget
+            local fn = self._func
+            local label = self._text:GetText()
+            list:Hide()
+            if target then
+                target._selectedID = self:GetID()
+                if target._text and label then
+                    target._text:SetText(label)
+                end
+            end
+            if fn then
+                fn(self)
+            end
+        end)
+        dropdownListButtons[idx] = btn
+    end
+
+    btn:SetID(idx)
+    btn._func = info.func
+    btn._text:SetText(info.text or "")
+    if dropdownTarget._selectedID == idx or info.checked then
+        btn._dot:Show()
+        btn._text:SetTextColor(1, 0.95, 1)
+    else
+        btn._dot:Hide()
+        btn._text:SetTextColor(0.86, 0.86, 0.90)
+    end
+    btn:ClearAllPoints()
+    btn:SetPoint("TOPLEFT", list, "TOPLEFT", 4, -4 - (idx - 1) * 20)
+    btn:SetPoint("TOPRIGHT", list, "TOPRIGHT", -4, -4 - (idx - 1) * 20)
+    btn:Show()
+end
+
+function Necrosis:CreateModernDropdown(name, parent)
+    local dd = CreateFrame("Button", name, parent)
+    dd:SetWidth(145)
+    dd:SetHeight(24)
+    dd:SetBackdrop(BACKDROP_DARK)
+    dd:SetBackdropColor(0.11, 0.10, 0.16, 0.95)
+    dd:SetBackdropBorderColor(0.32, 0.27, 0.48, 0.95)
+
+    local txt = dd:CreateFontString(name and (name .. "Text") or nil, "OVERLAY", "GameFontHighlightSmall")
+    txt:SetPoint("LEFT", dd, "LEFT", 8, 0)
+    txt:SetPoint("RIGHT", dd, "RIGHT", -22, 0)
+    txt:SetJustifyH("LEFT")
+    dd._text = txt
+
+    local arrow = dd:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    arrow:SetPoint("RIGHT", dd, "RIGHT", -7, 0)
+    arrow:SetText("▼")
+    arrow:SetTextColor(0.68, 0.58, 0.94)
+
+    dd:SetScript("OnEnter", function(self)
+        self:SetBackdropBorderColor(0.58, 0.51, 0.79, 1.0)
+    end)
+    dd:SetScript("OnLeave", function(self)
+        self:SetBackdropBorderColor(0.32, 0.27, 0.48, 0.95)
+    end)
+    dd:SetScript("OnClick", function(self)
+        local list = EnsureDropdownList()
+        if list:IsShown() and dropdownTarget == self then
+            list:Hide()
+            return
+        end
+        for i = 1, #dropdownListButtons do
+            dropdownListButtons[i]:Hide()
+        end
+        dropdownTarget = self
+        dropdownItemCount = 0
+        if self._initFunc then
+            self._initFunc(self)
+        end
+        if dropdownItemCount > 0 then
+            list:SetWidth(math.max(self:GetWidth(), 145))
+            list:SetHeight(dropdownItemCount * 20 + 8)
+            list:ClearAllPoints()
+            list:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, -2)
+            list:Show()
+        end
+    end)
+    dd:SetScript("OnHide", function(self)
+        if dropdownListFrame and dropdownListFrame:IsShown() and dropdownTarget == self then
+            dropdownListFrame:Hide()
+        end
+    end)
+
+    return dd
+end
+
+function Necrosis.DropDown_SetWidth(dd, width)
+    if dd and width then
+        dd:SetWidth(width + 20)
+    end
+end
+
+function Necrosis.DropDown_Initialize(dd, initFunc)
+    if dd then
+        dd._initFunc = initFunc
+    end
+end
+
+function Necrosis.DropDown_SetSelectedID(dd, id)
+    if dd then
+        dd._selectedID = id
+    end
+end
+
+function Necrosis.DropDown_SetText(dd, text)
+    if dd and dd._text then
+        dd._text:SetText(text or "")
+    end
+end
+
+local function StyleWidgetTree(frame)
+    local children = { frame:GetChildren() }
+    for i = 1, #children do
+        local child = children[i]
+        local objType = child:GetObjectType()
+        if objType == "Slider" and not child._styled then
+            child._styled = true
+            child:SetBackdrop(BACKDROP_DARK)
+            child:SetBackdropColor(0.05, 0.05, 0.07, 0.95)
+            child:SetBackdropBorderColor(0.30, 0.25, 0.44, 0.95)
+            child:SetHeight(10)
+            local thumb = child:GetThumbTexture()
+            if thumb then
+                thumb:SetTexture("Interface\\Buttons\\WHITE8X8")
+                thumb:SetWidth(10)
+                thumb:SetHeight(14)
+                thumb:SetVertexColor(0.65, 0.56, 0.88, 1.0)
+            end
+            local valText = child:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            valText:SetPoint("LEFT", child, "RIGHT", 8, 0)
+            valText:SetTextColor(0.76, 0.70, 0.95)
+            child._valText = valText
+            local function UpdateValText(s)
+                local v = math.floor((s:GetValue() or 0) + 0.5)
+                if s:GetName() == "NecrosisShardBag" then
+                    v = 5 - v
+                end
+                s._valText:SetText(v)
+            end
+            UpdateValText(child)
+            child:HookScript("OnValueChanged", UpdateValText)
+        elseif objType == "Button" and not child._styled then
+            local txt = child:GetText()
+            if txt == ">>>" or txt == "<<<" then
+                child._styled = true
+                child:SetBackdrop(BACKDROP_DARK)
+                child:SetBackdropColor(0.14, 0.12, 0.20, 0.95)
+                child:SetBackdropBorderColor(0.38, 0.32, 0.56, 0.95)
+                child:SetNormalTexture("")
+                child:SetPushedTexture("")
+                child:SetHighlightTexture("")
+                child:HookScript("OnEnter", function(b)
+                    b:SetBackdropColor(0.24, 0.20, 0.36, 0.98)
+                    b:SetBackdropBorderColor(0.58, 0.51, 0.79, 1.0)
+                end)
+                child:HookScript("OnLeave", function(b)
+                    b:SetBackdropColor(0.14, 0.12, 0.20, 0.95)
+                    b:SetBackdropBorderColor(0.38, 0.32, 0.56, 0.95)
+                end)
+            end
+        elseif objType == "Frame" then
+            StyleWidgetTree(child)
+        end
+    end
+end
+
+
+------------------------------------------------------------------------------------------------------
 -- MODERN CONFIG WINDOW
 ------------------------------------------------------------------------------------------------------
 
@@ -329,8 +570,14 @@ function Necrosis:SetPanel(PanelID)
     end
 
     local activeFrame = _G[PANEL_FRAME_NAMES[PanelID]]
-    if activeFrame and _G["NecrosisConfigContent"] then
-        activeFrame:ClearAllPoints()
-        activeFrame:SetPoint("BOTTOMLEFT", NecrosisConfigContent, "BOTTOMLEFT", 18, -10)
+    if activeFrame then
+        if not activeFrame._modernStyled then
+            activeFrame._modernStyled = true
+            StyleWidgetTree(activeFrame)
+        end
+        if _G["NecrosisConfigContent"] then
+            activeFrame:ClearAllPoints()
+            activeFrame:SetPoint("BOTTOMLEFT", NecrosisConfigContent, "BOTTOMLEFT", 18, -10)
+        end
     end
 end

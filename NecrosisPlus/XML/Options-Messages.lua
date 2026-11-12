@@ -59,7 +59,7 @@ function Necrosis:SetMessagesConfig()
         frame:SetPoint("BOTTOMLEFT")
 
         -- Choix de la langue
-        frame = CreateFrame("Frame", "NecrosisLanguageSelection", NecrosisMessagesConfig, "UIDropDownMenuTemplate")
+        frame = Necrosis:CreateModernDropdown("NecrosisLanguageSelection", NecrosisMessagesConfig)
         frame:Show()
         frame:ClearAllPoints()
         frame:SetPoint("RIGHT", NecrosisMessagesConfig, "BOTTOMRIGHT", 40, 420)
@@ -71,8 +71,8 @@ function Necrosis:SetMessagesConfig()
         FontString:SetTextColor(1, 1, 1)
         FontString:SetText("Langue / Language / Sprache")
 
-        -- UIDropDownMenu_SetWidth(125, frame)
-        UIDropDownMenu_SetWidth(frame, 125)
+        -- Necrosis.DropDown_SetWidth(125, frame)
+        Necrosis.DropDown_SetWidth(frame, 125)
 
         -- Activer les bulles d'aide
         frame = CreateFrame("CheckButton", "NecrosisShowTooltip", NecrosisMessagesConfig, "UICheckButtonTemplate")
@@ -321,14 +321,14 @@ function Necrosis:SetMessagesConfig()
         frame:SetFontString(FontString)
     end
 
-    UIDropDownMenu_Initialize(NecrosisLanguageSelection, Necrosis.Language_Init)
+    Necrosis.DropDown_Initialize(NecrosisLanguageSelection, Necrosis.Language_Init)
 
     local locales = { "frFR", "enUS", "deDE", "zhTW", "zhCN", "esES", "ruRU" }
     local langues = { "Français", "English", "Deutsch", "zhTW", "zhCN", "Español", "ruRU" }
     for i in ipairs(locales) do
         if locales[i] == NecrosisConfig.Language then
-            UIDropDownMenu_SetSelectedID(NecrosisLanguageSelection, i)
-            UIDropDownMenu_SetText(NecrosisLanguageSelection, langues[i])
+            Necrosis.DropDown_SetSelectedID(NecrosisLanguageSelection, i)
+            Necrosis.DropDown_SetText(NecrosisLanguageSelection, langues[i])
             break
         end
     end
@@ -390,14 +390,14 @@ function Necrosis.Language_Init()
         element.text = langues[i]
         element.checked = false
         element.func = Necrosis.Language_Click
-        UIDropDownMenu_AddButton(element)
+        Necrosis.DropDown_AddButton(element)
     end
 end
 
 function Necrosis.Language_Click(self)
     local ID = self:GetID()
 
-    UIDropDownMenu_SetSelectedID(NecrosisLanguageSelection, ID)
+    Necrosis.DropDown_SetSelectedID(NecrosisLanguageSelection, ID)
     if ID == 1 then
         NecrosisConfig.Language = "frFR"
         Necrosis:Localization_Dialog_Fr()

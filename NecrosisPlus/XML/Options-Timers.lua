@@ -59,7 +59,7 @@ function Necrosis:SetTimersConfig()
         frame:SetPoint("BOTTOMLEFT")
 
         -- Choix du timer graphique
-        frame = CreateFrame("Frame", "NecrosisTimerSelection", NecrosisTimersConfig, "UIDropDownMenuTemplate")
+        frame = Necrosis:CreateModernDropdown("NecrosisTimerSelection", NecrosisTimersConfig)
         frame:Show()
         frame:ClearAllPoints()
         frame:SetPoint("RIGHT", NecrosisTimersConfig, "BOTTOMRIGHT", 40, 400)
@@ -70,7 +70,7 @@ function Necrosis:SetTimersConfig()
         FontString:SetPoint("LEFT", NecrosisTimersConfig, "BOTTOMLEFT", 35, 403)
         FontString:SetTextColor(1, 1, 1)
 
-        UIDropDownMenu_SetWidth(frame, 125)
+        Necrosis.DropDown_SetWidth(frame, 125)
 
         -- Affiche ou masque le bouton des timers
         frame =
@@ -150,15 +150,15 @@ function Necrosis:SetTimersConfig()
         -- frame:SetDisabledTextColor(0.75, 0.75, 0.75)
     end
 
-    UIDropDownMenu_Initialize(NecrosisTimerSelection, Necrosis.Timer_Init)
+    Necrosis.DropDown_Initialize(NecrosisTimerSelection, Necrosis.Timer_Init)
 
     NecrosisTimerSelectionT:SetText(self.Config.Timers["Type de timers"])
     NecrosisShowSpellTimerButton:SetText(self.Config.Timers["Afficher le bouton des timers"])
     NecrosisTimerOnLeft:SetText(self.Config.Timers["Afficher les timers sur la gauche du bouton"])
     NecrosisTimerUpward:SetText(self.Config.Timers["Afficher les timers de bas en haut"])
 
-    UIDropDownMenu_SetSelectedID(NecrosisTimerSelection, (NecrosisConfig.TimerType + 1))
-    UIDropDownMenu_SetText(NecrosisTimerSelection, Necrosis.Config.Timers.Type[NecrosisConfig.TimerType + 1])
+    Necrosis.DropDown_SetSelectedID(NecrosisTimerSelection, (NecrosisConfig.TimerType + 1))
+    Necrosis.DropDown_SetText(NecrosisTimerSelection, Necrosis.Config.Timers.Type[NecrosisConfig.TimerType + 1])
 
     NecrosisShowSpellTimerButton:SetChecked(NecrosisConfig.ShowSpellTimers)
     NecrosisTimerOnLeft:SetChecked(NecrosisConfig.SpellTimerPos == -1)
@@ -190,13 +190,13 @@ function Necrosis.Timer_Init()
         element.text = Necrosis.Config.Timers.Type[i]
         element.checked = false
         element.func = Necrosis.Timer_Click
-        UIDropDownMenu_AddButton(element)
+        Necrosis.DropDown_AddButton(element)
     end
 end
 
 function Necrosis.Timer_Click(self)
     local ID = self:GetID()
-    UIDropDownMenu_SetSelectedID(NecrosisTimerSelection, ID)
+    Necrosis.DropDown_SetSelectedID(NecrosisTimerSelection, ID)
     NecrosisConfig.TimerType = ID - 1
     if ID ~= 1 then
         Necrosis:CreateTimerAnchor()
