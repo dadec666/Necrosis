@@ -317,6 +317,7 @@ Local.Events = {
     "UNIT_SPELLCAST_SENT",
     "UNIT_MANA",
     "UNIT_HEALTH",
+    "UNIT_AURA",
     "LEARNED_SPELL_IN_TAB",
     "PLAYER_TARGET_CHANGED",
     "TRADE_REQUEST",
@@ -518,6 +519,8 @@ Local.Warning = {
 
 -- Temps écoulé entre deux event OnUpdate
 Local.LastUpdate = { 0, 0 }
+Local.LastTextUpdate = 0
+Local.PlayerGUID = nil
 
 ------------------------------------------------------------------------------------------------------
 -- FONCTIONS NECROSIS APPLIQUEES A L'ENTREE DANS LE JEU
@@ -543,15 +546,11 @@ function Necrosis:OnLoad()
             NecrosisButton:RegisterEvent(Local.Events[i])
         end
 
-        -- Easter Egg
-        if UnitName("player") == "Licyon" then
-            SendChatMessage("Je suis le pire noob de la terre, et Lomig est mon maitre !", "GUILD")
-            SendChatMessage("Il n'y a pas plus cr\195\169tin que Lycion... Virez moi !", "OFFICER")
-            SendChatMessage("Lycion floode Cyrax by Lomig", "WHISPER", "Common", "Cyrax")
-        end
+        Local.PlayerGUID = UnitGUID("player")
 
         -- Détection du Type de démon présent à la connexion
         Local.Summon.DemonType = UnitCreatureFamily("pet")
+        self:UpdateOnUpdateState()
     end
 end
 
@@ -559,20 +558,61 @@ end
 -- FONCTIONS NECROSIS
 ------------------------------------------------------------------------------------------------------
 
--- Fonction lancée à la mise à jour de l'interface (main) - Dual-Frequency Throttled OnUpdate (Wiki Ch 18)
+local function Necrosis_OnUpdateScript(_, elapsed)
+    Necrosis:OnUpdate(elapsed)
+end
+
+-- Attach OnUpdate only when timers, shard sorting, rez chrono, or anti-fear blink are active
+function Necrosis:UpdateOnUpdateState()
+    if not NecrosisButton then
+        return
+    end
+    local hasTimers = Local.TimerManagement and Local.TimerManagement.SpellTimer and Local.TimerManagement.SpellTimer[1]
+    local needsSort = NecrosisConfig.SoulshardSort and Local.Soulshard and Local.Soulshard.Move and Local.Soulshard.Move > 0
+    local needsRez = (NecrosisConfig.CountType == 3 or NecrosisConfig.Circle == 2)
+        and Local.Stone
+        and Local.Stone.Soul
+        and (Local.Stone.Soul.Mode == 3 or Local.Stone.Soul.Mode == 4)
+    local needsBlink = Local.Warning and Local.Warning.Antifear and Local.Warning.Antifear.Actif
+
+    if hasTimers or needsSort or needsRez or needsBlink then
+        if not Local.OnUpdateActive then
+            Local.OnUpdateActive = true
+            NecrosisButton:SetScript("OnUpdate", Necrosis_OnUpdateScript)
+        end
+    elseif Local.OnUpdateActive then
+        Local.OnUpdateActive = false
+        Local.LastUpdate[1] = 0
+        Local.LastUpdate[2] = 0
+        NecrosisButton:SetScript("OnUpdate", nil)
+    end
+end
+
+-- Fonction lancée à la mise à jour de l'interface (main) - Self-terminating & throttled OnUpdate
 function Necrosis:OnUpdate(elapsed)
     Local.LastUpdate[1] = Local.LastUpdate[1] + elapsed
     Local.LastUpdate[2] = Local.LastUpdate[2] + elapsed
 
     local hasTimers = Local.TimerManagement.SpellTimer and Local.TimerManagement.SpellTimer[1]
 
-    -- Si des timers sont actifs, on met à jour la barre/étincelle
-    if hasTimers then
-        if NecrosisConfig.Smooth then
-            NecrosisUpdateTimer(Local.TimerManagement.SpellTimer)
-        end
-        if NecrosisConfig.TimerType == 2 then
-            self:TextTimerUpdate(Local.TimerManagement.SpellTimer, Local.TimerManagement.SpellGroup)
+    -- Smooth graphical timers run per-frame only while timers exist
+    if hasTimers and NecrosisConfig.Smooth then
+        NecrosisUpdateTimer(Local.TimerManagement.SpellTimer)
+    end
+
+    -- Blink AntiFear button when active
+    if Local.Warning.Antifear.Actif then
+        local now = GetTime()
+        if now >= Local.Warning.Antifear.Blink then
+            Local.Warning.Antifear.Toggle = (Local.Warning.Antifear.Toggle == 1) and 2 or 1
+            Local.Warning.Antifear.Blink = now + 0.4
+            local actifType = Local.Warning.Antifear.ActifType or 1
+            NecrosisAntiFearButton:SetNormalTexture(
+                "Interface\\AddOns\\NecrosisPlus\\UI\\AntiFear"
+                    .. Local.Warning.Antifear.Icon[actifType]
+                    .. "-0"
+                    .. Local.Warning.Antifear.Toggle
+            )
         end
     end
 
@@ -585,9 +625,13 @@ function Necrosis:OnUpdate(elapsed)
             NecrosisUpdateTimer(Local.TimerManagement.SpellTimer)
         end
 
-        -- Si configuré, affichage des avertissements d'Antifear
-        if NecrosisConfig.AntiFearAlert then
-            self:ShowAntiFearWarning()
+        -- Text timers only change once per integer second
+        if hasTimers and NecrosisConfig.TimerType == 2 then
+            local nowSec = floor(GetTime())
+            if nowSec ~= Local.LastTextUpdate then
+                Local.LastTextUpdate = nowSec
+                self:TextTimerUpdate(Local.TimerManagement.SpellTimer, Local.TimerManagement.SpellGroup)
+            end
         end
 
         -- Si configuré, on transforme la Sphere en Chrono de Rez
@@ -608,38 +652,38 @@ function Necrosis:OnUpdate(elapsed)
             self:SoulshardSwitch("MOVE")
         end
 
-        -- Parcours et expiration des Timers
+        -- Iterate backwards so multiple simultaneous timer expirations are all processed cleanly
         if hasTimers then
             local TimeLocal = GetTime()
-            for index = 1, #Local.TimerManagement.SpellTimer do
-                if Local.TimerManagement.SpellTimer[index] then
-                    if TimeLocal >= (Local.TimerManagement.SpellTimer[index].TimeMax - 0.5) then
-                        local StoneFade = false
-                        local MetamorphosisFade = false
-                        if Local.TimerManagement.SpellTimer[index].Name == self.Spell[11].Name then
-                            self:Msg(self.ChatMessage.Information.SoulstoneEnd)
-                            if NecrosisConfig.Sound then
-                                PlaySoundFile(self.Sound.SoulstoneEnd)
-                            end
-                            StoneFade = true
-                        elseif Local.TimerManagement.SpellTimer[index].Name == self.Spell[9].Name then
-                            Local.TimerManagement.Banish = false
-                        elseif Local.TimerManagement.SpellTimer[index].Name == self.Spell[27].Name then
-                            MetamorphosisFade = true
+            local spellTimer = Local.TimerManagement.SpellTimer
+            for index = #spellTimer, 1, -1 do
+                local entry = spellTimer[index]
+                if entry and TimeLocal >= (entry.TimeMax - 0.5) then
+                    local StoneFade = false
+                    local MetamorphosisFade = false
+                    if entry.Name == self.Spell[11].Name then
+                        self:Msg(self.ChatMessage.Information.SoulstoneEnd)
+                        if NecrosisConfig.Sound then
+                            PlaySoundFile(self.Sound.SoulstoneEnd)
                         end
-                        if Local.TimerManagement.SpellTimer[index].Name ~= self.Spell[10].Name then
-                            Local.TimerManagement = self:RetraitTimerParIndex(index, Local.TimerManagement)
-                            if StoneFade then
-                                self:UpdateIcons()
-                            elseif MetamorphosisFade then
-                                self:UpdateMana("Metamorphose")
-                            end
-                            break
+                        StoneFade = true
+                    elseif entry.Name == self.Spell[9].Name then
+                        Local.TimerManagement.Banish = false
+                    elseif entry.Name == self.Spell[27].Name then
+                        MetamorphosisFade = true
+                    end
+                    if entry.Name ~= self.Spell[10].Name then
+                        Local.TimerManagement = self:RetraitTimerParIndex(index, Local.TimerManagement)
+                        if StoneFade then
+                            self:UpdateIcons()
+                        elseif MetamorphosisFade then
+                            self:UpdateMana("Metamorphose")
                         end
                     end
                 end
             end
         end
+        self:UpdateOnUpdateState()
     end
 end
 
@@ -648,6 +692,7 @@ function Necrosis:OnEvent(event, ...)
     local arg1, arg2, arg3, arg4 = ...
     if event == "PLAYER_ENTERING_WORLD" then
         Local.InWorld = true
+        Local.PlayerGUID = Local.PlayerGUID or UnitGUID("player")
     elseif event == "PLAYER_LEAVING_WORLD" then
         Local.InWorld = false
     end
@@ -749,10 +794,15 @@ function Necrosis:OnEvent(event, ...)
             Local.Trade.Request = false
             Local.Trade.Complete = false
         end
-    -- AntiFear button hide on target change
+    -- AntiFear button update on target change or target aura change
+    elseif event == "UNIT_AURA" and arg1 == "target" then
+        if NecrosisConfig.AntiFearAlert then
+            self:ShowAntiFearWarning()
+        end
     elseif event == "PLAYER_TARGET_CHANGED" then
-        if NecrosisConfig.AntiFearAlert and Local.Warning.Antifear.Immune then
+        if NecrosisConfig.AntiFearAlert then
             Local.Warning.Antifear.Immune = false
+            self:ShowAntiFearWarning()
         end
         if NecrosisConfig.CreatureAlert and UnitCanAttack("player", "target") and not UnitIsDead("target") then
             local creatureType = UnitCreatureType("target")
@@ -809,7 +859,7 @@ function Necrosis:OnEvent(event, ...)
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
         local _timestamp, eventType, sourceGUID, _sourceName, _sourceFlags, destGUID, _destName, _destFlags, spellID, spellName, _spellSchool, auraType =
             ...
-        local playerGUID = UnitGUID("player")
+        local playerGUID = Local.PlayerGUID or UnitGUID("player")
 
         -- Détection de la transe de l'ombre et de Contrecoup (Nightfall / Backlash)
         if eventType == "SPELL_AURA_APPLIED" and destGUID == playerGUID then
@@ -817,17 +867,17 @@ function Necrosis:OnEvent(event, ...)
         -- Détection de la fin de la transe de l'ombre et de Contrecoup
         elseif eventType == "SPELL_AURA_REMOVED" and destGUID == playerGUID then
             self:SelfEffect("DEBUFF", spellName)
-        -- Détection du Déban (Banish fading from focus)
+        -- Détection du Déban (Banish fading from focus) - check cheap flags before UnitGUID("focus")
         elseif
             eventType == "SPELL_AURA_REMOVED"
-            and destGUID == UnitGUID("focus")
             and Local.TimerManagement.Banish
             and spellName == self.Spell[9].Name
+            and destGUID == UnitGUID("focus")
         then
             self:Msg("BAN ! BAN ! BAN !")
             self:RetraitTimerParNom(self.Spell[9].Name, Local.TimerManagement)
             Local.TimerManagement.Banish = false
-        -- Détection des résists / immunes
+        -- Détection des résists / immunes - check sourceGUID before UnitGUID("target")
         elseif eventType == "SPELL_MISSED" and sourceGUID == playerGUID and destGUID == UnitGUID("target") then
             local missType = auraType -- For SPELL_MISSED, 12th arg is missType
             if
@@ -836,6 +886,7 @@ function Necrosis:OnEvent(event, ...)
                 and missType == "IMMUNE"
             then
                 Local.Warning.Antifear.Immune = true
+                self:ShowAntiFearWarning()
             end
             if
                 spellName == Local.TimerManagement.LastSpell.Name
@@ -1092,7 +1143,7 @@ function Necrosis:SpellManagement()
                                     Local.TimerManagement.SpellTimer[thisspell].TimeMax =
                                         floor(GetTime() + self.Spell[spell].Length)
                                     if
-                                        (spell == 9) and (Local.SpellCasted.Rank and Local.SpellCasted.Rank:find("1"))
+                                        (spell == 9) and (Local.SpellCasted.Rank and Local.SpellCasted.Rank:find("1", 1, true))
                                     then
                                         Local.TimerManagement.SpellTimer[thisspell].Time = 20
                                         Local.TimerManagement.SpellTimer[thisspell].TimeMax = floor(GetTime() + 20)
@@ -1181,7 +1232,7 @@ function Necrosis:SpellManagement()
                     end
                     if not SortActif and self.Spell[spell].Type ~= 0 and spell ~= 10 then
                         if spell == 9 then
-                            if Local.SpellCasted.Rank and Local.SpellCasted.Rank:find("1") then
+                            if Local.SpellCasted.Rank and Local.SpellCasted.Rank:find("1", 1, true) then
                                 self.Spell[spell].Length = 20
                             else
                                 self.Spell[spell].Length = 30
@@ -1320,7 +1371,7 @@ function Necrosis:BuildTooltip(button, Type, anchor, sens)
             GameTooltip:AddLine(self.TooltipData.Main.NoCurrentDemon)
         end
     -- ..... pour les boutons de pierre
-    elseif Type:find("stone") then
+    elseif Type:find("stone", 1, true) then
         -- Pierre d'âme
         if Type == "Soulstone" then
             -- On affiche le nom de la pierre et l'action que produira le clic sur le bouton
@@ -1447,7 +1498,7 @@ function Necrosis:BuildTooltip(button, Type, anchor, sens)
         GameTooltip:AddLine(self.Spell[34].Mana .. " Mana")
     elseif Type == "Banish" then
         GameTooltip:AddLine(self.Spell[9].Mana .. " Mana")
-        if self.Spell[9].Rank:find("2") then
+        if self.Spell[9].Rank:find("2", 1, true) then
             GameTooltip:AddLine(self.TooltipData[Type].Text)
         end
     elseif Type == "Weakness" then
@@ -1741,6 +1792,7 @@ function Necrosis:UpdateIcons()
             "Interface\\AddOns\\NecrosisPlus\\UI\\FirestoneButton-0" .. Local.Stone.Fire.Mode
         )
     end
+    self:UpdateOnUpdateState()
 end
 
 -- Update de la sphere en fonction de la vie
@@ -2330,6 +2382,7 @@ function Necrosis:FindSlot(shardIndex, shardSlot)
             end
         end
     end
+    self:UpdateOnUpdateState()
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -2601,7 +2654,7 @@ end
 -- F(Type=string, string, int) -> Spell=table
 function Necrosis:FindSpellAttribute(Type, attribute, array)
     for index = 1, #self.Spell, 1 do
-        if self.Spell[index][Type]:find(attribute) then
+        if self.Spell[index][Type]:find(attribute, 1, true) then
             return self.Spell[index][array]
         end
     end
@@ -2615,13 +2668,16 @@ end
 -- function to check the presence of a debuff on the unit || Fonction pour savoir si une unité subit un effet
 -- F(string, string)->bool
 function Necrosis:UnitHasEffect(unit, effect)
+    if not effect then
+        return false
+    end
     local index = 1
     while true do
         local name = UnitDebuff(unit, index)
         if not name then
             break
         end
-        if name:find(effect) then
+        if name:find(effect, 1, true) then
             return true
         end
         index = index + 1
@@ -2631,13 +2687,16 @@ end
 
 -- Function to check the presence of a buff on the unit.
 function Necrosis:UnitHasBuff(unit, effect)
+    if not effect then
+        return false
+    end
     local index = 1
     while true do
         local name = UnitBuff(unit, index)
         if not name then
             break
         end
-        if name:find(effect) then
+        if name:find(effect, 1, true) then
             return true
         end
         index = index + 1
@@ -2656,20 +2715,44 @@ function Necrosis:ShowAntiFearWarning()
             Actif = 2 -- Immun
         end
 
-        -- We'll start to parse the target buffs, as his class doesn't give him natural permanent immunity
+        -- Single-pass scan over target buffs (O(B+M) instead of O(B*M))
         if not Actif then
-            for index = 1, #self.AntiFear.Buff, 1 do
-                if self:UnitHasBuff("target", self.AntiFear.Buff[index]) then
-                    Actif = 3 -- Prot
+            local buffList = self.AntiFear.Buff
+            local buffCount = #buffList
+            for i = 1, 40 do
+                local name = UnitBuff("target", i)
+                if not name then
+                    break
+                end
+                for j = 1, buffCount do
+                    if name:find(buffList[j], 1, true) then
+                        Actif = 3 -- Prot
+                        break
+                    end
+                end
+                if Actif then
                     break
                 end
             end
 
-            -- No buff found, let's try the debuffs
-            for index = 1, #self.AntiFear.Debuff, 1 do
-                if self:UnitHasEffect("target", self.AntiFear.Debuff[index]) then
-                    Actif = 3 -- Prot
-                    break
+            -- Single-pass scan over target debuffs if no buff matched
+            if not Actif then
+                local debuffList = self.AntiFear.Debuff
+                local debuffCount = #debuffList
+                for i = 1, 40 do
+                    local name = UnitDebuff("target", i)
+                    if not name then
+                        break
+                    end
+                    for j = 1, debuffCount do
+                        if name:find(debuffList[j], 1, true) then
+                            Actif = 3 -- Prot
+                            break
+                        end
+                    end
+                    if Actif then
+                        break
+                    end
                 end
             end
         end
@@ -2681,7 +2764,7 @@ function Necrosis:ShowAntiFearWarning()
     end
 
     if Actif then
-        -- Antifear button is currently not visible, we have to change that
+        Local.Warning.Antifear.ActifType = Actif
         if not Local.Warning.Antifear.Actif then
             Local.Warning.Antifear.Actif = true
             self:Msg(self.ChatMessage.Information.FearProtect, "USER")
@@ -2694,25 +2777,13 @@ function Necrosis:ShowAntiFearWarning()
             NecrosisAntiFearButton:Show()
             Local.Warning.Antifear.Blink = GetTime() + 0.6
             Local.Warning.Antifear.Toggle = 2
-
-        -- Timer to make the button blink
-        elseif GetTime() >= Local.Warning.Antifear.Blink then
-            if Local.Warning.Antifear.Toggle == 1 then
-                Local.Warning.Antifear.Toggle = 2
-            else
-                Local.Warning.Antifear.Toggle = 1
-            end
-            Local.Warning.Antifear.Blink = GetTime() + 0.4
-            NecrosisAntiFearButton:SetNormalTexture(
-                "Interface\\AddOns\\NecrosisPlus\\UI\\AntiFear"
-                    .. Local.Warning.Antifear.Icon[Actif]
-                    .. "-0"
-                    .. Local.Warning.Antifear.Toggle
-            )
+            self:UpdateOnUpdateState()
         end
     elseif Local.Warning.Antifear.Actif then -- No antifear on target, but the button is still visible => gonna hide it
         Local.Warning.Antifear.Actif = false
+        Local.Warning.Antifear.ActifType = nil
         NecrosisAntiFearButton:Hide()
+        self:UpdateOnUpdateState()
     end
 end
 
